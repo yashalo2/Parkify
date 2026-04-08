@@ -1,0 +1,198 @@
+.container {
+  position: fixed;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  animation: fade 2s ease;
+  overflow-y: auto;
+}
+.container .logo {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  align-content: center;
+  justify-items: center;
+  animation: animate 2s ease;
+  background-image: url("./assets/logo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  z-index: 3;
+}
+.container .logo img {
+  width: 100%;
+  height: 100%;
+}
+@keyframes animate {
+  0% {
+    width: 100%;
+    height: 100%;
+  }
+
+  100% {
+    width: 100px;
+    height: 100px;
+  }
+}
+@keyframes fade {
+  0% {
+    background: rgb(0, 0, 0);
+  }
+  50% {
+    background: rgb(0, 0, 0);
+  }
+
+  75% {
+    background: rgba(167, 166, 166, 0.261);
+  }
+  100% {
+    background: none;
+  }
+}
+.container .top {
+  position: fixed;
+  right: 10px;
+  top: 20px;
+  width: max-content;
+  height: calc(50px - 1em);
+  padding: 0.5em;
+  border-radius: 10px;
+  display: flex;
+  gap: 10px;
+  align-content: center;
+  box-shadow: 0px 0px 5px rgba(125, 124, 124, 0.247);
+}
+.container .top button {
+  height: 80%;
+  border: none;
+  background: none;
+  color: grey;
+  cursor: pointer;
+}
+.container .top button:hover {
+  color: black;
+}
+.container .card {
+  position: absolute;
+  left: 20%;
+  top: calc(70% - 150px);
+  width: 60%;
+  height: 300px;
+  background: #252525;
+  border-radius: 5px;
+  align-content: center;
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  animation: card 1.5s ease;
+}
+@keyframes card {
+  from {
+    display: none;
+  }
+  to {
+    display: none;
+  }
+}
+.container .card .infoCard {
+  position: absolute;
+  top: 0px;
+  width: calc(100% - 180px - 1em);
+  height: calc(100% - 1em);
+  padding: 0.5em;
+  background: #fff;
+  transition: 0.5s;
+  display: grid;
+  text-align: center;
+  animation: disAppear 5.5s ease;
+}
+.container .card .infoCard button {
+  border: none;
+  background: blue;
+  color: #fff;
+  font-size: large;
+  border-radius: 10px;
+  padding: 0.5em;
+  width: max-content;
+}
+@keyframes disAppear {
+  from {
+    background: transparent;
+    display: none;
+  }
+  to {
+    background: transparent;
+    display: none;
+  }
+}
+.container .card img {
+  position: absolute;
+  width: 150px;
+  right: 10px;
+  z-index: 4;
+  animation: drive 5s ease;
+}
+
+@keyframes drive {
+  0% {
+    transform: rotateZ(90deg) translateY(-100px);
+    right: calc(100% - 5px);
+  }
+  50% {
+    transform: rotateZ(90deg) translateY(-50px) translateX(-50px);
+  }
+  75% {
+    transform: rotateZ(0deg) translateY(-150px);
+  }
+}
+.container .card div {
+  position: absolute;
+  top: calc(50% - 2.5px);
+  width: 200px;
+  height: 5px;
+  background: #fff;
+}
+.container .card .div {
+  position: absolute;
+  bottom: 0px;
+  right: 170px;
+  height: 200px;
+  width: 5px;
+  background: #fff;
+  animation: none;
+}
+
+.container footer {
+  position: relative;
+  top: calc(100% + 200px);
+  width: 100%;
+  height: 300px;
+  background: black;
+}
+::-webkit-scrollbar {
+  background: transparent;
+  width: 0px;
+}
+@media (max-width: 700px) {
+  .container .top {
+    width: 10px;
+  }
+  img {
+    animation: drive 0.3s ease;
+    position: fixed;
+    bottom: -300px;
+  }
+  @keyframes drive {
+    from {
+      transform: translateY(0vh);
+    }
+    to {
+      transform: translateY(-100vh);
+    }
+  }
+}
