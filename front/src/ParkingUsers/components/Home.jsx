@@ -35,7 +35,22 @@ function Home() {
           </Marker>
         </MapContainer>
         <div className={style.info}>
-          <h1>Hello</h1>
+          <div className={style.topInfo}>
+            <div className={style.name}>
+              <strong>Area Name</strong>
+            </div>
+            <div className={style.price}>100 birr/hr</div>
+          </div>
+          <div className={style.bottomInfo}>
+            <div className={style.spotInfo}>
+              <strong style={{ color: "green" }}>Available | 23</strong>
+              <strong style={{ color: "orange" }}>Reserved | 10</strong>
+              <strong style={{ color: "red" }}>occupied | 15</strong>
+            </div>
+            <div className={style.viewInfo}>
+              <button>View Details</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

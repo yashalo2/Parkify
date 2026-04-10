@@ -1,7 +1,15 @@
-import { Outlet } from "react-router-dom";
+import {
+  MdHeadphones,
+  MdHistory,
+  MdHome,
+  MdSearch,
+  MdSettings,
+} from "react-icons/md";
+import { Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import style from "../styles/OutLet.module.css";
 function OutLet() {
+  const navigate = useNavigate();
   return (
     <div className={style.container}>
       <div className={style.topBar}>
@@ -26,6 +34,23 @@ function OutLet() {
       <main className={style.content}>
         <Outlet />
       </main>
+      <div className={style.bottomBar}>
+        <button onClick={() => navigate("home")}>
+          <MdHome size={24} />
+        </button>
+        <button>
+          <MdSearch size={24} />
+        </button>
+        <button>
+          <MdHistory size={24} />
+        </button>
+        <button>
+          <MdSettings size={24} />
+        </button>
+        <button>
+          <MdHeadphones size={24} />
+        </button>
+      </div>
     </div>
   );
 }

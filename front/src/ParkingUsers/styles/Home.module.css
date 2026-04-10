@@ -8,24 +8,118 @@
 .container .mapContainer {
   width: 100%;
   height: 100%;
-  background: grey;
   overflow: auto;
 }
 .container .mapContainer .info {
   width: 80%;
-  height: 100px;
-  background: black;
+  height: 150px;
+  background: #0000008f;
   position: fixed;
-  bottom: 0;
+  bottom: 50px;
   left: 10%;
+  z-index: 3;
+  border-radius: 20px;
+  display: grid;
+  gap: 2px;
+  overflow: hidden;
+}
+.container .mapContainer .info div {
+  display: flex;
+  color: #fff;
+}
+.container .mapContainer .info .topInfo div {
+  flex: 1;
+  text-align: center;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+}
+.container .mapContainer .info .topInfo .name {
+  width: calc(50% - 1em);
+  padding: 0.5em;
+  height: calc(100% - 1em);
+  text-align: center;
+  align-content: center;
+}
+.container .mapContainer .info .bottomInfo {
+  display: flex;
+}
+.container .mapContainer .info .bottomInfo div {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  width: calc(50% - 1em);
+  height: calc(100% - 1em);
+  padding: 0.5em;
+}
+.container .mapContainer .info .bottomInfo .viewInfo {
+  color: white;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.container .mapContainer .info .bottomInfo .spotInfo {
+  color: white;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  justify-content: center;
+}
+.container .mapContainer .info .bottomInfo .viewInfo button {
+  padding: 0.5em 1.5em;
+  width: calc(80% - 1em);
+  font-size: larger;
+  color: #fff;
+  background: #0146f6;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
 @media (max-width: 700px) {
   .container {
-    background: blue;
     width: calc(100% - 1em);
+    width: 100%;
   }
   .container .mapContainer {
+    position: absolute;
     width: 100%;
     height: 100%;
+    background: grey;
+  }
+  .container .mapContainer .info {
+    width: 100%;
+    height: 150px;
+    background: #fff;
+    position: fixed;
+    bottom: 50px;
+    left: 0;
+    z-index: 3;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    display: grid;
+    gap: 2px;
+    overflow: hidden;
+    animation: slideUp 0.5s ease-in-out;
+  }
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      z-index: 0;
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  .container .mapContainer .info .bottomInfo .viewInfo button {
+    font-size: smaller;
+    width: 100%;
+  }
+  .container .mapContainer .info .topInfo .name {
+    color: black;
+  }
+  .container .mapContainer .info .topInfo .price {
+    color: black;
   }
 }

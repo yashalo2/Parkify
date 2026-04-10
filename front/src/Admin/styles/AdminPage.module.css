@@ -1,0 +1,73 @@
+.container {
+  position: absolute;
+  width: calc(100% - 1em);
+  padding: 0.5em;
+  height: 100%;
+  display: grid;
+  gap: 2px;
+  overflow: auto;
+}
+.container .top {
+  display: flex;
+  gap: 5px;
+}
+.container .top .chart {
+  flex: 1;
+  background: #fff;
+  box-shadow: 0px 0px 3px #8080803b;
+  border-radius: 10px;
+}
+.container .top .more {
+  width: 300px;
+  display: grid;
+  gap: 5px;
+}
+.container .top .more .moreTop {
+  background: #fff;
+  box-shadow: 0px 0px 3px #8080803b;
+  border-radius: 10px;
+}
+.container .top .more .moreBottom {
+  background: #fff;
+  box-shadow: 0px 0px 3px #8080803b;
+  border-radius: 10px;
+}
+.container .bottom {
+  display: grid;
+  gap: 5px;
+}
+.container .bottom .left {
+  display: grid;
+  gap: 5px;
+}
+.container .bottom .left .upper {
+  display: flex;
+  gap: 10px;
+}
+.container .bottom .left .upper div {
+  flex: 1;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 3px #8080803b;
+}
+
+.container .bottom .right {
+  display: flex;
+  gap: 5px;
+}
+.container .bottom .right .lower {
+  flex: 1;
+  background: #fff;
+  box-shadow: 0px 0px 3px #8080803b;
+  border-radius: 10px;
+}
+.container .bottom .right .rightMore {
+  width: 300px;
+  display: grid;
+  gap: 2px;
+}
+.container .bottom .right .rightMore div {
+  background: #fff;
+  box-shadow: 0px 0px 3px #8080803b;
+  border-radius: 10px;
+}
