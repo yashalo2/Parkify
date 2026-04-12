@@ -76,7 +76,7 @@
   color: black;
 }
 .container .card {
-  position: absolute;
+  position: relative;
   left: 20%;
   top: calc(70% - 150px);
   width: 60%;
@@ -111,7 +111,14 @@
   text-align: center;
   animation: disAppear 5.5s ease;
 }
-.container .card .infoCard button {
+.container .card .infoCard .buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  height: max-content;
+  width: 100%;
+}
+.container .card .infoCard div button {
   border: none;
   background: blue;
   color: #fff;
@@ -179,20 +186,27 @@
   width: 0px;
 }
 @media (max-width: 700px) {
+  .container .card {
+    display: none;
+  }
+  .container .logo {
+    left: 0px;
+    top: 0;
+  }
   .container .top {
-    width: 10px;
+    right: 10px;
+    top: 10px;
+    width: max-content;
+    height: calc(50px - 1em);
+    padding: 0.5em;
+    border-radius: 10px;
+    display: flex;
+    gap: 10px;
+    align-content: center;
+    box-shadow: 0px 0px 5px rgba(125, 124, 124, 0.247);
   }
-  img {
-    animation: drive 0.3s ease;
-    position: fixed;
-    bottom: -300px;
-  }
-  @keyframes drive {
-    from {
-      transform: translateY(0vh);
-    }
-    to {
-      transform: translateY(-100vh);
-    }
+  .container .top button {
+    font-size: 12px;
+    color: #252525;
   }
 }

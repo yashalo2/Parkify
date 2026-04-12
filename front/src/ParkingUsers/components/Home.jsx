@@ -34,7 +34,7 @@ function Home() {
             </Popup>
           </Marker>
         </MapContainer>
-        <div className={style.info}>
+        {/* <div className={style.info}>
           <div className={style.topInfo}>
             <div className={style.name}>
               <strong>Area Name</strong>
@@ -51,7 +51,7 @@ function Home() {
               <button>View Details</button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
