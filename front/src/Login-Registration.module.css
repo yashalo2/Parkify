@@ -179,20 +179,11 @@
   width: 0px;
 }
 @media (max-width: 700px) {
-  .container .top {
-    width: 10px;
+  .container .card {
+    display: none;
   }
-  img {
-    animation: drive 0.3s ease;
-    position: fixed;
-    bottom: -300px;
-  }
-  @keyframes drive {
-    from {
-      transform: translateY(0vh);
-    }
-    to {
-      transform: translateY(-100vh);
-    }
+  .container .logo {
+    left: 0px;
+    top: 5px;
   }
 }
