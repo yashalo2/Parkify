@@ -1,12 +1,16 @@
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { Base_URL } from "../../config";
 import style from "../styles/Home.module.css";
+
 function Home() {
   const [position, setPosition] = useState([9.03, 38.74]);
   const [locations, setLocations] = useState([]);
+  const [showInfo, setShowInfo] = useState(false);
+
   const getLocations = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/parkingArea/getLocations`, {
@@ -14,13 +18,12 @@ function Home() {
       });
       const data = await response.json();
       setLocations(data);
-      toast.success("Parking areas loaded successfully!");
-      console.log(data);
     } catch (err) {
       toast.error("Failed to fetch parking areas. Please try again.");
       console.log(err);
     }
   };
+
   const orangeIcon = new L.Icon({
     iconUrl:
       "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png",
@@ -31,6 +34,7 @@ function Home() {
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
   });
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -42,6 +46,17 @@ function Home() {
     );
     getLocations();
   }, []);
+
+  function RecenterMap() {
+    const map = useMap();
+    useEffect(() => {
+      if (position) {
+        map.setView(position, 15);
+      }
+    }, [map, position]);
+    return null;
+  }
+
   return (
     <div className={style.container}>
       <div className={style.mapContainer}>
@@ -51,6 +66,8 @@ function Home() {
           style={{ height: "100%", width: "100%", zIndex: "1" }}
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <RecenterMap />
+
           <Marker position={position} icon={orangeIcon}>
             <Popup>
               <button
@@ -61,13 +78,14 @@ function Home() {
               </button>
             </Popup>
           </Marker>
+
           {locations.length > 0 &&
             locations.map((loc, index) => (
               <Marker key={index} position={[loc.latitude, loc.longitude]}>
                 <Popup>
                   <button
                     style={{ background: "none", border: "none" }}
-                    onClick={() => alert("Hello")}
+                    onClick={() => setShowInfo(true)}
                   >
                     {loc.locationName}
                   </button>
@@ -75,26 +93,30 @@ function Home() {
               </Marker>
             ))}
         </MapContainer>
-        <div className={style.info}>
-          <div className={style.topInfo}>
-            <div className={style.name}>
-              <strong>Area Name</strong>
+
+        {showInfo && (
+          <div className={style.info}>
+            <div className={style.topInfo}>
+              <div className={style.name}>
+                <strong>Area Name</strong>
+              </div>
+              <div className={style.price}>100 birr/hr</div>
             </div>
-            <div className={style.price}>100 birr/hr</div>
+            <div className={style.bottomInfo}>
+              <div className={style.spotInfo}>
+                <strong style={{ color: "green" }}>Available | 23</strong>
+                <strong style={{ color: "orange" }}>Reserved | 10</strong>
+                <strong style={{ color: "red" }}>Occupied | 15</strong>
+              </div>
+              <div className={style.viewInfo}>
+                <button>View Details</button>
+              </div>
+            </div>
           </div>
-          <div className={style.bottomInfo}>
-            <div className={style.spotInfo}>
-              <strong style={{ color: "green" }}>Available | 23</strong>
-              <strong style={{ color: "orange" }}>Reserved | 10</strong>
-              <strong style={{ color: "red" }}>occupied | 15</strong>
-            </div>
-            <div className={style.viewInfo}>
-              <button>View Details</button>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
+
 export default Home;
