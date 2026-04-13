@@ -25,7 +25,7 @@ function OutLet() {
           <p style={{ marginTop: "0px" }}>smart parking</p>
         </div>
         <div className={style.profileAndActions}>
-          <div className={style.profile}>
+          <div className={style.profile} onClick={() => setShowMenu(!showMenu)}>
             <MdPerson className={style.icon} size={30} />
           </div>
           <div className={style.actions}>
@@ -37,7 +37,7 @@ function OutLet() {
           </div>
         </div>
       </div>
-      <main className={style.content}>
+      <main className={style.content} onClick={() => setShowMenu(false)}>
         <Outlet />
       </main>
       <div className={style.bottomBar}>
