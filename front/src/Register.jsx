@@ -30,7 +30,17 @@ function Register() {
           <input type="password" placeholder="Confirm Password" />
           <button type="submit">Register</button>
           <p>
-            Already have an account? <a href="/login">Login</a>
+            Already have an account?{" "}
+            <span
+              style={{
+                color: "blue",
+                textDecorationLine: "underline",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </span>
           </p>
         </form>
       </div>

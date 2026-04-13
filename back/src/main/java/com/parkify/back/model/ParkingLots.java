@@ -11,17 +11,24 @@ public class ParkingLots {
     private int id;
     @Enumerated(EnumType.STRING)
     private LotStatus status;
-    @OneToOne
-    @JoinColumn( columnDefinition = "parkingArea_id")
-    private ParkingArea area;
-
-    @PrePersist
-    public void prePersist() {
-        status=LotStatus.Available;
+    private double price;
+    public double getPrice() {
+        return price;
     }
 
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
-
+    @ManyToOne
+    @JoinColumn(name = "parking_area_id")
+    private ParkingArea parkingArea;
+    @OneToMany(mappedBy = "parkingLots", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Spots> spots;
+    @PrePersist
+    public void prePersist() {
+        status=LotStatus.Open;
+    }
     public int getId() {
         return id;
     }
@@ -34,15 +41,24 @@ public class ParkingLots {
         return status;
     }
 
+    public ParkingArea getParkingArea() {
+        return parkingArea;
+    }
+
+    public void setParkingArea(ParkingArea parkingArea) {
+        this.parkingArea = parkingArea;
+    }
+
+    public List<Spots> getSpots() {
+        return spots;
+    }
+
+    public void setSpots(List<Spots> spots) {
+        this.spots = spots;
+    }
+
     public void setStatus(LotStatus status) {
         this.status = status;
     }
 
-    public ParkingArea getArea() {
-        return area;
-    }
-
-    public void setArea(ParkingArea area) {
-        this.area = area;
-    }
 }

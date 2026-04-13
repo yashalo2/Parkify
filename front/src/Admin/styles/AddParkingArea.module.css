@@ -1,0 +1,110 @@
+.container {
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  justify-items: center;
+  padding: 0.5em 0em;
+}
+.container .mapContainer {
+  position: absolute;
+  left: 5px;
+  width: 70%;
+  height: 60%;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.container .mapContainer .locationName {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.106);
+  z-index: 10;
+  backdrop-filter: blur(1px);
+  align-content: center;
+  justify-items: center;
+}
+.container .mapContainer .locationName .form {
+  position: relative;
+  padding: 1em;
+  background: #fff;
+  border-radius: 10px;
+  display: grid;
+  gap: 10px;
+}
+.container .mapContainer .locationName .form input {
+  text-align: center;
+  outline: none;
+  border: none;
+  border-bottom: 2px solid grey;
+  font-size: large;
+}
+.container .mapContainer .locationName .form button {
+  padding: 0.5em;
+  border-radius: 10px;
+  border: none;
+  background: blue;
+  color: #fff;
+  font-size: large;
+}
+.container .formContainer {
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  width: 70%;
+  height: calc(100% - 60% - 20px);
+  margin-top: 10px;
+  background: #fff;
+  border-radius: 10px;
+}
+.container .formContainer .name {
+  width: calc(100% - 1em);
+  height: max-content;
+  padding: 0.5em;
+  text-align: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+}
+.container .formContainer .name input {
+  outline: none;
+  border: none;
+  border-bottom: 2px solid grey;
+  text-align: center;
+}
+.container .formContainer .spots {
+  width: calc(100% - 1em);
+  padding: 0.5em;
+}
+.container .formContainer .spots .spot {
+  width: 100%;
+  display: grid;
+  gap: 20px;
+  margin-top: 20px;
+}
+.container .formContainer .spots .spot input {
+  border: none;
+  border-bottom: 2px solid grey;
+  text-align: center;
+  outline: none;
+}
+.container .formContainer .spots .spot button {
+  width: 80%;
+  padding: 0.5em;
+  margin-left: 10%;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: larger;
+  background: blue;
+}
+.container .info {
+  width: calc(30% - 20px);
+  height: calc(100% - 10px);
+  position: absolute;
+  right: 5px;
+  background: #fff;
+  border-radius: 10px;
+}

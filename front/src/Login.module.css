@@ -53,10 +53,38 @@
   padding: 0.5em;
   margin: 0.5em 0;
   border-radius: 5px;
-  border: 1px solid grey;
+  border: none;
   background: black;
   color: #fff;
   font-size: large;
+  justify-items: center;
+}
+.container .formContainer .loginButton {
+  background: #00000068;
+}
+.container .formContainer .loginButton div {
+  width: 30px;
+  height: 30px;
+  background: conic-gradient(
+    from 0deg,
+    #10b5d2,
+    #fff,
+    #10b5d2,
+    #fff,
+    #10b5d2,
+    #fff,
+    #10b5d2
+  );
+  border-radius: 50%;
+  animation: rotate 1s ease-out infinite;
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 @media (max-width: 500px) {
   .container .logoContainer {
