@@ -10,6 +10,8 @@ import {
   TileLayer,
   useMapEvents,
 } from "react-leaflet";
+import car from "../../assets/carView.png";
+import logo from "../../assets/logo.png";
 import { Base_URL } from "../../config";
 import style from "../styles/AddParkingArea.module.css";
 function AddParkingArea() {
@@ -18,7 +20,20 @@ function AddParkingArea() {
   const [showNameForm, setShowNameForm] = useState(false);
   const [locationId, setLocationId] = useState(0);
   const [name, setName] = useState("");
-
+  const [locations, setLocations] = useState([]);
+  const [showLocationInfo, setShowLocationInfo] = useState(false);
+  const getLocations = async () => {
+    try {
+      const response = await fetch(`${Base_URL}/api/parkingArea/getLocations`, {
+        method: "GET",
+      });
+      const data = await response.json();
+      setLocations(data);
+    } catch (err) {
+      toast.error("Failed to fetch parking areas. Please try again.");
+      console.log(err);
+    }
+  };
   const redIcon = new L.Icon({
     iconUrl:
       "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
@@ -82,6 +97,7 @@ function AddParkingArea() {
         console.log(err);
       },
     );
+    getLocations();
   }, []);
   return (
     <div className={style.container}>
@@ -125,6 +141,19 @@ function AddParkingArea() {
               </div>
             </Popup>
           </Marker>
+          {locations.length > 0 &&
+            locations.map((loc, index) => (
+              <Marker key={index} position={[loc.latitude, loc.longitude]}>
+                <Popup>
+                  <button
+                    style={{ background: "none", border: "none" }}
+                    onClick={() => alert("Hello")}
+                  >
+                    view {loc.locationName}
+                  </button>
+                </Popup>
+              </Marker>
+            ))}
         </MapContainer>
         {showNameForm && (
           <div className={style.locationName}>
@@ -137,6 +166,7 @@ function AddParkingArea() {
                 top: "10px",
                 right: "10px",
               }}
+              onClick={() => setShowNameForm(false)}
             />
             <div className={style.form}>
               <input
@@ -187,11 +217,44 @@ function AddParkingArea() {
               <label htmlFor="number">Number of Spots:</label>
               <input type="number" />
             </div>
-            <button>Next</button>
+            <button>Add Level</button>
           </div>
         </div>
       </div>
-      <div className={style.info}></div>
+      <div className={style.info}>
+        <div className={style.nameAndLogo}>
+          <div className={style.logoContainer}>
+            <img src={logo} />
+          </div>
+          <div style={{ textAlign: "start", alignContent: "center" }}>
+            <h1>Parkify</h1>
+            <p>Smart Parking</p>
+          </div>
+        </div>
+        {!showLocationInfo ? (
+          <div className={style.locationInfo}>
+            <div className={style.infoShimmering}>
+              <div className={style.line}></div>
+              <div className={style.lineTwo}></div>
+              <img src={car} alt="" />
+            </div>
+          </div>
+        ) : (
+          <div className={style.locationInfo}>
+            <div className={style.infoItem}>
+              <h3>Parking Name</h3>
+              <p>ABC Parking Lot</p>
+            </div>
+            <div className={style.levelsAndSpots}>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <p style={{ flex: "1" }}>Level 2</p>
+                <p style={{ flex: "1" }}>100 spots</p>
+                <p style={{ flex: "1" }}>80$/hr</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

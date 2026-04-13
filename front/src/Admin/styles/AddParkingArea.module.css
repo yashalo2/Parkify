@@ -108,3 +108,83 @@
   background: #fff;
   border-radius: 10px;
 }
+.container .info .nameAndLogo {
+  width: calc(100% - 1em);
+  height: 200px;
+  padding: 0.5em;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+.container .info .nameAndLogo .logoContainer {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+.container .info .nameAndLogo .logoContainer img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.container .info .locationInfo {
+  width: calc(100% - 1em);
+  height: calc(100% - 230px);
+  padding: 0.5em;
+}
+.container .info .locationInfo .infoItem {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  background: #2b2ec735;
+  border-radius: 10px;
+  border-left: 5px solid blue;
+  padding-left: 0.5em;
+  align-content: center;
+  height: 70px;
+}
+.container .info .locationInfo .levelsAndSpots {
+  width: calc(100% - 1em);
+  max-height: calc(100% - 80px - 1em);
+  padding: 0.5em;
+  background: #8d2de23b;
+  margin-top: 5px;
+  border-radius: 10px;
+  border-top: 5px solid #8e2de2;
+  overflow-y: auto;
+}
+.container .info .locationInfo .infoShimmering {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #252525;
+}
+.container .info .locationInfo .infoShimmering .line {
+  position: absolute;
+  left: 10px;
+  bottom: 0;
+  height: 80%;
+  width: 10px;
+  background: #fff;
+  animation: lightMove 1s linear infinite;
+}
+@keyframes lightMove {
+  from {
+    box-shadow: 10px 0px 2px #d30101;
+  }
+  to {
+    box-shadow: 0px 0px 5px 2px #d30101;
+  }
+}
+.container .info .locationInfo .infoShimmering .lineTwo {
+  position: absolute;
+  right: 10px;
+  bottom: 0;
+  height: 80%;
+  width: 10px;
+  background: #fff;
+}
+.container .info .locationInfo .infoShimmering img {
+  position: absolute;
+  top: 10%;
+  height: 80%;
+  width: 80%;
+  left: 10%;
+}

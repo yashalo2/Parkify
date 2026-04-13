@@ -3,6 +3,7 @@ import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { useNavigate } from "react-router-dom";
 import { Base_URL } from "../../config";
 import style from "../styles/Home.module.css";
 
@@ -10,7 +11,7 @@ function Home() {
   const [position, setPosition] = useState([9.03, 38.74]);
   const [locations, setLocations] = useState([]);
   const [showInfo, setShowInfo] = useState(false);
-
+  const navigate = useNavigate();
   const getLocations = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/parkingArea/getLocations`, {
@@ -70,10 +71,7 @@ function Home() {
 
           <Marker position={position} icon={orangeIcon}>
             <Popup>
-              <button
-                style={{ background: "none", border: "none" }}
-                onClick={() => alert("Hello")}
-              >
+              <button style={{ background: "none", border: "none" }}>
                 You Are Here
               </button>
             </Popup>
@@ -109,7 +107,9 @@ function Home() {
                 <strong style={{ color: "red" }}>Occupied | 15</strong>
               </div>
               <div className={style.viewInfo}>
-                <button>View Details</button>
+                <button onClick={() => navigate("/user/payment")}>
+                  View Details
+                </button>
               </div>
             </div>
           </div>
