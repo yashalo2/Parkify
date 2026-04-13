@@ -16,8 +16,7 @@ public class ParkingArea {
     private String description;
     private double latitude;
     private double longitude;
-    @OneToMany
-    @JoinColumn(name="parkinglot_id")
+    @OneToMany(mappedBy="parkingArea",cascade=CascadeType.ALL)
     private List<ParkingLots> parkingLots;
 
     public int getId() {

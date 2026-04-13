@@ -99,7 +99,14 @@ body::before {
   width: 40px;
   height: 60%;
   border-radius: 50%;
-  background: grey;
+  border: 1px solid grey;
+  align-content: center;
+  justify-items: center;
+}
+.container .topBar .profileAndActions .profile .icon {
+  position: absolute;
+  top: calc(50% - 15px);
+  left: calc(50% - 15px);
 }
 .container .topBar .profileAndActions .actions {
   height: calc(60% - 1em);
@@ -129,11 +136,23 @@ body::before {
   width: calc(100% - 1em);
   height: calc(100% - 70px - 1em);
   padding: 0.5em;
-  z-index: 30;
+  z-index: 10;
   overflow: auto;
 }
 .container .bottomBar {
   display: none;
+}
+.container .menu {
+  position: absolute;
+  right: 10px;
+  top: 80px;
+  width: 200px;
+  height: 400px;
+  background: #fff;
+  z-index: 20;
+  padding: 0.5em;
+  border-radius: 10px;
+  box-shadow: 0px 0px 3px #80808061;
 }
 @media (max-width: 700px) {
   .container .topBar {
@@ -209,5 +228,11 @@ body::before {
     background: none;
     font-size: 1em;
     cursor: pointer;
+  }
+  .container .menu {
+    height: calc(100% - 60px);
+    right: 0px;
+    top: 60px;
+    border-radius: 0px;
   }
 }

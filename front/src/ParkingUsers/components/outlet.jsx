@@ -1,7 +1,9 @@
+import { useState } from "react";
 import {
   MdHeadphones,
   MdHistory,
   MdHome,
+  MdPerson,
   MdSearch,
   MdSettings,
 } from "react-icons/md";
@@ -10,6 +12,8 @@ import logo from "../../assets/logo.png";
 import style from "../styles/OutLet.module.css";
 function OutLet() {
   const navigate = useNavigate();
+  const [showMenu, setShowMenu] = useState(false);
+
   return (
     <div className={style.container}>
       <div className={style.topBar}>
@@ -21,7 +25,9 @@ function OutLet() {
           <p style={{ marginTop: "0px" }}>smart parking</p>
         </div>
         <div className={style.profileAndActions}>
-          <div className={style.profile}></div>
+          <div className={style.profile}>
+            <MdPerson className={style.icon} size={30} />
+          </div>
           <div className={style.actions}>
             <button>Home</button>
             <button>Find Parking</button>
@@ -51,6 +57,7 @@ function OutLet() {
           <MdHeadphones size={24} />
         </button>
       </div>
+      {showMenu && <div className={style.menu}></div>}
     </div>
   );
 }

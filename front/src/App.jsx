@@ -1,4 +1,6 @@
+import { Toaster } from "react-hot-toast";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import AddParkingArea from "./Admin/coponenet/AddParkingArea.jsx";
 import AdminOutlet from "./Admin/coponenet/AdminOutlet";
 import AdminPage from "./Admin/coponenet/AdminPage.jsx";
 import "./App.css";
@@ -11,6 +13,8 @@ import Register from "./Register.jsx";
 function App() {
   return (
     <Router>
+      <Toaster />
+
       <Routes>
         <Route path="/" element={<Landing />}></Route>
         <Route path="login" element={<Login />}></Route>
@@ -20,6 +24,7 @@ function App() {
         </Route>
         <Route path="admin" element={<AdminOutlet />}>
           <Route path="dashboard" element={<AdminPage />}></Route>
+          <Route path="newParkingLots" element={<AddParkingArea />}></Route>
         </Route>
       </Routes>
     </Router>
