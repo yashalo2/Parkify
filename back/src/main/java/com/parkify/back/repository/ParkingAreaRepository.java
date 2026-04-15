@@ -51,4 +51,5 @@ public interface ParkingAreaRepository extends JpaRepository<ParkingArea, Long> 
                  
 """)
     List<UserAreaInfoDTO> getUserAreaInfo(@Param("available") SpotStatus a, @Param("occupied") SpotStatus c, @Param("reserved") SpotStatus r ,@Param("id") long id);
+
 }
