@@ -57,7 +57,6 @@ body::before {
   width: calc(100% - 1em);
   padding: 0.5em;
   height: calc(70px - 1em);
-  box-shadow: 0px 0px 3px grey;
   z-index: 20;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -130,9 +129,6 @@ body::before {
   color: grey;
 }
 .container .content {
-  position: absolute;
-  top: 72px;
-  left: 0;
   width: calc(100% - 1em);
   height: calc(100% - 70px - 1em);
   padding: 0.5em;
