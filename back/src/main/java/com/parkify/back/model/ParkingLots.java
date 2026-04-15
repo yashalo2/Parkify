@@ -8,10 +8,20 @@ import java.util.List;
 public class ParkingLots {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     @Enumerated(EnumType.STRING)
     private LotStatus status;
     private double price;
+    private int level;
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     public double getPrice() {
         return price;
     }
@@ -29,11 +39,11 @@ public class ParkingLots {
     public void prePersist() {
         status=LotStatus.Open;
     }
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
