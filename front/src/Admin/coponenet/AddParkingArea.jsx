@@ -1,6 +1,6 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 import {
@@ -10,7 +10,6 @@ import {
   TileLayer,
   useMapEvents,
 } from "react-leaflet";
-import car from "../../assets/carView.png";
 import logo from "../../assets/logo.png";
 import { Base_URL } from "../../config";
 import style from "../styles/AddParkingArea.module.css";
@@ -22,6 +21,11 @@ function AddParkingArea() {
   const [name, setName] = useState("");
   const [locations, setLocations] = useState([]);
   const [showLocationInfo, setShowLocationInfo] = useState(false);
+  const [parkingAreaId, setParkingAreaId] = useState(0);
+  const lotRef = useRef(null);
+  const [showAddLevelForm, setShowAddLevelForm] = useState(false);
+  const [parkingArea, setParkingArea] = useState([]);
+  const [lots, setLots] = useState([]);
   const getLocations = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/parkingArea/getLocations`, {
@@ -83,11 +87,56 @@ function AddParkingArea() {
       setLocationId(data);
       setShowNameForm(false);
       toast.success("Location added successfully!");
+      getLocations();
     } catch (err) {
       toast.error("Failed to add location. Please try again.");
     }
   };
+  const addLots = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(lotRef.current);
 
+    try {
+      const response = await fetch(`${Base_URL}/api/parkingLots/addSpots`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.text();
+      toast.success(data);
+      getLots(parkingArea[0].id);
+      setShowAddLevelForm(false);
+    } catch (err) {
+      toast.error(err);
+    }
+  };
+  const getParkingArea = async (id) => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingArea/getArea/${id}`,
+        {
+          method: "GET",
+        },
+      );
+      const data = await response.json();
+      setParkingArea(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getLots = async (id) => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingLots/getLots/${id}`,
+        {
+          method: "GET",
+        },
+      );
+      const data = await response.json();
+      setLots(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -101,7 +150,10 @@ function AddParkingArea() {
   }, []);
   return (
     <div className={style.container}>
-      <div className={style.mapContainer}>
+      <div
+        className={style.mapContainer}
+        onClick={() => setShowAddLevelForm(false)}
+      >
         <MapContainer
           center={position}
           zoom={13}
@@ -147,7 +199,10 @@ function AddParkingArea() {
                 <Popup>
                   <button
                     style={{ background: "none", border: "none" }}
-                    onClick={() => alert("Hello")}
+                    onClick={() => {
+                      getParkingArea(loc.id);
+                      getLots(loc.id);
+                    }}
                   >
                     view {loc.locationName}
                   </button>
@@ -169,8 +224,12 @@ function AddParkingArea() {
               onClick={() => setShowNameForm(false)}
             />
             <div className={style.form}>
+              <label htmlFor="name" style={{ color: "#fff" }}>
+                Location Name
+              </label>
               <input
                 type="name"
+                id="name"
                 placeholder="Enter Parking Area Name"
                 onChange={(e) => setName(e.target.value)}
               />
@@ -183,44 +242,48 @@ function AddParkingArea() {
           </div>
         )}
       </div>
-      <div className={style.formContainer}>
-        <div style={{ width: "100%", textAlign: "center" }}>
-          <p>
-            Add New Parking Location{" "}
-            {location != null && `(${location.lat}, ${location.lng})`}{" "}
-          </p>
-        </div>
-        <div className={style.name}>
-          <div>
-            <label htmlFor="name">Levels:</label>
-            <input type="number" />
-          </div>
-          <div>
-            <label htmlFor="name">Price:</label>
-            <input type="number" /> /hr
-          </div>
-        </div>
-        <div className={style.spots}>
+      {showAddLevelForm && (
+        <form ref={lotRef} onSubmit={addLots} className={style.formContainer}>
           <div style={{ width: "100%", textAlign: "center" }}>
-            Spots In each level
+            <p>Add New Level to {parkingArea[0].name} Parking</p>
           </div>
-          <div className={style.spot}>
-            <div
-              style={{
-                display: "flex",
-                textAlign: "center",
-                gap: "5px",
-                width: "80%",
-                marginLeft: "10%",
-              }}
-            >
-              <label htmlFor="number">Number of Spots:</label>
-              <input type="number" />
+          <div className={style.name}>
+            <div>
+              <label htmlFor="name">Levels:</label>
+              <input type="number" name="level" />
+              <input
+                type="hidden"
+                name="parkingArea"
+                value={parkingArea[0].id}
+              />
             </div>
-            <button>Add Level</button>
+            <div>
+              <label htmlFor="name">Price:</label>
+              <input type="number" name="price" /> /hr
+            </div>
           </div>
-        </div>
-      </div>
+          <div className={style.spots}>
+            <div style={{ width: "100%", textAlign: "center" }}>
+              Spots In each level
+            </div>
+            <div className={style.spot}>
+              <div
+                style={{
+                  display: "flex",
+                  textAlign: "center",
+                  gap: "5px",
+                  width: "80%",
+                  marginLeft: "10%",
+                }}
+              >
+                <label htmlFor="number">Number of Spots:</label>
+                <input type="number" name="spots" />
+              </div>
+              <button>Add Level</button>
+            </div>
+          </div>
+        </form>
+      )}
       <div className={style.info}>
         <div className={style.nameAndLogo}>
           <div className={style.logoContainer}>
@@ -231,29 +294,44 @@ function AddParkingArea() {
             <p>Smart Parking</p>
           </div>
         </div>
-        {!showLocationInfo ? (
-          <div className={style.locationInfo}>
-            <div className={style.infoShimmering}>
-              <div className={style.line}></div>
-              <div className={style.lineTwo}></div>
-              <img src={car} alt="" />
-            </div>
+
+        <div className={style.locationInfo}>
+          <div className={style.infoItem}>
+            {parkingArea.length > 0 ? (
+              <>
+                <h3>{parkingArea[0].name}</h3>
+                <button
+                  style={{
+                    height: "max-content",
+                    padding: " 1em 0.5em",
+                    border: "none",
+                    background: "blue",
+                    color: "#fff",
+                    borderRadius: "10px",
+                  }}
+                  onClick={() => setShowAddLevelForm(true)}
+                >
+                  Add level
+                </button>
+              </>
+            ) : (
+              <h3>Select Parking Area</h3>
+            )}
           </div>
-        ) : (
-          <div className={style.locationInfo}>
-            <div className={style.infoItem}>
-              <h3>Parking Name</h3>
-              <p>ABC Parking Lot</p>
-            </div>
-            <div className={style.levelsAndSpots}>
-              <div style={{ display: "flex", gap: "10px" }}>
-                <p style={{ flex: "1" }}>Level 2</p>
-                <p style={{ flex: "1" }}>100 spots</p>
-                <p style={{ flex: "1" }}>80$/hr</p>
-              </div>
-            </div>
+          <div className={style.levelsAndSpots}>
+            {lots.length > 0 ? (
+              lots.map((lot, index) => (
+                <div key={index} style={{ display: "flex", gap: "10px" }}>
+                  <p style={{ flex: "1" }}>Level {lot.lotName}</p>
+                  <p style={{ flex: "1" }}>{lot.spots} spots</p>
+                  <p style={{ flex: "1" }}>{lot.price} birr/hr</p>
+                </div>
+              ))
+            ) : (
+              <p style={{ textAlign: "center" }}>No Levels</p>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

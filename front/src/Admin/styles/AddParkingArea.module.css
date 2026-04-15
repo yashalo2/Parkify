@@ -9,7 +9,7 @@
   position: absolute;
   left: 5px;
   width: 70%;
-  height: 60%;
+  height: 100%;
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
@@ -29,17 +29,22 @@
 .container .mapContainer .locationName .form {
   position: relative;
   padding: 1em;
-  background: #fff;
+  background: #00000086;
   border-radius: 10px;
   display: grid;
   gap: 10px;
+  width: 60%;
+  backdrop-filter: blur(5px);
 }
 .container .mapContainer .locationName .form input {
   text-align: center;
   outline: none;
   border: none;
-  border-bottom: 2px solid grey;
+  border-bottom: 2px solid snow;
+  background: none;
+  color: #fff;
   font-size: large;
+  padding: 1em;
 }
 .container .mapContainer .locationName .form button {
   padding: 0.5em;
@@ -56,8 +61,10 @@
   width: 70%;
   height: calc(100% - 60% - 20px);
   margin-top: 10px;
-  background: #fff;
+  background: #0000009b;
   border-radius: 10px;
+  z-index: 10;
+  color: #fff;
 }
 .container .formContainer .name {
   width: calc(100% - 1em);
@@ -71,7 +78,8 @@
 .container .formContainer .name input {
   outline: none;
   border: none;
-  border-bottom: 2px solid grey;
+  background: none;
+  border-bottom: 2px solid snow;
   text-align: center;
 }
 .container .formContainer .spots {
@@ -86,7 +94,8 @@
 }
 .container .formContainer .spots .spot input {
   border: none;
-  border-bottom: 2px solid grey;
+  border-bottom: 2px solid snow;
+  background: none;
   text-align: center;
   outline: none;
 }
@@ -131,6 +140,7 @@
   padding: 0.5em;
 }
 .container .info .locationInfo .infoItem {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   background: #2b2ec735;
@@ -139,6 +149,14 @@
   padding-left: 0.5em;
   align-content: center;
   height: 70px;
+  justify-items: center;
+}
+.container .info .locationInfo .infoItem button {
+  position: absolute;
+  right: 10px;
+  top: 15%;
+  height: 80%;
+  cursor: pointer;
 }
 .container .info .locationInfo .levelsAndSpots {
   width: calc(100% - 1em);

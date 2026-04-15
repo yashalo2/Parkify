@@ -11,6 +11,7 @@ function Home() {
   const [position, setPosition] = useState([9.03, 38.74]);
   const [locations, setLocations] = useState([]);
   const [showInfo, setShowInfo] = useState(false);
+  const [selectedArea, setSelectedArea] = useState([]);
   const navigate = useNavigate();
   const getLocations = async () => {
     try {
@@ -35,7 +36,21 @@ function Home() {
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
   });
-
+  const getAreaInfo = async (id) => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingArea/getAreaInfo/${id}`,
+        {
+          method: "GET",
+        },
+      );
+      const data = await response.json();
+      setSelectedArea(data);
+      console.log(data);
+    } catch (err) {
+      toast.error("Error Occurred!");
+    }
+  };
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -83,7 +98,10 @@ function Home() {
                 <Popup>
                   <button
                     style={{ background: "none", border: "none" }}
-                    onClick={() => setShowInfo(true)}
+                    onClick={() => {
+                      setShowInfo(true);
+                      getAreaInfo(loc.id);
+                    }}
                   >
                     {loc.locationName}
                   </button>
@@ -94,24 +112,45 @@ function Home() {
 
         {showInfo && (
           <div className={style.info}>
-            <div className={style.topInfo}>
-              <div className={style.name}>
-                <strong>Area Name</strong>
+            {selectedArea.length > 0 ? (
+              <>
+                <div className={style.topInfo}>
+                  <div className={style.name} style={{ color: "#fff" }}>
+                    <strong>{selectedArea[0].name}</strong>
+                  </div>
+                  <div className={style.price} style={{ color: "#fff" }}>
+                    <span>
+                      {selectedArea[0].minPrice} - {selectedArea[0].maxPrice}{" "}
+                      birr/hr
+                    </span>
+                  </div>
+                </div>
+                <div className={style.bottomInfo}>
+                  <div className={style.spotInfo}>
+                    <strong>Available | {selectedArea[0].available}</strong>
+                    <strong>Reserved | {selectedArea[0].reserved}</strong>
+                    <strong>Occupied | {selectedArea[0].occupied}</strong>
+                  </div>
+                  <div className={style.viewInfo}>
+                    <button onClick={() => navigate("/user/payment")}>
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  textAlign: "center",
+                  alignContent: "center",
+                  display: "flex",
+                }}
+              >
+                <h2 style={{ flex: "1" }}>Parking Area Is Out Of Service</h2>
               </div>
-              <div className={style.price}>100 birr/hr</div>
-            </div>
-            <div className={style.bottomInfo}>
-              <div className={style.spotInfo}>
-                <strong style={{ color: "green" }}>Available | 23</strong>
-                <strong style={{ color: "orange" }}>Reserved | 10</strong>
-                <strong style={{ color: "red" }}>Occupied | 15</strong>
-              </div>
-              <div className={style.viewInfo}>
-                <button onClick={() => navigate("/user/payment")}>
-                  View Details
-                </button>
-              </div>
-            </div>
+            )}
           </div>
         )}
       </div>
