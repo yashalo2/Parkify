@@ -1,6 +1,7 @@
 package com.parkify.back.controller;
 
 import com.parkify.back.dto.LotInfoDTO;
+import com.parkify.back.dto.SpaceDTO;
 import com.parkify.back.dto.SpotDTO;
 import com.parkify.back.repository.ParkingLotsRepository;
 import com.parkify.back.service.ParkingLotsService;
@@ -28,5 +29,9 @@ public class ParkingLotsController {
     @GetMapping("/getLots/{id}")
     public List<LotInfoDTO> getLots(@PathVariable int id) {
         return parkingLotsRepository.getLotInfo(id);
+    }
+    @GetMapping("/getInfo/{id}")
+    public List<SpaceDTO> getSpots(@PathVariable int id) {
+        return parkingLotsRepository.getSpaceInfo(id);
     }
 }

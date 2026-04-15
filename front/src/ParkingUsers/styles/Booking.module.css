@@ -1,0 +1,119 @@
+.container {
+  width: calc(100% - 1em);
+  height: calc(100% - 1em);
+  padding: 0.5em;
+  justify-items: center;
+}
+.container .spotsContainer {
+  width: calc(80% - 1em);
+  padding: 0.5em;
+  height: 50%;
+  background: #ffff;
+  border-radius: 10px;
+  display: flex;
+  gap: 10px;
+}
+.container .spotsContainer .indicator {
+  width: 120px;
+  height: 100%;
+  justify-items: center;
+  align-content: center;
+}
+.container .spotsContainer .indicator button {
+  border: none;
+  margin-top: 10px;
+  width: max-content;
+  display: flex;
+  gap: 5px;
+  font-size: medium;
+  background: none;
+}
+.container .spotsContainer .indicator button div {
+  width: 30px;
+  height: 15px;
+}
+.container .spotsContainer .spots {
+  flex: 1;
+}
+.container .spotsContainer .spots .spot {
+  height: calc(100% - 60px - 1em);
+  padding: 0.5em;
+  justify-items: center;
+  align-content: center;
+  overflow: auto;
+}
+.container .spotsContainer .spots .spot .div {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(6, 1fr);
+}
+.container .spotsContainer .spots .spot .div .space {
+  width: 80px;
+  height: 80px;
+  background: grey;
+  border-radius: 5px;
+  text-align: center;
+  align-content: center;
+  font-size: large;
+  color: #fff;
+}
+.container .spotsContainer .spots .btnContainer {
+  width: 100%;
+  height: 55px;
+  margin-top: 5px;
+  justify-items: center;
+  align-content: center;
+}
+.container .spotsContainer .spots .btnContainer div button {
+  border: none;
+  width: 80px;
+  border-radius: 5px;
+  color: #fff;
+  background: #0000005b;
+}
+.container .spotsContainer .spots .btnContainer div button:hover {
+  background: black;
+}
+.container .bookingForm {
+  width: calc(80% - 1em);
+  height: calc(48% - 1em);
+  background: #fff;
+  padding: 0.5em;
+  margin-top: 0.5em;
+  border-radius: 10px;
+}
+@media (max-width: 700px) {
+  .container .spotsContainer {
+    position: relative;
+    display: grid;
+    overflow: auto;
+    width: calc(100% - 1em);
+  }
+  .container .spotsContainer .indicator {
+    width: 100%;
+    height: 60px;
+  }
+  .container .spotsContainer .spots {
+    position: absolute;
+    left: 0.5em;
+    bottom: 0.5em;
+    height: calc(100% - 70px - 0.5em);
+    width: calc(100% - 1em);
+  }
+  .container .spotsContainer .indicator div {
+    width: 100%;
+    height: 100%;
+    display: flex;
+  }
+  .container .spotsContainer .spots .spot .div {
+    gap: 10px;
+  }
+  .container .spotsContainer .spots .spot .div .space {
+    width: 50px;
+    height: 50px;
+    font-size: small;
+  }
+  .container .bookingForm {
+    width: calc(100% - 1em);
+  }
+}

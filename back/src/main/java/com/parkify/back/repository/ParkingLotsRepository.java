@@ -1,6 +1,7 @@
 package com.parkify.back.repository;
 
 import com.parkify.back.dto.LotInfoDTO;
+import com.parkify.back.dto.SpaceDTO;
 import com.parkify.back.model.ParkingLots;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,4 +24,16 @@ public interface ParkingLotsRepository extends JpaRepository<ParkingLots, Long> 
  where p.parkingArea.id = :id
 """)
     List<LotInfoDTO> getLotInfo(@Param("id") long id);
+    @Query("""
+select new com.parkify.back.dto.SpaceDTO(
+    p.level,
+ s.spotName,
+ s.id,
+ s.spotStatus
+)
+from ParkingLots p
+join p.spots s
+where p.parkingArea.id = :id
+""")
+    List<SpaceDTO> getSpaceInfo(@Param("id") long id);
 }
