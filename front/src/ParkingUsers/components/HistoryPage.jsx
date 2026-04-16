@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MdArrowBack } from "react-icons/md";
+import { MdArrowBack, MdClose } from "react-icons/md";
 import logo from "../../assets/logo.png";
 import { Base_URL } from "../../config";
 import style from "../styles/HistoryPage.module.css";
@@ -8,6 +8,8 @@ function History() {
   const [showBooking, setShowBooking] = useState(true);
   const [img, setImg] = useState();
   const [receipt, setReceipt] = useState([]);
+  const [bookingId, setBookingId] = useState();
+  const [showPayment, setShowPayment] = useState(false);
   const getMyBooking = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/booking/getMyBooking`, {
@@ -246,13 +248,71 @@ function History() {
                     </p>
                   </div>
                 </div>
-                <div className={style.btnContainer}>
-                  <button style={{ background: "blue" }}>Pay</button>
-                  <button style={{ background: "red" }}>Cancel</button>
-                </div>
+                {receipt[0].duration < 0.31 ? (
+                  <div className={style.btnContainer}>
+                    <button
+                      style={{ background: "blue" }}
+                      onClick={() => setShowPayment(true)}
+                    >
+                      Pay
+                    </button>
+                    <button style={{ background: "red" }}>Cancel</button>
+                  </div>
+                ) : (
+                  <div
+                    style={{ display: "flex" }}
+                    className={style.btnContainer}
+                  >
+                    <button
+                      style={{ background: "blue", flex: "1" }}
+                      onClick={() => setShowPayment(true)}
+                    >
+                      Pay
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
+          {showPayment && (
+            <div className={style.paymentForm}>
+              <div
+                style={{
+                  position: "absolute",
+                  top: "0",
+                  left: "0",
+                  width: "max-content",
+                }}
+                onClick={() => setShowPayment(false)}
+              >
+                <MdClose color="red" size={24} />
+              </div>
+              <div className={style.form}>
+                <div>
+                  <label>select payment method</label>
+                  <select name="bank" id="">
+                    <option value=""></option>
+                    <option value="cbeBirr"> cbeBirr</option>
+                    <option value="teleBirr"> telebirr</option>
+                    <option value="Mpesa"> MPESA</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Enter account number</label>
+
+                  <input type="number" />
+                </div>
+                <div>
+                  <label>Enter Amount</label>
+
+                  <input type="number" />
+                </div>
+                <div>
+                  <button>Pay</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

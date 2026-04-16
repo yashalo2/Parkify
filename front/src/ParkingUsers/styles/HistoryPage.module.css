@@ -85,6 +85,11 @@
   gap: 3px;
   border-top: 3px dotted #fff;
 }
+.container .showBooking .receiptContainer .receipt .body div {
+  width: calc(100% - 1em);
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
 .container .showBooking .receiptContainer .receipt .btnContainer {
   width: 100%;
   display: grid;
@@ -99,6 +104,50 @@
   color: #fff;
   padding: 0.5em;
 }
+.container .showBooking .paymentForm {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  align-content: center;
+  justify-items: center;
+  background: #00000062;
+  backdrop-filter: blur(2px);
+}
+.container .showBooking .paymentForm .form {
+  padding: 0.5em;
+  background: #fff;
+  border-radius: 10px;
+  width: 40%;
+  display: grid;
+  gap: 10px;
+}
+.container .showBooking .paymentForm .form div {
+  display: grid;
+}
+.container .showBooking .paymentForm .form div input {
+  box-shadow: inset 0px 0px 3px black;
+  border: none;
+  outline: none;
+  padding: 0.5em;
+}
+.container .showBooking .paymentForm .form div button {
+  padding: 0.5em;
+  border: none;
+  background: #8e2de2;
+  color: #fff;
+  border-radius: 10px;
+  font-size: large;
+}
+.container .showBooking .paymentForm .form div select {
+  border: none;
+  padding: 0.5em;
+  color: grey;
+  background: #ededed;
+  outline: none;
+}
+
 @media (max-width: 700px) {
   .container {
     padding: 0;
@@ -117,12 +166,21 @@
   .container .div .book {
     width: calc(100% - 1em);
     background: #fff;
-    box-shadow: 0px 0px 3px gre;
+    box-shadow: 0px 0px 3px grey;
   }
   .container .showBooking .qrCode .label {
     width: 90%;
   }
   .container .showBooking .receiptContainer .receipt {
     width: 90%;
+  }
+  .container .showBooking .paymentForm {
+    background: #00000062;
+    backdrop-filter: blur(2px);
+  }
+  .container .showBooking .paymentForm .form {
+    position: absolute;
+    width: calc(90% - 1em);
+    padding: 1em;
   }
 }

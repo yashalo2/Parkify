@@ -1,0 +1,25 @@
+package com.parkify.back.controller;
+
+import com.parkify.back.model.Bookings;
+import com.parkify.back.model.Payment;
+import com.parkify.back.repository.BookingsRepository;
+import com.parkify.back.repository.PaymentRepository;
+import com.parkify.back.service.PaymentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("api/payment")
+public class PaymentController {
+    @Autowired
+    private PaymentService paymentService;
+    @Autowired
+    private PaymentRepository paymentRepository;
+    @Autowired
+    private BookingsRepository bookingsRepository;
+    @PostMapping("/pay/{booking}")
+    public ResponseEntity<?> pay(@RequestBody Payment payment,@PathVariable long booking){
+        return ResponseEntity.ok().body(paymentService.Pay(payment.getAmount(),booking));
+    }
+}
