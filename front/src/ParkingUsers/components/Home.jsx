@@ -6,12 +6,14 @@ import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import { Base_URL } from "../../config";
 import style from "../styles/Home.module.css";
+import Booking from "./Booking";
 
 function Home() {
   const [position, setPosition] = useState([9.03, 38.74]);
   const [locations, setLocations] = useState([]);
   const [showInfo, setShowInfo] = useState(false);
   const [selectedArea, setSelectedArea] = useState([]);
+  const [showBooking, setShowBooking] = useState(false);
   const navigate = useNavigate();
   const getLocations = async () => {
     try {
@@ -75,84 +77,88 @@ function Home() {
 
   return (
     <div className={style.container}>
-      <div className={style.mapContainer}>
-        <MapContainer
-          center={position}
-          zoom={13}
-          style={{ height: "100%", width: "100%", zIndex: "1" }}
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          <RecenterMap />
+      {!showBooking ? (
+        <div className={style.mapContainer}>
+          <MapContainer
+            center={position}
+            zoom={13}
+            style={{ height: "100%", width: "100%", zIndex: "1" }}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <RecenterMap />
 
-          <Marker position={position} icon={orangeIcon}>
-            <Popup>
-              <button style={{ background: "none", border: "none" }}>
-                You Are Here
-              </button>
-            </Popup>
-          </Marker>
+            <Marker position={position} icon={orangeIcon}>
+              <Popup>
+                <button style={{ background: "none", border: "none" }}>
+                  You Are Here
+                </button>
+              </Popup>
+            </Marker>
 
-          {locations.length > 0 &&
-            locations.map((loc, index) => (
-              <Marker key={index} position={[loc.latitude, loc.longitude]}>
-                <Popup>
-                  <button
-                    style={{ background: "none", border: "none" }}
-                    onClick={() => {
-                      setShowInfo(true);
-                      getAreaInfo(loc.id);
-                    }}
-                  >
-                    {loc.locationName}
-                  </button>
-                </Popup>
-              </Marker>
-            ))}
-        </MapContainer>
-        {showInfo && (
-          <div className={style.info}>
-            {selectedArea.length > 0 ? (
-              <>
-                <div className={style.topInfo}>
-                  <div className={style.name} style={{ color: "#fff" }}>
-                    <strong>{selectedArea[0].name}</strong>
-                  </div>
-                  <div className={style.price} style={{ color: "#fff" }}>
-                    <span>
-                      {selectedArea[0].minPrice} - {selectedArea[0].maxPrice}{" "}
-                      birr/hr
-                    </span>
-                  </div>
-                </div>
-                <div className={style.bottomInfo}>
-                  <div className={style.spotInfo}>
-                    <strong>Available | {selectedArea[0].available}</strong>
-                    <strong>Reserved | {selectedArea[0].reserved}</strong>
-                    <strong>Occupied | {selectedArea[0].occupied}</strong>
-                  </div>
-                  <div className={style.viewInfo}>
-                    <button onClick={() => navigate("/user/payment")}>
-                      View Details
+            {locations.length > 0 &&
+              locations.map((loc, index) => (
+                <Marker key={index} position={[loc.latitude, loc.longitude]}>
+                  <Popup>
+                    <button
+                      style={{ background: "none", border: "none" }}
+                      onClick={() => {
+                        setShowInfo(true);
+                        getAreaInfo(loc.id);
+                      }}
+                    >
+                      {loc.locationName}
                     </button>
+                  </Popup>
+                </Marker>
+              ))}
+          </MapContainer>
+          {showInfo && (
+            <div className={style.info}>
+              {selectedArea.length > 0 ? (
+                <>
+                  <div className={style.topInfo}>
+                    <div className={style.name} style={{ color: "#fff" }}>
+                      <strong>{selectedArea[0].name}</strong>
+                    </div>
+                    <div className={style.price} style={{ color: "#fff" }}>
+                      <span>
+                        {selectedArea[0].minPrice} - {selectedArea[0].maxPrice}{" "}
+                        birr/hr
+                      </span>
+                    </div>
                   </div>
+                  <div className={style.bottomInfo}>
+                    <div className={style.spotInfo}>
+                      <strong>Available | {selectedArea[0].available}</strong>
+                      <strong>Reserved | {selectedArea[0].reserved}</strong>
+                      <strong>Occupied | {selectedArea[0].occupied}</strong>
+                    </div>
+                    <div className={style.viewInfo}>
+                      <button onClick={() => setShowBooking(true)}>
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    textAlign: "center",
+                    alignContent: "center",
+                    display: "flex",
+                  }}
+                >
+                  <h2 style={{ flex: "1" }}>Parking Area Is Out Of Service</h2>
                 </div>
-              </>
-            ) : (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  textAlign: "center",
-                  alignContent: "center",
-                  display: "flex",
-                }}
-              >
-                <h2 style={{ flex: "1" }}>Parking Area Is Out Of Service</h2>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        <Booking area={selectedArea[0].id} />
+      )}
     </div>
   );
 }

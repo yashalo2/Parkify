@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MdArrowLeft, MdArrowRight } from "react-icons/md";
+import logo from "../../assets/logo.png";
 import { Base_URL } from "../../config";
 import style from "../styles/Booking.module.css";
 function Booking({ area }) {
@@ -201,6 +202,46 @@ function Booking({ area }) {
       {showQR && (
         <div className={style.qr} onClick={() => setShowQR(false)}>
           <div>
+            <div
+              style={{
+                width: "calc(100% + 3em)",
+                height: "80px",
+                background: "#8e2de2",
+                position: "relative",
+                marginLeft: "-2em",
+                marginTop: "-2em",
+                padding: "0em",
+                display: "flex",
+                gap: "10px",
+                color: "#fff",
+              }}
+            >
+              <div
+                style={{
+                  width: "75px",
+                  height: "70px",
+                  padding: "0em",
+                  background: "#fff",
+                  margin: "5px",
+                }}
+              >
+                <img
+                  style={{ width: "100%", height: "100%" }}
+                  src={logo}
+                  alt=""
+                />
+              </div>
+              <div
+                style={{
+                  width: "calc(100% - 90px)",
+                  height: "100%",
+                  padding: "0em",
+                  background: "none",
+                }}
+              >
+                <h2>Entrance Code</h2>
+              </div>
+            </div>
             <img src={`data:image/png;base64,${img}`} alt="" />
           </div>
         </div>

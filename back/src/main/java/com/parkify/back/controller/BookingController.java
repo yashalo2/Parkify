@@ -50,4 +50,31 @@ public class BookingController {
         return ResponseEntity.ok().body(base64Image);
 
     }
+    @GetMapping("/getEntrance/{id}")
+    public ResponseEntity<?> getEntrance(@PathVariable long id) throws WriterException, IOException {
+        String qrContent = "{\"bookingId\":" + id;
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE,350,350);
+        BufferedImage qrImage = new BufferedImage(350,350, BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < 350; x++) {
+            for (int y = 0; y < 350; y++) {
+                int pixel = bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF;
+                qrImage.setRGB(x, y, pixel);
+            }
+        }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(qrImage, "png", byteArrayOutputStream);
+        String base64Image = Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
+        return ResponseEntity.ok().body(base64Image);
+    }
+    @GetMapping("/getMyBooking")
+    public ResponseEntity<?> getMyBooking(){
+        return ResponseEntity.ok().body(bookingsRepository.getBookings());
+
+
+    }
+    @GetMapping("/getBooking/{id}")
+    public ResponseEntity<?> getBooking(@PathVariable long id){
+        return ResponseEntity.ok().body(bookingsRepository.getReceipts(id));
+    }
 }

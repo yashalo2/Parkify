@@ -228,7 +228,7 @@ body::before {
     height: 50px;
     background: #fff;
     display: flex;
-    z-index: 20;
+    z-index: 1;
   }
   .container .bottomBar button {
     flex: 1;
