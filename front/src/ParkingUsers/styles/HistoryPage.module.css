@@ -117,7 +117,7 @@
   .container .div .book {
     width: calc(100% - 1em);
     background: #fff;
-    box-shadow: 0px 0px 3px gre;
+    box-shadow: 0px 0px 3px grey;
   }
   .container .showBooking .qrCode .label {
     width: 90%;
