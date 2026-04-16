@@ -9,7 +9,7 @@ import java.time.Instant;
 public class Bookings {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
@@ -43,7 +43,7 @@ public class Bookings {
         this.bookingDate = bookingDate;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

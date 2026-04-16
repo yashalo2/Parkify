@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface BookingsRepository extends JpaRepository<Bookings, Integer> {
+public interface BookingsRepository extends JpaRepository<Bookings, Long> {
     @Query("""
  select new com.parkify.back.dto.GetBookingDTO(
  b.id,

@@ -77,4 +77,8 @@ public class BookingController {
     public ResponseEntity<?> getBooking(@PathVariable long id){
         return ResponseEntity.ok().body(bookingsRepository.getReceipts(id));
     }
+    @GetMapping("/EntranceScanner/{id}")
+    public ResponseEntity<?> getEntranceScanner(@PathVariable long id){
+        return ResponseEntity.ok().body(bookingsRepository.findById(id));
+    }
 }

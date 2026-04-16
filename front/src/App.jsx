@@ -11,7 +11,7 @@ import Home from "./ParkingUsers/components/Home";
 import OutLet from "./ParkingUsers/components/outlet.jsx";
 import PaymentPage from "./ParkingUsers/components/PaymentPage.jsx";
 import Register from "./Register.jsx";
-
+import Scanner from "./Scanner.jsx";
 function App() {
   return (
     <Router>
@@ -19,6 +19,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Landing />}></Route>
+        <Route path="scanner" element={<Scanner />}></Route>
         <Route path="login" element={<Login />}></Route>
         <Route path="register" element={<Register />}></Route>
         <Route path="user" element={<OutLet />}>

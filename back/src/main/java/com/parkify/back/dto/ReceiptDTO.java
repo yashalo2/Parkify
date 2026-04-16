@@ -55,7 +55,7 @@ public class ReceiptDTO {
 
     void total(Instant start, Instant end, double price){
         Duration duration = Duration.between(start, end);
-        double durationHours = duration.toHours();
+        double durationHours = duration.toMinutes() / 60.0;
         total = durationHours * price;
 
     }
@@ -68,7 +68,7 @@ public class ReceiptDTO {
         this.date = date.toString();
         this.status = status.toString();
         Duration duration = Duration.between(date,Instant.now());
-        durationHour = duration.toHours();
+        durationHour = duration.toMinutes() / 60.0;
         total(date, Instant.now(),price);
     }
 }
