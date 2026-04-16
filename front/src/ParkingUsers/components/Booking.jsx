@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { MdArrowLeft, MdArrowRight } from "react-icons/md";
 import { Base_URL } from "../../config";
 import style from "../styles/Booking.module.css";
-function Booking() {
+function Booking({ area }) {
   const [spaces, setSpaces] = useState([]);
   const [lots, setLots] = useState([]);
   const [currentLot, setCurrentLot] = useState(0);
@@ -27,17 +27,17 @@ function Booking() {
       setEnd(false);
     }
   };
-  const getParkingLots = async (id) => {
+  const getParkingLots = async () => {
     try {
       const response = await fetch(
-        `${Base_URL}/api/parkingLots/getInfo/${34}`,
+        `${Base_URL}/api/parkingLots/getInfo/${area}`,
         {
           method: "GET",
+          headers: { "Content-Type": "application/json" },
         },
       );
       const data = await response.json();
       setSpaces(data);
-      console.log(data);
     } catch (err) {
       console.log(err);
     }
@@ -121,14 +121,14 @@ function Booking() {
           <div className={style.btnContainer}>
             <div style={{ display: "flex", gap: "10px" }}>
               {start ? (
-                <></>
+                <button style={{ background: "none" }}></button>
               ) : (
                 <button onClick={() => prev()}>
                   <MdArrowLeft size={30} />
                 </button>
               )}
               {end ? (
-                <></>
+                <button style={{ background: "none" }}></button>
               ) : (
                 <button onClick={() => next()}>
                   <MdArrowRight size={30} />
