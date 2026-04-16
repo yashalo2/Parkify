@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MdArrowLeft, MdArrowRight } from "react-icons/md";
 import { Base_URL } from "../../config";
 import style from "../styles/Booking.module.css";
@@ -8,6 +8,10 @@ function Booking({ area }) {
   const [currentLot, setCurrentLot] = useState(0);
   const [end, setEnd] = useState(false);
   const [start, setStart] = useState(true);
+  const [selectedSpot, setSelectedSpot] = useState([]);
+  const bookRef = useRef(null);
+  const [img, setImg] = useState();
+  const [showQR, setShowQR] = useState(false);
   const next = () => {
     if (currentLot == lots.length - 1) {
       setEnd(true);
@@ -15,6 +19,33 @@ function Booking({ area }) {
     } else {
       setCurrentLot(currentLot + 1);
       setStart(false);
+    }
+  };
+  const book = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(bookRef.current);
+    try {
+      const response = await fetch(`${Base_URL}/api/booking/book`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.text();
+      setShowQR(true);
+      setImg(data);
+      getParkingLots();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const getSpot = async (id) => {
+    try {
+      const response = await fetch(`${Base_URL}/api/spots/book/${id}`, {
+        method: "GET",
+      });
+      const data = await response.json();
+      setSelectedSpot(data);
+    } catch (err) {
+      console.log(err);
     }
   };
   const prev = () => {
@@ -52,7 +83,6 @@ function Booking({ area }) {
       );
       const data = await response.json();
       setLots(data);
-      console.log(data);
     } catch (err) {
       console.log(err);
     }
@@ -60,7 +90,6 @@ function Booking({ area }) {
   const filteredSpot = spaces.filter(
     (s) => s.level === lots[currentLot].lotName,
   );
-  console.log(filteredSpot);
   useEffect(() => {
     getParkingLots();
     getLots();
@@ -91,6 +120,7 @@ function Booking({ area }) {
                       <div
                         className={style.space}
                         style={{ background: "green" }}
+                        onClick={() => getSpot(s.id)}
                       >
                         <p>{s.name}</p>
                       </div>
@@ -138,7 +168,43 @@ function Booking({ area }) {
           </div>
         </div>
       </div>
-      <div className={style.bookingForm}></div>
+      <div className={style.bookingForm}>
+        {selectedSpot.length > 0 ? (
+          <form ref={bookRef} onSubmit={book}>
+            <div className={style.parkingName}>{selectedSpot[0].area}</div>
+            <input type="hidden" name="price" value={selectedSpot[0].price} />
+            <input type="hidden" name="spot" value={selectedSpot[0].id} />
+            <div className={style.lotInfo}>
+              <div>
+                <p>Level {selectedSpot[0].level}</p>{" "}
+                <p>{selectedSpot[0].price} /hr</p>
+              </div>
+            </div>
+            <div className={style.selectedSpot}>
+              <div>{selectedSpot[0].spotCode}</div>
+            </div>
+            <button>Book</button>
+          </form>
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              textAlign: "center",
+              alignContent: "center",
+            }}
+          >
+            <h2>Please Select Space To Book</h2>
+          </div>
+        )}
+      </div>
+      {showQR && (
+        <div className={style.qr} onClick={() => setShowQR(false)}>
+          <div>
+            <img src={`data:image/png;base64,${img}`} alt="" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
