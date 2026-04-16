@@ -1,6 +1,6 @@
 package com.parkify.back.model;
 
-public enum LotStatus {
+public enum BookingStatus {
     Open,
-    Closed
+    Cancelled,
 }

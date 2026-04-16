@@ -1,7 +1,55 @@
 package com.parkify.back.repository;
 
+import com.parkify.back.dto.AreaDTO;
+import com.parkify.back.dto.LocationDTO;
+import com.parkify.back.dto.UserAreaInfoDTO;
 import com.parkify.back.model.ParkingArea;
+import com.parkify.back.model.SpotStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-public interface ParkingAreaRepository extends JpaRepository<ParkingArea, Integer> {
+import java.util.List;
+
+public interface ParkingAreaRepository extends JpaRepository<ParkingArea, Long> {
+    @Query("""
+ select new com.parkify.back.dto.LocationDTO(
+ a.name,
+ a.latitude,
+ a.longitude,
+ a.id
+ 
+ )
+ from ParkingArea a
+""")
+    List<LocationDTO> getLocations();
+    @Query("""
+     select new com.parkify.back.dto.AreaDTO(
+     a.name,
+     a.id
+     
+     )
+     from ParkingArea a
+     where a.id = :id
+""")
+    List<AreaDTO> getArea(@Param("id") long id);
+    @Query("""
+ SELECT new com.parkify.back.dto.UserAreaInfoDTO(
+                     p.id,
+                     p.name,
+                     MIN(pa.price),
+                     MAX(pa.price),
+                     SUM(CASE WHEN s.spotStatus = :available THEN 1 ELSE 0 END),
+                     SUM(CASE WHEN s.spotStatus = :occupied THEN 1 ELSE 0 END),
+                     SUM(CASE WHEN s.spotStatus = :reserved THEN 1 ELSE 0 END)
+                 )
+                 FROM ParkingArea p
+                 JOIN p.parkingLots pa
+                 JOIN pa.spots s
+                 WHERE p.id = :id
+                 GROUP BY p.id, p.name
+                 
+""")
+    List<UserAreaInfoDTO> getUserAreaInfo(@Param("available") SpotStatus a, @Param("occupied") SpotStatus c, @Param("reserved") SpotStatus r ,@Param("id") long id);
+
 }
