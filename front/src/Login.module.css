@@ -1,0 +1,106 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.container .logoContainer {
+  position: absolute;
+  top: 50px;
+  left: 20px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+.container .logoContainer img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.container .formContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: max-content;
+  background: rgba(255, 255, 255, 0.362);
+  border-radius: 10px;
+  padding: 1em;
+  text-align: center;
+  animation: slideIn 0.5s ease-out;
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+.container .formContainer input {
+  width: 90%;
+  padding: 0.5em;
+  margin: 0.5em 0;
+  border-radius: 5px;
+  border: 1px solid grey;
+}
+.container .formContainer button {
+  width: 90%;
+  padding: 0.5em;
+  margin: 0.5em 0;
+  border-radius: 5px;
+  border: none;
+  background: black;
+  color: #fff;
+  font-size: large;
+  justify-items: center;
+}
+.container .formContainer .loginButton {
+  background: #00000068;
+}
+.container .formContainer .loginButton div {
+  width: 30px;
+  height: 30px;
+  background: conic-gradient(
+    from 0deg,
+    #10b5d2,
+    #fff,
+    #10b5d2,
+    #fff,
+    #10b5d2,
+    #fff,
+    #10b5d2
+  );
+  border-radius: 50%;
+  animation: rotate 1s ease-out infinite;
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 500px) {
+  .container .logoContainer {
+    position: absolute;
+    top: 20px;
+    left: calc(50% - 100px);
+    width: 200px;
+    height: 200px;
+  }
+  .container .logoContainer img {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+  }
+}

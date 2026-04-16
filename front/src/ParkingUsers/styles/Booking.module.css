@@ -1,0 +1,185 @@
+.container {
+  width: calc(100% - 1em);
+  height: calc(100% - 1em);
+  padding: 0.5em;
+  justify-items: center;
+  overflow: auto;
+}
+.container .spotsContainer {
+  width: calc(80% - 1em);
+  padding: 0.5em;
+  height: 50%;
+  background: #ffff;
+  border-radius: 10px;
+  display: flex;
+  gap: 10px;
+}
+.container .spotsContainer .indicator {
+  width: 120px;
+  height: 100%;
+  justify-items: center;
+  align-content: center;
+}
+.container .spotsContainer .indicator button {
+  border: none;
+  margin-top: 10px;
+  width: max-content;
+  display: flex;
+  gap: 5px;
+  font-size: medium;
+  background: none;
+}
+.container .spotsContainer .indicator button div {
+  width: 30px;
+  height: 15px;
+}
+.container .spotsContainer .spots {
+  flex: 1;
+}
+.container .spotsContainer .spots .spot {
+  height: calc(100% - 60px - 1em);
+  padding: 0.5em;
+  justify-items: center;
+  align-content: center;
+  overflow: auto;
+}
+.container .spotsContainer .spots .spot .div {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(6, 1fr);
+}
+.container .spotsContainer .spots .spot .div .space {
+  width: 80px;
+  height: 80px;
+  background: grey;
+  border-radius: 5px;
+  text-align: center;
+  align-content: center;
+  font-size: large;
+  color: #fff;
+}
+.container .spotsContainer .spots .btnContainer {
+  width: 100%;
+  height: 55px;
+  margin-top: 5px;
+  justify-items: center;
+  align-content: center;
+}
+.container .spotsContainer .spots .btnContainer div button {
+  border: none;
+  width: 80px;
+  border-radius: 5px;
+  color: #7d7b7b;
+  background: none;
+  cursor: pointer;
+}
+
+.container .bookingForm {
+  width: calc(80% - 1em);
+  height: calc(48% - 1em);
+  background: #fff;
+  padding: 0.5em;
+  margin-top: 0.5em;
+  border-radius: 10px;
+}
+.container .bookingForm .parkingName {
+  width: 100%;
+  height: 40px;
+  font-size: larger;
+  align-content: center;
+  text-align: center;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+}
+.container .bookingForm .lotInfo {
+  width: 100%;
+  height: 40px;
+  gap: 30px;
+  font-size: large;
+  justify-items: center;
+}
+.container .bookingForm .lotInfo div {
+  display: flex;
+  gap: 50px;
+}
+.container .bookingForm .selectedSpot {
+  width: calc(100%- 1em);
+  height: 200px;
+  padding: 0.5em;
+  justify-items: center;
+  align-content: center;
+}
+.container .bookingForm .selectedSpot div {
+  width: 150px;
+  height: 150px;
+  background: green;
+  border-radius: 10px;
+  text-align: center;
+  align-content: center;
+  color: #fff;
+  font-size: 30px;
+}
+.container .bookingForm button {
+  padding: 0.5em;
+  width: 200px;
+  margin-left: calc(50% - 100px);
+  margin-top: 20px;
+  border: none;
+  background: orange;
+  border-radius: 10px;
+  font-size: large;
+  color: #fff;
+}
+.container .qr {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  align-content: center;
+  justify-items: center;
+  background: #00000046;
+  backdrop-filter: blur(3px);
+}
+.container .qr div {
+  padding: 3em;
+  background: #fff;
+  border-radius: 10px;
+}
+@media (max-width: 700px) {
+  .container .spotsContainer {
+    position: relative;
+    display: grid;
+    overflow: auto;
+    width: calc(100% - 1em);
+  }
+  .container .spotsContainer .indicator {
+    width: 100%;
+    height: 60px;
+  }
+  .container .spotsContainer .spots {
+    position: absolute;
+    left: 0.5em;
+    bottom: 0.5em;
+    height: calc(100% - 70px - 0.5em);
+    width: calc(100% - 1em);
+  }
+  .container .spotsContainer .indicator div {
+    width: 100%;
+    height: 100%;
+    display: flex;
+  }
+  .container .spotsContainer .spots .spot .div {
+    gap: 10px;
+  }
+  .container .spotsContainer .spots .spot .div .space {
+    width: 50px;
+    height: 50px;
+    font-size: small;
+  }
+  .container .bookingForm {
+    width: calc(100% - 1em);
+  }
+  .container .bookingForm button {
+    margin-top: -10px;
+  }
+}
