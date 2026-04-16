@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { MdArrowLeft, MdArrowRight } from "react-icons/md";
 import { Base_URL } from "../../config";
 import style from "../styles/Booking.module.css";
-function Booking() {
+function Booking({ area }) {
   const [spaces, setSpaces] = useState([]);
   const [lots, setLots] = useState([]);
   const [currentLot, setCurrentLot] = useState(0);
@@ -58,12 +58,13 @@ function Booking() {
       setEnd(false);
     }
   };
-  const getParkingLots = async (id) => {
+  const getParkingLots = async () => {
     try {
       const response = await fetch(
-        `${Base_URL}/api/parkingLots/getInfo/${34}`,
+        `${Base_URL}/api/parkingLots/getInfo/${area}`,
         {
           method: "GET",
+          headers: { "Content-Type": "application/json" },
         },
       );
       const data = await response.json();

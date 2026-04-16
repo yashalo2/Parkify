@@ -109,27 +109,6 @@ function Home() {
               </Marker>
             ))}
         </MapContainer>
-<<<<<<< HEAD
-        {/* <div className={style.info}>
-          <div className={style.topInfo}>
-            <div className={style.name}>
-              <strong>Area Name</strong>
-            </div>
-            <div className={style.price}>100 birr/hr</div>
-          </div>
-          <div className={style.bottomInfo}>
-            <div className={style.spotInfo}>
-              <strong style={{ color: "green" }}>Available | 23</strong>
-              <strong style={{ color: "orange" }}>Reserved | 10</strong>
-              <strong style={{ color: "red" }}>occupied | 15</strong>
-            </div>
-            <div className={style.viewInfo}>
-              <button>View Details</button>
-            </div>
-          </div>
-        </div> */}
-=======
-
         {showInfo && (
           <div className={style.info}>
             {selectedArea.length > 0 ? (
@@ -173,7 +152,6 @@ function Home() {
             )}
           </div>
         )}
->>>>>>> a9099e034d4a245357bcb1590dda2ef26bec6c91
       </div>
     </div>
   );
