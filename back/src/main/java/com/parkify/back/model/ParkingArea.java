@@ -16,8 +16,22 @@ public class ParkingArea {
     private String description;
     private double latitude;
     private double longitude;
+    @Enumerated(EnumType.STRING)
+    private ParkingAreaStatus parkingAreaStatus;
     @OneToMany(mappedBy="parkingArea",cascade=CascadeType.ALL)
     private List<ParkingLots> parkingLots;
+    @PrePersist
+    public void prePersist() {
+        parkingAreaStatus = ParkingAreaStatus.Open;
+    }
+
+    public ParkingAreaStatus getParkingAreaStatus() {
+        return parkingAreaStatus;
+    }
+
+    public void setParkingAreaStatus(ParkingAreaStatus parkingAreaStatus) {
+        this.parkingAreaStatus = parkingAreaStatus;
+    }
 
     public int getId() {
         return id;

@@ -1,11 +1,16 @@
 import { Html5Qrcode } from "html5-qrcode";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { MdClose, MdDone } from "react-icons/md";
 import { Base_URL } from "./config";
-
+import style from "./Scanner.module.css";
 function Scanner() {
   const [result, setResult] = useState("");
   const readerRef = useRef(null);
   const containerRef = useRef(null);
+  const [success, setSuccess] = useState(true);
+  const [scanned, setScanned] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const initScanner = async () => {
@@ -21,18 +26,16 @@ function Scanner() {
             cameraId,
             { fps: 10, qrbox: 250 },
             async (decodedText) => {
-              console.log("Scanner Booking", decodedText);
               setResult(decodedText);
               const parts = decodedText.split(":");
               const id = parts[1];
               await reader.stop();
               verifyBooking(id);
             },
-            (err) => console.warn("Scan error", err),
           );
         }
       } catch (err) {
-        console.error("Scanner error:", err);
+        toast.error("Please Wait  !");
       }
     };
 
@@ -54,8 +57,14 @@ function Scanner() {
           method: "GET",
         },
       );
-      const data = await response.json();
-      console.log(data);
+      const data = await response.text();
+      if (data == "Booking Confirmed") {
+        setSuccess(true);
+      } else {
+        setSuccess(false);
+      }
+      setMessage(data);
+      setScanned(true);
     } catch (err) {
       console.log(err);
     }
@@ -71,13 +80,27 @@ function Scanner() {
         justifyItems: "center",
       }}
     >
-      <h1>QR Scanner</h1>
-      <div
-        id="reader"
-        ref={containerRef}
-        style={{ width: "300px", height: "300px" }}
-      ></div>
-      {result && <p>Result: {result}</p>}
+      <div className={style.container}>
+        <div style={{ justifyItems: "center" }}>
+          <h1>QR Scanner</h1>
+          <div id="reader" className={style.reader} ref={containerRef}></div>
+        </div>
+        {scanned && (
+          <div className={style.confirmation}>
+            {success ? (
+              <>
+                <MdDone color="green" size={300} />
+                <p>{message}</p>
+              </>
+            ) : (
+              <>
+                <MdClose color="red" size={300} />
+                <p>{message}</p>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

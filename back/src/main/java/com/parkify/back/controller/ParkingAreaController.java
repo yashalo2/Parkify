@@ -4,14 +4,14 @@ import com.parkify.back.dto.AreaDTO;
 import com.parkify.back.dto.LocationDTO;
 import com.parkify.back.dto.SpotDTO;
 import com.parkify.back.dto.UserAreaInfoDTO;
+import com.parkify.back.model.BookingStatus;
 import com.parkify.back.model.ParkingArea;
 import com.parkify.back.model.SpotStatus;
 import com.parkify.back.repository.ParkingAreaRepository;
+import com.parkify.back.service.ParkingAreaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,6 +20,8 @@ import java.util.List;
 public class ParkingAreaController {
     @Autowired
     private ParkingAreaRepository parkingAreaRepository;
+    @Autowired
+    private ParkingAreaService parkingAreaService;
     @GetMapping("/getLocations")
     public List<LocationDTO> getLocations() {
          return parkingAreaRepository.getLocations();
@@ -35,6 +37,18 @@ public class ParkingAreaController {
     @GetMapping("/getAreaInfo/{id}")
     public List<UserAreaInfoDTO> getAreaInfo(@PathVariable long id) {
         return parkingAreaRepository.getUserAreaInfo(SpotStatus.Available,SpotStatus.Occupied,SpotStatus.Reserved,id);
+    }
+    @GetMapping("/getAvailableSpots")
+    public ResponseEntity<?> getAvailableSpots() {
+        return ResponseEntity.ok().body(parkingAreaService.getAvailableSpots());
+    }
+    @GetMapping("/getReservedSpots")
+    public ResponseEntity<?> getReservedSpots() {
+        return ResponseEntity.ok().body(parkingAreaService.getReservedSpots());
+    }
+    @GetMapping("/getOccupiedSpots")
+    public ResponseEntity<?> getOccupiedSpots() {
+        return ResponseEntity.ok().body(parkingAreaService.getOccupiedSpots());
     }
 
 

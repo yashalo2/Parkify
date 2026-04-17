@@ -5,11 +5,13 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.encoder.QRCode;
+import com.parkify.back.model.BookingStatus;
 import com.parkify.back.model.Bookings;
 import com.parkify.back.model.SpotStatus;
 import com.parkify.back.model.Spots;
 import com.parkify.back.repository.BookingsRepository;
 import com.parkify.back.repository.SpotsRepository;
+import com.parkify.back.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,8 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("api/booking")
 public class BookingController {
@@ -27,6 +31,8 @@ public class BookingController {
     private BookingsRepository bookingsRepository;
     @Autowired
     private SpotsRepository spotsRepository;
+    @Autowired
+    private BookingService bookingService;
 
     @PostMapping("/book")
     public ResponseEntity<?> book(@ModelAttribute Bookings bookings) throws WriterException, IOException {
@@ -79,6 +85,21 @@ public class BookingController {
     }
     @GetMapping("/EntranceScanner/{id}")
     public ResponseEntity<?> getEntranceScanner(@PathVariable long id){
-        return ResponseEntity.ok().body(bookingsRepository.findById(id));
+        Optional<Bookings> booking = bookingsRepository.findById(id);
+        Bookings booked = booking.get();
+        if(booked.getStatus().equals(BookingStatus.Cancelled)){
+            return ResponseEntity.badRequest().body("Entrance have been used or cancelled");
+        }
+        booked.setStatus(BookingStatus.Cancelled);
+        bookingsRepository.save(booked);
+        return ResponseEntity.ok().body("Booking Confirmed");
+    }
+    @GetMapping("/getPendingBookings")
+    public ResponseEntity<?> getPendingBooking(){
+        return ResponseEntity.ok().body(bookingService.getBooked());
+    }
+    @GetMapping("/getCancelledBookings")
+    public ResponseEntity<?> getCancelledBooking(){
+        return ResponseEntity.ok().body(bookingService.getCancelled());
     }
 }
