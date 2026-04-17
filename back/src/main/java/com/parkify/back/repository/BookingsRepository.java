@@ -1,6 +1,8 @@
 package com.parkify.back.repository;
+import com.parkify.back.dto.ChartDTO;
 import com.parkify.back.dto.GetBookingDTO;
 import com.parkify.back.dto.ReceiptDTO;
+import com.parkify.back.model.BookingStatus;
 import com.parkify.back.model.Bookings;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -47,4 +49,14 @@ join pa.parkingArea p
 where b.id = :id
 """)
     List<ReceiptDTO> getReceipts(@Param("id") long id);
+    @Query("""
+select new com.parkify.back.dto.ChartDTO(
+b.bookingDate,
+COUNT(*)
+)
+from Bookings b
+where b.status = :status
+group by b.bookingDate
+""")
+    List<ChartDTO> getChart(@Param("status") BookingStatus status);
 }

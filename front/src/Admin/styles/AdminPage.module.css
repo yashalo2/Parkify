@@ -10,12 +10,16 @@
 .container .top {
   display: flex;
   gap: 5px;
+  background: black;
+  margin-bottom: 0;
 }
 .container .top .chart {
   flex: 1;
   background: #fff;
   box-shadow: 0px 0px 3px #8080803b;
   border-radius: 10px;
+  margin-bottom: 0px;
+  align-content: end;
 }
 .container .top .more {
   width: 300px;
@@ -35,6 +39,7 @@
 .container .bottom {
   display: grid;
   gap: 5px;
+  height: 100%;
 }
 .container .bottom .left {
   display: grid;
@@ -61,6 +66,21 @@
   box-shadow: 0px 0px 3px #8080803b;
   border-radius: 10px;
 }
+.container .bottom .right .lower .label {
+  width: calc(100% - 1em);
+  height: calc(30px - 1em);
+  padding: 0.5em;
+  display: flex;
+  gap: 10px;
+  background: grey;
+}
+.container .bottom .right .lower .display {
+  width: calc(100% - 1em);
+  height: calc(100% - 1em);
+  padding: 0.5em;
+  background: blue;
+  overflow-y: auto;
+}
 .container .bottom .right .rightMore {
   width: 300px;
   display: grid;
@@ -71,7 +91,26 @@
   box-shadow: 0px 0px 3px #8080803b;
   border-radius: 10px;
 }
-.myLocation .leaflet-popup-content-wrapper {
-  background: rgb(113, 139, 0);
-  color: yellow;
+.container .bottom .right .rightMore .systemInfo {
+  display: grid;
+  gap: 3px;
+  background: none;
+}
+.container .bottom .right .rightMore .systemInfo .parkings {
+  width: calc(100% - 1em);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: #8e2de2;
+  padding: 0.5em;
+}
+.container .bottom .right .rightMore .systemInfo .parkings div {
+  display: grid;
+  color: #fff;
+  background: #8e2de2;
+  gap: 0;
+  height: max-content;
+}
+.container .bottom .right .rightMore .systemInfo .parkings div p {
+  margin: 5px;
 }

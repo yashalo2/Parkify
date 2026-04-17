@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { MdArrowLeft, MdArrowRight } from "react-icons/md";
+import { MdArrowLeft, MdArrowRight, MdOutlineClose } from "react-icons/md";
 import logo from "../../assets/logo.png";
 import { Base_URL } from "../../config";
 import style from "../styles/Booking.module.css";
@@ -200,7 +200,7 @@ function Booking({ area }) {
         )}
       </div>
       {showQR && (
-        <div className={style.qr} onClick={() => setShowQR(false)}>
+        <div className={style.qr}>
           <div>
             <div
               style={{
@@ -243,6 +243,21 @@ function Booking({ area }) {
               </div>
             </div>
             <img src={`data:image/png;base64,${img}`} alt="" />
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              marginTop: "30px",
+              alignContent: "center",
+              padding: "0.3em",
+              borderRadius: "50%",
+              color: "#fff",
+              border: "1px solid #fff",
+              background: "none",
+            }}
+            onClick={() => setShowQR(false)}
+          >
+            <MdOutlineClose size={24} />
           </div>
         </div>
       )}
