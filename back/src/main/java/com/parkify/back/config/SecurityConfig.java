@@ -17,6 +17,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/api/parkingArea/**").permitAll()
                         .requestMatchers("/api/parkingLots/**").permitAll()
@@ -29,6 +30,7 @@ public class SecurityConfig {
 
 
                 .cors(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults());
         ;
         return http.build();
     }
@@ -39,7 +41,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:5173","http://192.168.144.215:5173")
+                        .allowedOrigins("http://localhost:5173","http://10.240.212.148:5173")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowCredentials(true);
             }

@@ -5,7 +5,6 @@
   height: 100%;
   display: grid;
   gap: 2px;
-  overflow: auto;
 }
 .container .top {
   display: flex;
@@ -38,7 +37,8 @@
 .container .bottom {
   display: grid;
   gap: 5px;
-  height: 100%;
+  height: 56%;
+  max-height: max-content;
 }
 .container .bottom .left {
   display: grid;
@@ -58,12 +58,15 @@
 .container .bottom .right {
   display: flex;
   gap: 5px;
+  overflow-y: auto;
+  height: 68%;
 }
 .container .bottom .right .lower {
   flex: 1;
   background: #fff;
   box-shadow: 0px 0px 3px #8080803b;
   border-radius: 10px;
+  overflow-y: auto;
 }
 .container .bottom .right .lower .label {
   width: calc(100% - 1em);
@@ -71,20 +74,34 @@
   padding: 0.5em;
   display: flex;
   gap: 10px;
-  background: grey;
 }
 .container .bottom .right .lower .display {
   width: calc(100% - 1em);
   height: calc(100% - 1em);
   padding: 0.5em;
-  background: blue;
   overflow-y: auto;
+}
+.container .bottom .right .lower .display .recent {
+  width: calc(100% - 1em);
+  padding: 0.5em;
+  /* background: #fff; */
+  display: flex;
+  gap: 2px;
+  border-radius: 5px;
+  border-top: 1px solid #ededed;
+}
+.container .bottom .right .lower .display .recent div {
+  flex: 1;
+  height: 40px;
+  align-content: center;
 }
 .container .bottom .right .rightMore {
   width: 300px;
   display: grid;
   gap: 2px;
+  overflow-y: auto;
 }
+
 .container .bottom .right .rightMore div {
   background: #fff;
   box-shadow: 0px 0px 3px #8080803b;

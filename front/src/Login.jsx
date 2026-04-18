@@ -26,6 +26,7 @@ function Login() {
         toast.success("Login successful!");
         navigate("/user/home");
       }
+      console.log(data);
     } catch (error) {
       toast.error("An error occurred. Please try again.");
     } finally {

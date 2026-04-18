@@ -1,0 +1,176 @@
+.container {
+  position: absolute;
+  width: calc(100% - 1em);
+  height: calc(100% - 1em);
+  background: #edededed;
+  padding: 0.5em;
+  display: flex;
+  gap: 2px;
+}
+.container .userContainer {
+  width: 30%;
+  background: #fff;
+}
+.container .messageContainer {
+  position: relative;
+  flex: 1;
+  background: #fff;
+}
+.container .userContainer .filter {
+  width: calc(100% - 1em);
+  height: 60px;
+  padding: 0.5em;
+  background: #fff;
+  display: flex;
+  gap: 3px;
+}
+.container .userContainer .filter button {
+  width: 40px;
+  border-radius: 10px;
+  border: none;
+  background: #8e2de2;
+  color: #fff;
+}
+.container .userContainer .filter input {
+  flex: 1;
+  border-radius: 10px;
+  outline: none;
+  border: 1px solid grey;
+}
+.container .userContainer .users {
+  width: calc(100% - 0.8em);
+  padding: 0.4em;
+  height: calc(100% - 112px - 1.8em);
+  margin-top: 2px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.container .userContainer .users .user {
+  width: 100%;
+  height: 60px;
+  background: #ededed;
+  display: flex;
+  gap: 2px;
+  border-radius: 10px;
+  margin-bottom: 1px;
+}
+.container .userContainer .users .user .profile {
+  width: 60px;
+  height: 100%;
+  align-content: center;
+  justify-items: center;
+}
+.container .userContainer .users .user .profile .img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  align-content: center;
+  text-align: center;
+  border: 1px solid grey;
+}
+.container .userContainer .users .user .info {
+  flex: 1;
+  display: grid;
+  font-size: medium;
+  font-weight: bolder;
+}
+.container .userContainer .users .user .info div {
+  align-content: center;
+  padding-left: 0.5em;
+}
+.container .messageContainer .header {
+  width: calc(100% - 1em);
+  height: calc(60px - 1em);
+  background: #8e2de2;
+  box-shadow: 0px 1px 1px #00000038;
+  padding: 0.5em;
+  display: flex;
+  gap: 2px;
+  color: #fff;
+}
+.container .messageContainer .header div {
+  flex: 1;
+}
+.container .messageContainer .header .receiver {
+  gap: 5px;
+  position: relative;
+}
+.container .messageContainer .header .receiver .div {
+  width: calc(60px - 1em);
+  height: 100%;
+  border-radius: 50%;
+  align-content: center;
+  text-align: center;
+  color: #fff;
+  background: black;
+}
+.container .messageContainer .header .receiver .name {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: calc(100% - calc(60px - 0.6em));
+  height: 100%;
+  align-content: center;
+}
+.container .messageContainer .header .action {
+  text-align: end;
+  align-content: center;
+}
+.container .messageContainer .header .action button {
+  padding: 0.5em;
+  border: none;
+  background: red;
+  color: #fff;
+  font-size: large;
+  width: 60px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.container .messageContainer .body {
+  width: calc(100% - 0.8em);
+  height: calc(100% - 120px);
+  padding-left: 0.4em;
+  padding-right: 0.4em;
+}
+.container .messageContainer .input {
+  position: absolute;
+  bottom: 0px;
+  width: calc(100% - 0.6em);
+  min-height: 60px;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+  display: grid;
+  margin-bottom: 5px;
+}
+.container .messageContainer .input .textarea {
+  text-align: center;
+  padding-top: 0.5em;
+}
+.container .messageContainer .input .textarea textarea {
+  width: 60%;
+  border: none;
+  outline: none;
+  text-align: center;
+  border-radius: 10px;
+  background: #000000aa;
+  color: #fff;
+  backdrop-filter: blur(5px);
+}
+.container .messageContainer .input .textarea .button {
+  position: absolute;
+  bottom: 10px;
+  width: max-content;
+  text-align: end;
+  background: green;
+  color: #fff;
+  right: 10%;
+  padding: 0.5em;
+  border-radius: 50%;
+}
+.container .messageContainer .input .textarea .button button {
+  border: none;
+  border-radius: 50%;
+  padding: 0.3em;
+  background: none;
+  color: #fff;
+}

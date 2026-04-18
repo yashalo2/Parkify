@@ -88,9 +88,11 @@ public class BookingController {
         Optional<Bookings> booking = bookingsRepository.findById(id);
         Bookings booked = booking.get();
         if(booked.getStatus().equals(BookingStatus.Cancelled)){
-            return ResponseEntity.badRequest().body("Entrance have been used or cancelled");
+            return ResponseEntity.ok().body("Entrance have been used or cancelled");
+        }else if(booked.getStatus().equals(BookingStatus.Used)){
+            return ResponseEntity.ok().body("Entrance has been used");
         }
-        booked.setStatus(BookingStatus.Cancelled);
+        booked.setStatus(BookingStatus.Used);
         bookingsRepository.save(booked);
         return ResponseEntity.ok().body("Booking Confirmed");
     }

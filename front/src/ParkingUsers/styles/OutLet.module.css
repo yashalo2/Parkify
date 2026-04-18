@@ -130,6 +130,8 @@ body::before {
   color: grey;
 }
 .container .content {
+  position: absolute;
+  top: 70px;
   width: calc(100% - 1em);
   height: calc(100% - 70px - 1em);
   padding: 0.5em;

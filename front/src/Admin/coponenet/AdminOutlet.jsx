@@ -29,6 +29,11 @@ function AdminOutlet() {
         <button onClick={() => navigate("newParkingLots")}>
           Add Parking Area
         </button>
+        <button onClick={() => navigate("manageParking")}>
+          Manage Parking Area
+        </button>
+        <button onClick={() => navigate("manageUser")}>Manage Users</button>
+        <button onClick={() => navigate("support")}>Support</button>
         <div className={style.decor}>
           <div className={style.one}></div>
           <div className={style.two}></div>
