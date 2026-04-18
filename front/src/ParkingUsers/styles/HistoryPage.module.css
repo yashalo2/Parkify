@@ -37,13 +37,13 @@
   left: 0;
   z-index: 2;
   display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   overflow: auto;
 }
 .container .showBooking .qrCode,
 .receiptContainer {
   position: relative;
-  width: 100%;
   height: 100vh;
   background: #fff;
   align-content: center;
@@ -51,18 +51,16 @@
 }
 .container .showBooking .qrCode .code {
   padding: 1em;
-  background: #fff;
   border-radius: 10px;
 }
 .container .showBooking .qrCode .label {
-  position: absolute;
-  top: 10px;
-  width: 60%;
+  width: calc(100% - 1em);
   height: 100px;
   background: #8e2de2;
   border-radius: 10px;
   padding: 0.5em;
   color: #fff;
+  margin-bottom: 10px;
 }
 .container .showBooking .receiptContainer .receipt {
   padding: 0.5em;
@@ -168,8 +166,13 @@
     background: #fff;
     box-shadow: 0px 0px 3px grey;
   }
+  .container .showBooking {
+    grid-template-columns: 1fr;
+  }
   .container .showBooking .qrCode .label {
-    width: 90%;
+    position: absolute;
+    top: 20px;
+    width: calc(90% - 1em);
   }
   .container .showBooking .receiptContainer .receipt {
     width: 90%;
@@ -179,7 +182,6 @@
     backdrop-filter: blur(2px);
   }
   .container .showBooking .paymentForm .form {
-    position: absolute;
     width: calc(90% - 1em);
     padding: 1em;
   }

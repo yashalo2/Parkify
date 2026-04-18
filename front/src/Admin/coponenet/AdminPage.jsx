@@ -1,4 +1,5 @@
 import {
+  ArcElement,
   BarElement,
   CategoryScale,
   Chart as ChartJS,
@@ -11,9 +12,9 @@ import {
   Tooltip,
 } from "chart.js";
 import { useEffect, useState } from "react";
-import { Bar, Line } from "react-chartjs-2";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
 import toast from "react-hot-toast";
-import { MdArrowForward } from "react-icons/md";
+import { MdArrowBack, MdArrowForward } from "react-icons/md";
 import logo from "../../assets/logo.png";
 import { Base_URL } from "../../config";
 import style from "../styles/AdminPage.module.css";
@@ -25,6 +26,7 @@ ChartJS.register(
   Tooltip,
   Legend,
   Filler,
+  ArcElement,
 );
 ChartJS.register(
   CategoryScale,
@@ -43,6 +45,9 @@ function AdminPage() {
   const [available, setAvailable] = useState([]);
   const [reserved, setReserved] = useState([]);
   const [occupied, setOccupied] = useState([]);
+  const [fullScreen, setFullScreen] = useState(false);
+  const [activeArea, setActiveArea] = useState([]);
+  const [activeLot, setActiveLot] = useState([]);
   const getChart = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/payment/getChartInfo`, {
@@ -50,7 +55,6 @@ function AdminPage() {
       });
       const data = await response.json();
       setPaymentChart(data);
-      console.log(data);
     } catch (err) {
       toast.error("Please check your network connection");
     }
@@ -83,32 +87,68 @@ function AdminPage() {
       toast.error("Error Occurred");
     }
   };
-  const formDate = (value) => {
-    const data = new Date(value);
-    return data.toDateString();
-  };
-  const chartData = {};
-  paymentChart.forEach(({ gross, date }) => {
-    const dateT = formDate(date);
-    if (!chartData[dateT]) {
-      chartData[dateT] = { gross: gross };
-    }
-    chartData[dateT].gross += gross;
-  });
-  const realChartData = Object.values(chartData).sort((a, b) => {
-    new Date(a.date) - new Date(b.date);
-  });
-  const labels = () => {
-    formDate(paymentChart);
-  };
+  const groupBooked = booked.reduce((acc, item) => {
+    const day = new Date(item.date).toISOString().split("T")[0];
+    acc[day] = (acc[day] || 0) + item.gross;
+    return acc;
+  }, {});
+  const bookedLabels = Object.keys(groupBooked)
+    .sort()
+    .map((day) => {
+      const d = new Date(day);
+      return d.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    });
+  const bookedData = Object.keys(groupBooked)
+    .sort()
+    .map((day) => groupBooked[day]);
+  const groupCancelled = cancelled.reduce((acc, item) => {
+    const day = new Date(item.date).toISOString().split("T")[0];
+    acc[day] = (acc[day] || 0) + item.gross;
+    return acc;
+  }, {});
+  const cancelledLabels = Object.keys(groupCancelled)
+    .sort()
+    .map((day) => {
+      const d = new Date(day);
+      return d.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    });
+  const cancelledData = Object.keys(groupCancelled)
+    .sort()
+    .map((day) => groupCancelled[day]);
+  const grouped = paymentChart.reduce((acc, item) => {
+    const day = new Date(item.date).toISOString().split("T")[0];
+    acc[day] = (acc[day] || 0) + item.gross;
+    return acc;
+  }, {});
+  const labels = Object.keys(grouped)
+    .sort()
+    .map((day) => {
+      const d = new Date(day);
+      return d.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    });
+  const data = Object.keys(grouped)
+    .sort()
+    .map((day) => grouped[day]);
   const dataSet = {
-    labels: paymentChart.map((d) => new Date(d.date).toDateString()),
+    labels,
     datasets: [
       {
         label: "Payment Gross",
-        data: paymentChart.map((d) => d.gross),
-        borderColor: "#e30a769e",
-        backgroundColor: "#e30a769e",
+        data: data,
+        borderColor: "#0b49f3",
+        backgroundColor: "#1E3A8A",
         fill: true,
         pointRadius: 5,
         tension: 0.4,
@@ -127,18 +167,34 @@ function AdminPage() {
       },
     },
   };
-  booked.forEach(({ gross, date }) => {
-    const dateT = formDate(date);
-    if (!chartData[dateT]) {
-      chartData[dateT] = { gross: dateT };
-    }
-
-    chartData[dateT] += gross;
-  });
-  const bookedChartData = Object.values(chartData).sort((a, b) => {
-    new Date(a.date) - new Date(b.date);
-  });
-  const label = bookedChartData.map((d) => d.dateT);
+  const bookedSets = {
+    labels: bookedLabels,
+    datasets: [
+      {
+        label: "Booked Parkings",
+        data: bookedData,
+        borderColor: "#08ba08",
+        backgroundColor: "#16cb28ab",
+        fill: true,
+        pointRadius: 5,
+        tension: 0.4,
+      },
+    ],
+  };
+  const cancelledSets = {
+    labels: cancelledLabels,
+    datasets: [
+      {
+        label: "Cancelled Bookings",
+        data: cancelledData,
+        borderColor: "#f30b0b",
+        backgroundColor: "#f52715a1",
+        fill: true,
+        pointRadius: 5,
+        tension: 0.4,
+      },
+    ],
+  };
   const getAvailableSpots = async () => {
     try {
       const response = await fetch(
@@ -181,6 +237,56 @@ function AdminPage() {
       toast.error("Error Loading Page");
     }
   };
+  const getActiveArea = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingArea/getActiveParkingArea`,
+        {
+          method: "GET",
+        },
+      );
+      const data = await response.json();
+      setActiveArea(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getActiveParkingLot = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingLots/getActiveParkingLot`,
+        {
+          method: "GET",
+        },
+      );
+      const data = await response.json();
+      setActiveLot(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getTopGrossing = async () => {
+    try {
+      const response = await fetch(`${Base_URL}/api/payment/getTopGrossing`, {
+        method: "GET",
+      });
+      const data = await response.json();
+      console.log(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getLessGrossing = async () => {
+    try {
+      const response = await fetch(`${Base_URL}/api/payment/getLessGrossing`, {
+        method: "GET",
+      });
+      const data = await response.json();
+      console.log(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
   useEffect(() => {
     getChart();
     getBooked();
@@ -188,6 +294,10 @@ function AdminPage() {
     getAvailableSpots();
     getReservedSpots();
     getOccupiedSpots();
+    getActiveArea();
+    getActiveParkingLot();
+    getTopGrossing();
+    getLessGrossing();
   }, []);
   return (
     <div className={style.container}>
@@ -201,13 +311,13 @@ function AdminPage() {
         <div className={style.more}>
           <div className={style.moreTop} style={{ alignContent: "end" }}>
             <Line
-              data={dataSet}
+              data={bookedSets}
               options={{ ...options, maintainAspectRatio: true }}
             />
           </div>
           <div className={style.moreBottom} style={{ alignContent: "end" }}>
             <Line
-              data={dataSet}
+              data={cancelledSets}
               options={{ ...options, maintainAspectRatio: true }}
             />
           </div>
@@ -229,7 +339,31 @@ function AdminPage() {
                     },
                   ],
                 }}
-                options={{ maintainAspectRatio: false }}
+                options={{
+                  plugins: {
+                    legend: {
+                      display: false,
+                    },
+                  },
+                  scales: {
+                    x: {
+                      ticks: {
+                        callback: function (value, index) {
+                          const label = this.getLabelForValue(value);
+                          return label.length > 3
+                            ? label.substring(0, 3) + "…"
+                            : label;
+                        },
+                      },
+                    },
+                    y: {
+                      ticks: {
+                        display: true,
+                      },
+                    },
+                  },
+                  maintainAspectRatio: false,
+                }}
               />
             </div>
             <div>
@@ -245,7 +379,31 @@ function AdminPage() {
                     },
                   ],
                 }}
-                options={{ maintainAspectRatio: false }}
+                options={{
+                  plugins: {
+                    legend: {
+                      display: false,
+                    },
+                  },
+                  scales: {
+                    x: {
+                      ticks: {
+                        callback: function (value, index) {
+                          const label = this.getLabelForValue(value);
+                          return label.length > 3
+                            ? label.substring(0, 3) + "…"
+                            : label;
+                        },
+                      },
+                    },
+                    y: {
+                      ticks: {
+                        display: true,
+                      },
+                    },
+                  },
+                  maintainAspectRatio: false,
+                }}
               />
             </div>
             <div>
@@ -261,19 +419,55 @@ function AdminPage() {
                     },
                   ],
                 }}
-                options={{ maintainAspectRatio: false }}
+                options={{
+                  plugins: {
+                    legend: {
+                      display: false,
+                    },
+                  },
+                  scales: {
+                    x: {
+                      ticks: {
+                        callback: function (value, index) {
+                          const label = this.getLabelForValue(value);
+                          return label.length > 3
+                            ? label.substring(0, 3) + "…"
+                            : label;
+                        },
+                      },
+                    },
+                    y: {
+                      ticks: {
+                        display: true,
+                      },
+                    },
+                  },
+                  maintainAspectRatio: false,
+                }}
               />
             </div>
           </div>
         </div>
         <div className={style.right}>
-          <div className={style.lower}>
+          <div
+            className={`${style.lower} ${fullScreen ? style.fullScreen : ""}`}
+          >
             <div className={style.label}>
               <div style={{ flex: "1", textAlign: "start" }}>
                 Recent Payment
               </div>
               <div style={{ flex: "1", textAlign: "end" }}>
-                <MdArrowForward style={{ cursor: "pointer" }} />
+                {fullScreen ? (
+                  <MdArrowBack
+                    onClick={() => setFullScreen(!fullScreen)}
+                    style={{ cursor: "pointer" }}
+                  />
+                ) : (
+                  <MdArrowForward
+                    onClick={() => setFullScreen(!fullScreen)}
+                    style={{ cursor: "pointer" }}
+                  />
+                )}
               </div>
             </div>
             <div className={style.display}></div>
@@ -304,31 +498,112 @@ function AdminPage() {
                 </div>
               </div>
               <div
-                style={{ background: "#fff" }}
-                className={`${style.topGross} ${style.parkings}`}
+                style={{ background: "#fff", display: "flex", gap: "5px" }}
+                className={style.topGross}
               >
                 <div
-                  style={{ width: "60px", height: "60px", background: "none" }}
+                  style={{
+                    height: "80px",
+                    background: "none",
+                    boxShadow: "none",
+                  }}
                 >
-                  <img
-                    style={{ width: "100%", height: "100%" }}
-                    src={logo}
-                    alt=""
+                  <Doughnut
+                    data={{
+                      labels: activeArea.map((d) => d.status),
+                      datasets: [
+                        {
+                          label: "count",
+                          data: activeArea.map((d) => d.number),
+                          backgroundColor: ["red", "blue"],
+                          BsBorderWidth: 1,
+                          borderRadius: 5,
+                          spacing: 2,
+                        },
+                      ],
+                    }}
+                    options={{
+                      plugins: {
+                        legend: {
+                          display: false,
+                        },
+                      },
+                    }}
                   />
                 </div>
-                <div></div>
-                <div></div>
+                <div
+                  className={style.description}
+                  style={{ boxShadow: "none" }}
+                >
+                  <div style={{ width: "100%" }}>Parking Area Status Chart</div>
+
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                    }}
+                  >
+                    <p style={{ fontSize: "smaller", margin: "0" }}>
+                      30 Parking Areas Are Giving service to users andd 40 are
+                      out of service
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className={style.lessGross}>
-                <div style={{ width: "60px", height: "60px" }}>
-                  <img
-                    style={{ width: "100%", height: "100%" }}
-                    src={logo}
-                    alt=""
+              <div
+                style={{ display: "flex", gap: "5px" }}
+                className={style.lessGross}
+              >
+                <div
+                  className={style.description}
+                  style={{ boxShadow: "none" }}
+                >
+                  <div
+                    style={{ width: "calc(100% - 1em)", paddingLeft: "1em" }}
+                  >
+                    Parking Spot Status Chart
+                  </div>
+
+                  <div
+                    style={{
+                      width: "calc(100% - 1em)",
+                      display: "flex",
+                      paddingLeft: "1em",
+                    }}
+                  >
+                    <p style={{ fontSize: "smaller", margin: "0" }}>
+                      <span style={{ color: "red" }}>25 level</span> across all
+                      parking areas are out of service while{" "}
+                      <span style={{ color: "blue" }}>30 parking level </span>
+                      are active and giving service
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ height: "80px", justifyItems: "end" }}>
+                  <Doughnut
+                    data={{
+                      labels: activeLot.map((d) => d.status),
+                      datasets: [
+                        {
+                          label: "count",
+                          data: activeLot.map((d) => d.number),
+                          backgroundColor: ["blue", "red"],
+                          BsBorderWidth: 1,
+                          borderRadius: 5,
+                          spacing: 2,
+                        },
+                      ],
+                    }}
+                    options={{
+                      plugins: {
+                        legend: {
+                          display: false,
+                        },
+                      },
+                    }}
                   />
                 </div>
-                <div></div>
-                <div></div>
               </div>
             </div>
             <div>

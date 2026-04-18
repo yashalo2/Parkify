@@ -4,6 +4,8 @@ import toast from "react-hot-toast";
 import { MdClose, MdDone } from "react-icons/md";
 import { Base_URL } from "./config";
 import style from "./Scanner.module.css";
+import FailMp from "./Sounds/fail.mp3";
+import SuccessMp from "./Sounds/success.mp3";
 function Scanner() {
   const [result, setResult] = useState("");
   const readerRef = useRef(null);
@@ -11,6 +13,8 @@ function Scanner() {
   const [success, setSuccess] = useState(true);
   const [scanned, setScanned] = useState(false);
   const [message, setMessage] = useState("");
+  const successSound = new Audio(SuccessMp);
+  const failSound = new Audio(FailMp);
 
   useEffect(() => {
     const initScanner = async () => {
@@ -40,7 +44,6 @@ function Scanner() {
     };
 
     const timer = setTimeout(initScanner, 300);
-
     return () => {
       clearTimeout(timer);
       if (readerRef.current) {
@@ -60,8 +63,10 @@ function Scanner() {
       const data = await response.text();
       if (data == "Booking Confirmed") {
         setSuccess(true);
+        successSound.play();
       } else {
         setSuccess(false);
+        failSound.play();
       }
       setMessage(data);
       setScanned(true);

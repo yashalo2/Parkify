@@ -1,6 +1,7 @@
 package com.parkify.back.controller;
 
 import com.parkify.back.dto.ChartDTO;
+import com.parkify.back.dto.CompareGrossDTO;
 import com.parkify.back.model.Bookings;
 import com.parkify.back.model.Payment;
 import com.parkify.back.repository.BookingsRepository;
@@ -28,5 +29,13 @@ public class PaymentController {
     @GetMapping("/getChartInfo")
     public List<ChartDTO> getChartInfo(){
         return paymentRepository.groupPaymentsByDay();
+    }
+    @GetMapping("/getTopGrossing")
+    public CompareGrossDTO getTopGrossing(){
+        return paymentService.getTopGrossing();
+    }
+    @GetMapping("/getLessGrossing")
+    public CompareGrossDTO getLessGrossing(){
+        return paymentService.getTopGrossing();
     }
 }

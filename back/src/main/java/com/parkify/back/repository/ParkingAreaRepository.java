@@ -1,9 +1,6 @@
 package com.parkify.back.repository;
 
-import com.parkify.back.dto.AreaDTO;
-import com.parkify.back.dto.LocationDTO;
-import com.parkify.back.dto.SpotsChartDTO;
-import com.parkify.back.dto.UserAreaInfoDTO;
+import com.parkify.back.dto.*;
 import com.parkify.back.model.ParkingArea;
 import com.parkify.back.model.SpotStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -66,4 +63,13 @@ public interface ParkingAreaRepository extends JpaRepository<ParkingArea, Long> 
  group by p.id
 """)
     List<SpotsChartDTO> getSpotsChart(@Param("status") SpotStatus status);
+    @Query("""
+        select new com.parkify.back.dto.ActiveAreaDTO(
+        count(p),
+        p.areaStatus
+        )
+        from ParkingArea p
+        group by p.areaStatus
+""")
+    List<ActiveAreaDTO> getActiveArea();
 }

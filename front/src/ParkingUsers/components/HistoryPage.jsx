@@ -119,37 +119,43 @@ function History() {
       ) : (
         <div className={style.showBooking}>
           <div
-            style={{ width: "max-content" }}
+            style={{
+              width: "max-content",
+              position: "absolute",
+              top: "0",
+              left: "10px",
+              zIndex: "10",
+            }}
             onClick={() => setShowBooking(true)}
           >
             <MdArrowBack color="red" size={24} />
           </div>
           <div className={style.qrCode}>
-            <div
-              className={style.label}
-              style={{ display: "flex", gap: "10px" }}
-            >
-              <div style={{ width: "100px", height: "100px" }}>
-                <img
-                  style={{ width: "100%", height: "100%" }}
-                  src={logo}
-                  alt=""
-                />
-              </div>
-              <div
-                style={{
-                  width: "calc(100% - 110px)",
-                  height: "100px",
-                }}
-              >
-                <h2>Parkify</h2>
-                <p>
-                  {receipt[0].area}{" "}
-                  <span style={{ fontWeight: "bold" }}>Entrance</span>
-                </p>
-              </div>
-            </div>
             <div className={style.code}>
+              <div
+                className={style.label}
+                style={{ display: "flex", gap: "10px" }}
+              >
+                <div style={{ width: "100px", height: "100px" }}>
+                  <img
+                    style={{ width: "100%", height: "100%" }}
+                    src={logo}
+                    alt=""
+                  />
+                </div>
+                <div
+                  style={{
+                    width: "calc(100% - 110px)",
+                    height: "100px",
+                  }}
+                >
+                  <h2>Parkify</h2>
+                  <p>
+                    {receipt[0].area}{" "}
+                    <span style={{ fontWeight: "bold" }}>Entrance</span>
+                  </p>
+                </div>
+              </div>
               <img src={`data:image/png;base64,${img}`} alt="" />
             </div>
           </div>
@@ -278,14 +284,15 @@ function History() {
             <div className={style.paymentForm}>
               <div
                 style={{
-                  position: "absolute",
-                  top: "0",
                   left: "0",
                   width: "max-content",
+                  borderRadius: "50%",
+                  border: "1px solid #ffffff",
+                  alignContent: "center",
                 }}
                 onClick={() => setShowPayment(false)}
               >
-                <MdClose color="red" size={24} />
+                <MdClose color="#fff" size={24} />
               </div>
               <div className={style.form}>
                 <div>

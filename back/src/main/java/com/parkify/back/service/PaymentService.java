@@ -1,5 +1,6 @@
 package com.parkify.back.service;
 
+import com.parkify.back.dto.CompareGrossDTO;
 import com.parkify.back.model.Bookings;
 import com.parkify.back.model.Payment;
 import com.parkify.back.repository.BookingsRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,12 +25,10 @@ public class PaymentService {
         if (!bookingOpt.isPresent()) {
             return ResponseEntity.badRequest().body("Booking not found");
         }
-
         Bookings booking = bookingOpt.get();
         Instant end = Instant.now();
         Instant start = booking.getBookingDate();
         Duration duration = Duration.between(start, end);
-
         double hours = duration.toMinutes() / 60.0;
         double amount = booking.getPrice() * hours;
         if(amount > pricePerHour) {
@@ -39,7 +39,17 @@ public class PaymentService {
         payment.setBooking(booking);
         payment.setAmount(amount);
         paymentRepository.save(payment);
-        return ResponseEntity.ok().body("payment Completed");
+        return ResponseEntity.ok().body(payment);
+    }
+    public CompareGrossDTO getTopGrossing(){
+        List<CompareGrossDTO> results = paymentRepository.getTopGrossing();
+        CompareGrossDTO top = results.isEmpty() ? null : results.get(0);
+        return top;
+    }
+    public CompareGrossDTO getLessGrossing(){
+        List<CompareGrossDTO> results = paymentRepository.getLessGrossing();
+        CompareGrossDTO top = results.isEmpty() ? null : results.get(0);
+        return top;
     }
 
 }

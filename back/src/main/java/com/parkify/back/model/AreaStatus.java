@@ -1,6 +1,6 @@
 package com.parkify.back.model;
 
-public enum ParkingAreaStatus {
+public enum AreaStatus {
     Open,
     Closed
 }

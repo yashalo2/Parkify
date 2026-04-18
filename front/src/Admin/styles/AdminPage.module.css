@@ -10,7 +10,6 @@
 .container .top {
   display: flex;
   gap: 5px;
-  background: black;
   margin-bottom: 0;
 }
 .container .top .chart {
@@ -95,6 +94,7 @@
   display: grid;
   gap: 3px;
   background: none;
+  width: 300px;
 }
 .container .bottom .right .rightMore .systemInfo .parkings {
   width: calc(100% - 1em);
@@ -113,4 +113,17 @@
 }
 .container .bottom .right .rightMore .systemInfo .parkings div p {
   margin: 5px;
+}
+.container .fullScreen {
+  position: absolute;
+  transition: 0.3s;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.container .description {
+  flex: 1;
+  background: orange;
 }

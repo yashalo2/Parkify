@@ -1,9 +1,6 @@
 package com.parkify.back.controller;
 
-import com.parkify.back.dto.AreaDTO;
-import com.parkify.back.dto.LocationDTO;
-import com.parkify.back.dto.SpotDTO;
-import com.parkify.back.dto.UserAreaInfoDTO;
+import com.parkify.back.dto.*;
 import com.parkify.back.model.BookingStatus;
 import com.parkify.back.model.ParkingArea;
 import com.parkify.back.model.SpotStatus;
@@ -49,6 +46,10 @@ public class ParkingAreaController {
     @GetMapping("/getOccupiedSpots")
     public ResponseEntity<?> getOccupiedSpots() {
         return ResponseEntity.ok().body(parkingAreaService.getOccupiedSpots());
+    }
+    @GetMapping("/getActiveParkingArea")
+    public List<ActiveAreaDTO> getActiveParkingArea() {
+        return parkingAreaRepository.getActiveArea();
     }
 
 
