@@ -68,7 +68,7 @@ function History() {
                 >
                   <div className={style.info}>
                     <div>{new Date(b.date).toLocaleDateString()}</div>
-                    {b.status == "Open" ? (
+                    {b.status == "Open" && (
                       <div
                         style={{
                           textAlign: "end",
@@ -78,11 +78,23 @@ function History() {
                       >
                         {b.status}
                       </div>
-                    ) : (
+                    )}
+                    {b.status == "Cancelled" && (
                       <div
                         style={{
                           textAlign: "end",
                           color: "#b81414",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {b.status}
+                      </div>
+                    )}
+                    {b.status == "Used" && (
+                      <div
+                        style={{
+                          textAlign: "end",
+                          color: "#ffa600",
                           fontWeight: "bold",
                         }}
                       >
@@ -128,7 +140,7 @@ function History() {
             }}
             onClick={() => setShowBooking(true)}
           >
-            <MdArrowBack color="red" size={24} />
+            <MdArrowBack onClick={() => getMyBooking()} color="red" size={24} />
           </div>
           <div className={style.qrCode}>
             <div className={style.code}>

@@ -37,7 +37,7 @@ public class UserAreaInfoDTO {
         return occupied;
     }
 
-    public UserAreaInfoDTO(long id, String name, double minPrice, double maxPrice, long available, long reserved, long occupied) {
+    public UserAreaInfoDTO(long id, String name, double minPrice, double maxPrice, long available , long occupied, long reserved) {
         this.id = id;
         this.name = name;
         this.minPrice = minPrice;

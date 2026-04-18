@@ -31,11 +31,11 @@ public class PaymentController {
         return paymentRepository.groupPaymentsByDay();
     }
     @GetMapping("/getTopGrossing")
-    public CompareGrossDTO getTopGrossing(){
+    public List<CompareGrossDTO> getTopGrossing(){
         return paymentService.getTopGrossing();
     }
     @GetMapping("/getLessGrossing")
-    public CompareGrossDTO getLessGrossing(){
-        return paymentService.getTopGrossing();
+    public List<CompareGrossDTO> getLessGrossing(){
+        return paymentService.getLessGrossing();
     }
 }

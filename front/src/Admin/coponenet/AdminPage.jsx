@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import toast from "react-hot-toast";
-import { MdArrowBack, MdArrowForward } from "react-icons/md";
+import { MdArrowBack, MdArrowForward, MdPerson } from "react-icons/md";
 import logo from "../../assets/logo.png";
 import { Base_URL } from "../../config";
 import style from "../styles/AdminPage.module.css";
@@ -48,6 +48,8 @@ function AdminPage() {
   const [fullScreen, setFullScreen] = useState(false);
   const [activeArea, setActiveArea] = useState([]);
   const [activeLot, setActiveLot] = useState([]);
+  const [topGrossing, setTopGrossing] = useState([]);
+  const [lessGrossing, setLessGrossing] = useState([]);
   const getChart = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/payment/getChartInfo`, {
@@ -147,8 +149,8 @@ function AdminPage() {
       {
         label: "Payment Gross",
         data: data,
-        borderColor: "#0b49f3",
-        backgroundColor: "#1E3A8A",
+        borderColor: "#0b49f356",
+        backgroundColor: "#1e3b8a6c",
         fill: true,
         pointRadius: 5,
         tension: 0.4,
@@ -164,6 +166,18 @@ function AdminPage() {
       tooltip: {
         mode: "index",
         intersect: false,
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        grid: {
+          display: false,
+        },
       },
     },
   };
@@ -271,7 +285,7 @@ function AdminPage() {
         method: "GET",
       });
       const data = await response.json();
-      console.log(data);
+      setTopGrossing(data);
     } catch (err) {
       toast.error("Error Occurred");
     }
@@ -282,7 +296,7 @@ function AdminPage() {
         method: "GET",
       });
       const data = await response.json();
-      console.log(data);
+      setLessGrossing(data);
     } catch (err) {
       toast.error("Error Occurred");
     }
@@ -355,10 +369,16 @@ function AdminPage() {
                             : label;
                         },
                       },
+                      grid: {
+                        display: false,
+                      },
                     },
                     y: {
                       ticks: {
                         display: true,
+                      },
+                      grid: {
+                        display: false,
                       },
                     },
                   },
@@ -395,10 +415,16 @@ function AdminPage() {
                             : label;
                         },
                       },
+                      grid: {
+                        display: false,
+                      },
                     },
                     y: {
                       ticks: {
                         display: true,
+                      },
+                      grid: {
+                        display: false,
                       },
                     },
                   },
@@ -435,10 +461,16 @@ function AdminPage() {
                             : label;
                         },
                       },
+                      grid: {
+                        display: false,
+                      },
                     },
                     y: {
                       ticks: {
                         display: true,
+                      },
+                      grid: {
+                        display: false,
                       },
                     },
                   },
@@ -470,7 +502,536 @@ function AdminPage() {
                 )}
               </div>
             </div>
-            <div className={style.display}></div>
+            <div className={style.display}>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+              <div className={style.recent}>
+                <div>
+                  <div
+                    style={{
+                      width: "calc(40px - 0.3em)",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "1px solid black",
+                      alignContent: "center",
+                      justifyItems: "end",
+                      paddingLeft: "0.3em",
+                    }}
+                  >
+                    <MdPerson size={30} />
+                  </div>
+                </div>
+                <div>yasinshalo.astu@gmail.com</div>
+                <div>Parking Area</div>
+                <div>Level 2</div>
+                <div>spot A20</div>
+                <div>120 birr/r</div>
+                <div>10hr</div>
+                <div>1200 birr</div>
+              </div>
+            </div>
           </div>
           <div className={style.rightMore}>
             <div className={style.systemInfo}>
@@ -608,13 +1169,35 @@ function AdminPage() {
             </div>
             <div>
               <Line
-                data={dataSet}
+                data={{
+                  labels: topGrossing.map((d) => d.date),
+                  datasets: [
+                    {
+                      label: "Gross",
+                      data: topGrossing.map((d) => d.gross),
+                      backgroundColor: "#02f5a4ff",
+                      borderColor: "rgb(2, 245, 2)",
+                      fill: true,
+                    },
+                  ],
+                }}
                 options={{ ...options, maintainAspectRatio: true }}
               />
             </div>
             <div>
               <Line
-                data={dataSet}
+                data={{
+                  labels: lessGrossing.map((d) => d.date),
+                  datasets: [
+                    {
+                      label: "Gross",
+                      data: lessGrossing.map((d) => d.gross),
+                      backgroundColor: "#f54b02",
+                      borderColor: "#990202",
+                      fill: true,
+                    },
+                  ],
+                }}
                 options={{ ...options, maintainAspectRatio: true }}
               />
             </div>

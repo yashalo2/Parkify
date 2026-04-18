@@ -1,6 +1,7 @@
 package com.parkify.back.service;
 
 import com.parkify.back.dto.CompareGrossDTO;
+import com.parkify.back.dto.IdDTO;
 import com.parkify.back.model.Bookings;
 import com.parkify.back.model.Payment;
 import com.parkify.back.repository.BookingsRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,15 +43,15 @@ public class PaymentService {
         paymentRepository.save(payment);
         return ResponseEntity.ok().body(payment);
     }
-    public CompareGrossDTO getTopGrossing(){
-        List<CompareGrossDTO> results = paymentRepository.getTopGrossing();
-        CompareGrossDTO top = results.isEmpty() ? null : results.get(0);
-        return top;
+    public List<CompareGrossDTO> getTopGrossing(){
+        List<IdDTO> results = paymentRepository.getTopGrossing(Date.from(Instant.now()));
+        IdDTO top = results.isEmpty() ? null : results.get(0);
+        return paymentRepository.getTopGrossing(top.getId());
     }
-    public CompareGrossDTO getLessGrossing(){
-        List<CompareGrossDTO> results = paymentRepository.getLessGrossing();
-        CompareGrossDTO top = results.isEmpty() ? null : results.get(0);
-        return top;
+    public List<CompareGrossDTO> getLessGrossing(){
+        List<IdDTO> results = paymentRepository.getLessGrossing(Date.from(Instant.now()));
+        IdDTO top = results.isEmpty() ? null : results.get(0);
+        return paymentRepository.getLessGrossing(top.getId());
     }
 
 }

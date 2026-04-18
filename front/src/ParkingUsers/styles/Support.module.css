@@ -1,0 +1,70 @@
+.container {
+  background: #fff;
+  width: calc(100% - 1em);
+  height: calc(100% - 1em);
+  padding: 0.5em;
+  align-content: center;
+  justify-items: center;
+}
+.container .contentContainer {
+  width: 80%;
+  height: calc(100% - 200px);
+  background: grey;
+  margin-bottom: 10px;
+}
+.container .inputContainer {
+  width: 60%;
+  background: #2a29296d;
+  padding: 0.5em;
+  border-radius: 20px;
+  box-shadow: inset 0px 0px 3px grey;
+}
+.container .inputContainer textarea {
+  width: calc(100% - 1em);
+  padding: 0.5em;
+  border-radius: 20px;
+  border: none;
+  text-align: center;
+  outline: none;
+  min-height: 30px;
+  resize: none;
+  background: none;
+  color: #fff;
+  font-size: large;
+}
+.container .inputContainer .dev {
+  width: 100%;
+  justify-items: end;
+  text-align: end;
+}
+.container .inputContainer .dev button {
+  padding: 0.1em 0.5em;
+  font-size: large;
+  border-radius: 20px;
+  align-content: center;
+  justify-items: center;
+  border: none;
+  background: #cceaf6;
+  color: #252525;
+}
+@media (max-width: 700px) {
+  .container {
+    position: fixed;
+    height: calc(100% - 75px);
+  }
+  .container .contentContainer {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: calc(100% - 120px);
+    background: #fff;
+  }
+  .container .inputContainer {
+    width: 96%;
+    position: absolute;
+    bottom: 5px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    background: #000000a1;
+  }
+}
