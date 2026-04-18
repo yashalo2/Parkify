@@ -1,5 +1,4 @@
 package com.parkify.back.model;
-import com.parkify.back.model.ParkingLots;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -17,20 +16,20 @@ public class ParkingArea {
     private double latitude;
     private double longitude;
     @Enumerated(EnumType.STRING)
-    private ParkingAreaStatus parkingAreaStatus;
+    private AreaStatus areaStatus;
     @OneToMany(mappedBy="parkingArea",cascade=CascadeType.ALL)
     private List<ParkingLots> parkingLots;
     @PrePersist
     public void prePersist() {
-        parkingAreaStatus = ParkingAreaStatus.Open;
+        areaStatus = AreaStatus.Open;
     }
 
-    public ParkingAreaStatus getParkingAreaStatus() {
-        return parkingAreaStatus;
+    public AreaStatus getParkingAreaStatus() {
+        return areaStatus;
     }
 
-    public void setParkingAreaStatus(ParkingAreaStatus parkingAreaStatus) {
-        this.parkingAreaStatus = parkingAreaStatus;
+    public void setParkingAreaStatus(AreaStatus areaStatus) {
+        this.areaStatus = areaStatus;
     }
 
     public int getId() {

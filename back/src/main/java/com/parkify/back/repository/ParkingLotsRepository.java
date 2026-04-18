@@ -1,5 +1,6 @@
 package com.parkify.back.repository;
 
+import com.parkify.back.dto.ActiveLevelDTO;
 import com.parkify.back.dto.LotInfoDTO;
 import com.parkify.back.dto.SpaceDTO;
 import com.parkify.back.model.ParkingLots;
@@ -36,4 +37,13 @@ join p.spots s
 where p.parkingArea.id = :id
 """)
     List<SpaceDTO> getSpaceInfo(@Param("id") long id);
+    @Query("""
+        select new com.parkify.back.dto.ActiveLevelDTO(
+        count(pa),
+        pa.status
+        )
+        from ParkingLots pa
+        group by pa.status
+""")
+    List<ActiveLevelDTO> getActiveLevel();
 }
