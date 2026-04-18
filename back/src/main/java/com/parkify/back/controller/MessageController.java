@@ -24,11 +24,9 @@ public class MessageController {
 
     @MessageMapping("/chat")
     public void chat(@Payload Message message, SimpMessageHeaderAccessor headerAccessor){
-        String email = headerAccessor.getSessionAttributes().get("email").toString();
-        User sender=userRepository.findByEmail(email);
+
         User receiver = userRepository.findByRole(Role.Admin);
         message.setReceiver(receiver);
-        message.setSender(sender);
         messageService.sendMessage(message);
     }
 

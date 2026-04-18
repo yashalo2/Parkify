@@ -29,7 +29,7 @@ function Message({ senderId, receiverId }) {
     try {
       if (client && client.connected) {
         const msg = {
-          senderId,
+          senderId: 4,
           receiverId,
           content,
         };
