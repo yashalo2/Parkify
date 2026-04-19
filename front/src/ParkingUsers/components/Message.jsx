@@ -1,22 +1,35 @@
 import { Client } from "@stomp/stompjs";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { MdArrowUpward } from "react-icons/md";
 import SockJS from "sockjs-client";
 import { Base_URL } from "../../config";
 import style from "../styles/Support.module.css";
-function Message({ senderId, receiverId }) {
+function Message() {
   const [content, setContent] = useState();
   const [client, setClient] = useState("");
   const [messages, setMessages] = useState([]);
+  const user = sessionStorage.getItem("user");
   const textRef = useRef(null);
   useEffect(() => {
+    async () => {
+      try {
+        const response = await fetch(`${Base_URL}/api/users/getSupport`, {
+          method: "GET",
+        });
+        const data = await response.json();
+        console.log(data);
+      } catch (err) {
+        toast.error("Error Loading The Page");
+      }
+    };
     const stompClient = new Client({
       webSocketFactory: () =>
         new SockJS(`${Base_URL}/ws`, null, { withCredentials: true }),
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("Connected to webSocket");
-        stompClient.subscribe(`/topic/message/${receiverId}`, (message) => {
+        stompClient.subscribe(`/topic/message/`, (message) => {
           setMessages((prev) => [...prev, JSON.parse(message.body)]);
         });
       },
@@ -24,15 +37,18 @@ function Message({ senderId, receiverId }) {
     stompClient.activate();
     setClient(stompClient);
     return () => stompClient.deactivate();
-  }, [receiverId]);
+  }, []);
   const sendMessage = async () => {
     try {
-      if (client && client.connected) {
+      if (client && client.connected && user) {
+        const userId = JSON.parse(user);
+        const senderId = userId.id;
         const msg = {
-          senderId: 4,
-          receiverId,
+          senderId,
+          receiver: 6,
           content,
         };
+        console.log(msg);
         client.publish({
           destination: "/app/chat",
           body: JSON.stringify(msg),
@@ -50,7 +66,7 @@ function Message({ senderId, receiverId }) {
   };
   return (
     <div className={style.container}>
-      <h2>Chat with User {receiverId}</h2>
+      <h2>Chat with User Support Group</h2>
       <div className={style.contentContainer}>
         {messages.map((msg, index) => (
           <div key={index}>

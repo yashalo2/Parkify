@@ -13,26 +13,38 @@ function Login() {
     e.preventDefault();
     const formData = new FormData(formRef.current);
     setLoading(true);
+
     try {
       const res = await fetch(`${Base_URL}/api/users/login`, {
         method: "POST",
         credentials: "include",
         body: formData,
       });
-      const data = await res.text();
-      if (data === "Wrong Credentials") {
-        toast.error("Invalid credentials.");
-      } else {
-        toast.success("Login successful!");
-        navigate("/user/home");
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        toast.error(errorText);
+        return;
       }
-      console.log(data);
+
+      const contentType = res.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        const user = await res.json();
+        sessionStorage.setItem("user", JSON.stringify(user));
+        toast.success("Login successful!");
+        navigate(`/${user.role}/home`);
+      } else {
+        const message = await res.text();
+        toast.error(message || "Error occurred");
+      }
     } catch (error) {
       toast.error("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <div className={style.container}>
       <div

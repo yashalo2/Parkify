@@ -27,7 +27,7 @@ function App() {
         <Route path="scanner" element={<Scanner />}></Route>
         <Route path="login" element={<Login />}></Route>
         <Route path="register" element={<Register />}></Route>
-        <Route path="user" element={<OutLet />}>
+        <Route path="customer" element={<OutLet />}>
           <Route path="home" element={<Home />}></Route>
           <Route path="payment" element={<PaymentPage />}></Route>
           <Route path="history" element={<History />}></Route>
@@ -37,7 +37,7 @@ function App() {
           ></Route>
         </Route>
         <Route path="admin" element={<AdminOutlet />}>
-          <Route path="dashboard" element={<AdminPage />}></Route>
+          <Route path="home" element={<AdminPage />}></Route>
           <Route path="newParkingLots" element={<AddParkingArea />}></Route>
           <Route path="manageParking" element={<ManageParkingArea />}></Route>
           <Route path="manageUser" element={<ManageUser />}></Route>
