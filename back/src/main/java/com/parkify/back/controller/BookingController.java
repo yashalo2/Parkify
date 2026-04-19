@@ -5,13 +5,12 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.encoder.QRCode;
-import com.parkify.back.model.BookingStatus;
-import com.parkify.back.model.Bookings;
-import com.parkify.back.model.SpotStatus;
-import com.parkify.back.model.Spots;
+import com.parkify.back.model.*;
 import com.parkify.back.repository.BookingsRepository;
 import com.parkify.back.repository.SpotsRepository;
+import com.parkify.back.repository.UserRepository;
 import com.parkify.back.service.BookingService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,12 +32,20 @@ public class BookingController {
     private SpotsRepository spotsRepository;
     @Autowired
     private BookingService bookingService;
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/book")
-    public ResponseEntity<?> book(@ModelAttribute Bookings bookings) throws WriterException, IOException {
+    public ResponseEntity<?> book(@ModelAttribute Bookings bookings, HttpSession session) throws WriterException, IOException {
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return ResponseEntity.ok().body("user not logged in");
+        }
+        User user = userRepository.findByEmail(email);
         Spots spots = bookings.getSpot();
         spots.setSpotStatus(SpotStatus.Reserved);
         spotsRepository.save(spots);
+        bookings.setUser(user);
         Bookings booking = bookingsRepository.save(bookings);
         String qrContent = "{\"bookingId\":" + booking.getId();
         QRCodeWriter qrCodeWriter = new QRCodeWriter();

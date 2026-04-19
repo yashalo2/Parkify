@@ -1,5 +1,6 @@
 package com.parkify.back.controller;
 
+import com.parkify.back.dto.MessageSendDTO;
 import com.parkify.back.model.Message;
 import com.parkify.back.model.Role;
 import com.parkify.back.model.User;
@@ -23,11 +24,9 @@ public class MessageController {
     private UserRepository userRepository;
 
     @MessageMapping("/chat")
-    public void chat(@Payload Message message, SimpMessageHeaderAccessor headerAccessor){
-
-        User receiver = userRepository.findByRole(Role.Admin);
-        message.setReceiver(receiver);
+    public void chat(@Payload Message message){
         messageService.sendMessage(message);
+        System.out.println(message);
     }
 
 

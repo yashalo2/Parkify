@@ -1,6 +1,7 @@
 package com.parkify.back.controller;
 
 import com.parkify.back.model.ParkingArea;
+import com.parkify.back.model.Role;
 import com.parkify.back.model.User;
 import com.parkify.back.repository.ParkingAreaRepository;
 import com.parkify.back.repository.UserRepository;
@@ -8,9 +9,13 @@ import com.parkify.back.service.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/users")
@@ -41,18 +46,32 @@ public class UserController {
         return "User Registered Successfully";
     }
     @PostMapping("/login")
-    public String login(@ModelAttribute User user, HttpSession session) {
+    public ResponseEntity<?> login(@ModelAttribute User user, HttpSession session) {
         if(userRepository.existsByEmail(user.getEmail())) {
             User customer = userRepository.findByEmail(user.getEmail());
             if(customer.getPassword().equals(user.getPassword())) {
                 session.setAttribute("id", customer.getId());
                 session.setAttribute("email", customer.getEmail());
+                session.setAttribute("firstName", customer.getFirstName());
+                session.setAttribute("lastName", customer.getLastName());
+                session.setAttribute("role", customer.getRole());
                 String email = (String) session.getAttribute("email");
-                return email;
+                return ResponseEntity.ok().body(Map.of(
+                        "id",customer.getId(),
+                        "email",customer.getEmail(),
+                        "role",customer.getRole(),
+                        "firstName",customer.getFirstName(),
+                        "lastName",customer.getLastName()
+
+                ));
             }
-            return "Wrong Credentials";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    "Wrong Credentials"
+            );
         }
-        return "Wrong Credentials";
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                "Wrong Credentials"
+        );
     }
     @PostMapping("/addArea")
         public long createLot(@RequestBody ParkingArea lot) {
@@ -61,4 +80,10 @@ public class UserController {
     return area.getId(); 
 
     }
+    @GetMapping("/getSupport")
+    public int getAdmin(){
+        User supporter=userRepository.findByRole(Role.Admin);
+        return supporter.getId();
+    }
+
 }

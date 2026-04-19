@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MdHeadphones,
   MdHistory,
@@ -10,11 +10,23 @@ import {
 import { Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import style from "../styles/OutLet.module.css";
+
 function OutLet() {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
+  const [role, setRole] = useState("");
+  const isAuthenticated = !!sessionStorage.getItem("user");
+  const user = sessionStorage.getItem("user");
+  useEffect(() => {
+    if (user) {
+      const userRole = JSON.parse(user);
+      setRole(userRole.role);
+    }
+  }, []);
 
-  return (
+  return !isAuthenticated ? (
+    navigate("/login")
+  ) : role == "Customer" ? (
     <div className={style.container}>
       <div className={style.topBar}>
         <div className={style.logoContainer}>
@@ -59,6 +71,8 @@ function OutLet() {
       </div>
       {showMenu && <div className={style.menu}></div>}
     </div>
+  ) : (
+    navigate("/login")
   );
 }
 export default OutLet;

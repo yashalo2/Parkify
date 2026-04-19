@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -46,11 +47,18 @@ public class PaymentService {
     public List<CompareGrossDTO> getTopGrossing(){
         List<IdDTO> results = paymentRepository.getTopGrossing(Date.from(Instant.now()));
         IdDTO top = results.isEmpty() ? null : results.get(0);
+        if(top == null){
+            return new ArrayList<>();
+
+        }
         return paymentRepository.getTopGrossing(top.getId());
     }
     public List<CompareGrossDTO> getLessGrossing(){
         List<IdDTO> results = paymentRepository.getLessGrossing(Date.from(Instant.now()));
         IdDTO top = results.isEmpty() ? null : results.get(0);
+        if(top == null){
+            return new ArrayList<>();
+        }
         return paymentRepository.getLessGrossing(top.getId());
     }
 
