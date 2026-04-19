@@ -1,6 +1,6 @@
 import { Client } from "@stomp/stompjs";
 import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { MdArrowUpward } from "react-icons/md";
 import SockJS from "sockjs-client";
 import { Base_URL } from "../../config";
@@ -9,27 +9,17 @@ function Message() {
   const [content, setContent] = useState();
   const [client, setClient] = useState("");
   const [messages, setMessages] = useState([]);
-  const user = sessionStorage.getItem("user");
+  const [receiverId, setReceiverId] = useState();
   const textRef = useRef(null);
+
   useEffect(() => {
-    async () => {
-      try {
-        const response = await fetch(`${Base_URL}/api/users/getSupport`, {
-          method: "GET",
-        });
-        const data = await response.json();
-        console.log(data);
-      } catch (err) {
-        toast.error("Error Loading The Page");
-      }
-    };
     const stompClient = new Client({
       webSocketFactory: () =>
         new SockJS(`${Base_URL}/ws`, null, { withCredentials: true }),
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("Connected to webSocket");
-        stompClient.subscribe(`/topic/message/`, (message) => {
+        stompClient.subscribe(`/topic/message/${receiverId}`, (message) => {
           setMessages((prev) => [...prev, JSON.parse(message.body)]);
         });
       },
@@ -37,15 +27,17 @@ function Message() {
     stompClient.activate();
     setClient(stompClient);
     return () => stompClient.deactivate();
-  }, []);
+  }, [receiverId]);
   const sendMessage = async () => {
     try {
-      if (client && client.connected && user) {
-        const userId = JSON.parse(user);
-        const senderId = userId.id;
+      if (client && client.connected) {
+        const user = sessionStorage.getItem("user");
+        const userI = JSON.parse(user);
+        const senderId = userI.id;
+
         const msg = {
           senderId,
-          receiver: 6,
+          receiverId,
           content,
         };
         console.log(msg);
@@ -64,6 +56,21 @@ function Message() {
     el.style.height = "auto";
     el.style.height = Math.min(el.scrollHeight, 100) + "px"; // cap at 200px
   };
+  useEffect(() => {
+    const getAdmin = async () => {
+      try {
+        const response = await fetch(`${Base_URL}/api/users/getSupport`, {
+          method: "GET",
+        });
+        const data = await response.json();
+        setReceiverId(data);
+        console.log(data);
+      } catch (err) {
+        toast.error("Error Loading The Page");
+      }
+    };
+    getAdmin();
+  }, [receiverId]);
   return (
     <div className={style.container}>
       <h2>Chat with User Support Group</h2>

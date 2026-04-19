@@ -29,8 +29,7 @@ public class UserController {
     private static final SecureRandom random = new SecureRandom();
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody User user) throws MessagingException {
-        emailService.sendEmail("yasin2ashalo@gmail.com","Registration","You did it",2435);
+    public String registerUser(@ModelAttribute User user) throws MessagingException {
 
         if(userRepository.existsByEmail(user.getEmail())) {
             return "User with the email already exists";
@@ -43,6 +42,8 @@ public class UserController {
         register.setLastName(user.getLastName());
         userRepository.save(register);
         int code = 100000 + random.nextInt(900000);
+        emailService.sendEmail("yasin2ashalo@gmail.com","Registration",code);
+
         return "User Registered Successfully";
     }
     @PostMapping("/login")
@@ -66,11 +67,11 @@ public class UserController {
                 ));
             }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    "Wrong Credentials"
+                    "Wrong Credentia"
             );
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                "Wrong Credentials"
+                "user not registered"
         );
     }
     @PostMapping("/addArea")
@@ -81,7 +82,7 @@ public class UserController {
 
     }
     @GetMapping("/getSupport")
-    public int getAdmin(){
+    public Long getAdmin(){
         User supporter=userRepository.findByRole(Role.Admin);
         return supporter.getId();
     }

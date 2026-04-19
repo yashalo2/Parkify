@@ -1,22 +1,22 @@
 package com.parkify.back.dto;
 
 public class MessageSendDTO {
-    private int senderId;
-    private int receiver;
+    private Long senderId;
+    private Long receiverId;
     private String content;
 
-    public MessageSendDTO(int sender, int receiver, String content) {
-        this.senderId = sender;
-        this.receiver = receiver;
+    public MessageSendDTO(Long senderId, Long receiverId, String content) {
+        this.senderId = senderId;
+        this.receiverId = receiverId;
         this.content = content;
     }
 
-    public int getSender() {
+    public Long getSender() {
         return senderId;
     }
 
-    public int getReceiver() {
-        return receiver;
+    public Long getReceiverId() {
+        return receiverId;
     }
 
     public String getContent() {

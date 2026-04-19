@@ -38,6 +38,7 @@ function Login() {
         const message = await res.text();
         toast.error(message || "Error occurred");
       }
+      console.log(data);
     } catch (error) {
       toast.error("An error occurred. Please try again.");
     } finally {

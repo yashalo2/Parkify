@@ -22,6 +22,6 @@ public class MessageService {
         User receiver =userRepository.findByRole(Role.Admin);
         message.setReceiver(receiver);
         Message saved = messageRepository.save(message);
-        messagingTemplate.convertAndSend("/topic/message/" + message.getReceiver().getId(),saved);
+        messagingTemplate.convertAndSend("/topic/message/" + message.getReceiver(),saved);
     }
 }

@@ -28,12 +28,14 @@ function Booking({ area }) {
     try {
       const response = await fetch(`${Base_URL}/api/booking/book`, {
         method: "POST",
+        credentials: "include",
         body: formData,
       });
       const data = await response.text();
       setShowQR(true);
       setImg(data);
       getParkingLots();
+      setSelectedSpot([]);
     } catch (err) {
       console.log(err);
     }
@@ -42,6 +44,7 @@ function Booking({ area }) {
     try {
       const response = await fetch(`${Base_URL}/api/spots/book/${id}`, {
         method: "GET",
+        credentials: "include",
       });
       const data = await response.json();
       setSelectedSpot(data);
