@@ -10,7 +10,7 @@ public class Message {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private long id;
     @ManyToOne
     @JoinColumn(name="sender",nullable = false)
     private User sender;
@@ -25,11 +25,11 @@ public class Message {
         date = Instant.now();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -28,8 +28,9 @@ public interface BookingsRepository extends JpaRepository<Bookings, Long> {
  join b.spot s
  join s.parkingLots pa
  join pa.parkingArea p
+ where b.user.id = :id
 """)
-    List<GetBookingDTO> getBookings();
+    List<GetBookingDTO> getBookings(@Param("id") long id);
     @Query("""
 select new com.parkify.back.dto.ReceiptDTO(
 b.id,

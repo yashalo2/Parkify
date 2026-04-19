@@ -31,10 +31,7 @@ function App() {
           <Route path="home" element={<Home />}></Route>
           <Route path="payment" element={<PaymentPage />}></Route>
           <Route path="history" element={<History />}></Route>
-          <Route
-            path="support"
-            element={<Message senderId={1} receiverId={2} />}
-          ></Route>
+          <Route path="support" element={<Message />}></Route>
         </Route>
         <Route path="admin" element={<AdminOutlet />}>
           <Route path="home" element={<AdminPage />}></Route>

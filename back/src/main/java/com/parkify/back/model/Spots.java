@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class Spots {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     private String spotName;
 
     private SpotStatus spotStatus;
@@ -19,11 +19,11 @@ public class Spots {
         spotStatus = SpotStatus.Available;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

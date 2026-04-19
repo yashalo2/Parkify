@@ -53,7 +53,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
  join s.parkingLots pl
  join pl.parkingArea pa
  where cast(p.date as date ) = :today
- group by pa.name,function('DATE',p.date),pa.id
+ group by pa.name,cast(p.date as date),pa.id
  order by cast(p.date as date ),sum(p.amount) asc
 """)
     List<IdDTO> getLessGrossing(@Param("today")  Date today);

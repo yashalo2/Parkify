@@ -14,7 +14,12 @@ function History() {
     try {
       const response = await fetch(`${Base_URL}/api/booking/getMyBooking`, {
         method: "GET",
+        credentials: "include",
       });
+      if (!response.ok) {
+        toast.error("Please Login to book");
+        return;
+      }
       const data = await response.json();
       setBookings(data);
     } catch (err) {

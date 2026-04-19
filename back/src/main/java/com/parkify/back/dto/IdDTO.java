@@ -3,11 +3,11 @@ package com.parkify.back.dto;
 import java.sql.Date;
 
 public class IdDTO {
-    private int id;
+    private long id;
     private String name;
     private String date;
     private double gross;
-    public IdDTO(int id,String name, Date date, Double gross) {
+    public IdDTO(Long id,String name, Date date, Double gross) {
         this.id = id;
         this.name = name;
         this.date = date.toString();
@@ -26,7 +26,7 @@ public class IdDTO {
         return gross;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 }

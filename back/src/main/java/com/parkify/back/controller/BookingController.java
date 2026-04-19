@@ -12,6 +12,7 @@ import com.parkify.back.repository.UserRepository;
 import com.parkify.back.service.BookingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -81,8 +82,14 @@ public class BookingController {
         return ResponseEntity.ok().body(base64Image);
     }
     @GetMapping("/getMyBooking")
-    public ResponseEntity<?> getMyBooking(){
-        return ResponseEntity.ok().body(bookingsRepository.getBookings());
+    public ResponseEntity<?> getMyBooking(HttpSession session){
+        int id = (int) session.getAttribute("id");
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
+        }
+        User user = userRepository.findByEmail(email);
+        return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId()));
 
 
     }
