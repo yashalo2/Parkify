@@ -40,6 +40,7 @@ public class BookingController {
     public ResponseEntity<?> book(@ModelAttribute Bookings bookings, HttpSession session) throws WriterException, IOException {
         String email = (String) session.getAttribute("email");
         if(email == null){
+            System.out.println(email);
             return ResponseEntity.ok().body("user not logged in");
         }
         User user = userRepository.findByEmail(email);
@@ -83,7 +84,7 @@ public class BookingController {
     }
     @GetMapping("/getMyBooking")
     public ResponseEntity<?> getMyBooking(HttpSession session){
-        int id = (int) session.getAttribute("id");
+        long id = (long) session.getAttribute("id");
         String email = (String) session.getAttribute("email");
         if(email == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");

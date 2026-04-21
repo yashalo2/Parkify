@@ -47,48 +47,50 @@ function Login() {
   };
 
   return (
-    <div className={style.container}>
-      <div
-        style={{
-          position: "absolute",
-          top: "20px",
-          left: "20px",
-          cursor: "pointer",
-        }}
-        onClick={() => navigate("/")}
-      >
-        <MdArrowBack size={24} color="red" />
-      </div>
-      <div className={style.logoContainer}>
-        <img src={logo} alt="" />
-      </div>
-      <div className={style.formContainer}>
-        <h2>Login</h2>
-        <form ref={formRef} onSubmit={login}>
-          <input type="text" name="email" placeholder="Username" />
-          <input type="password" name="password" placeholder="Password" />
-          {loading ? (
-            <button className={style.loginButton}>
-              <div></div>
-            </button>
-          ) : (
-            <button type="submit">Login</button>
-          )}
+    <div className={style.body}>
+      <div className={style.container}>
+        <div
+          style={{
+            position: "absolute",
+            top: "20px",
+            left: "20px",
+            cursor: "pointer",
+          }}
+          onClick={() => navigate("/")}
+        >
+          <MdArrowBack size={24} color="red" />
+        </div>
+        <div className={style.logoContainer}>
+          <img src={logo} alt="" />
+        </div>
+        <div className={style.formContainer}>
+          <h2>Login</h2>
+          <form ref={formRef} onSubmit={login}>
+            <input type="text" name="email" placeholder="Username" />
+            <input type="password" name="password" placeholder="Password" />
+            {loading ? (
+              <button className={style.loginButton}>
+                <div></div>
+              </button>
+            ) : (
+              <button type="submit">Login</button>
+            )}
 
-          <p>
-            Don't have an account?{" "}
-            <span
-              style={{
-                color: "blue",
-                textDecorationLine: "underline",
-                cursor: "pointer",
-              }}
-              onClick={() => navigate("/register")}
-            >
-              Register
-            </span>
-          </p>
-        </form>
+            <p>
+              Don't have an account?{" "}
+              <span
+                style={{
+                  color: "blue",
+                  textDecorationLine: "underline",
+                  cursor: "pointer",
+                }}
+                onClick={() => navigate("/register")}
+              >
+                Register
+              </span>
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   );

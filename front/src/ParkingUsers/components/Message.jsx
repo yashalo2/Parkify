@@ -1,7 +1,7 @@
 import { Client } from "@stomp/stompjs";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
-import { MdArrowUpward } from "react-icons/md";
+import { MdArrowForward, MdArrowUpward } from "react-icons/md";
 import SockJS from "sockjs-client";
 import { Base_URL } from "../../config";
 import style from "../styles/Support.module.css";
@@ -10,7 +10,24 @@ function Message() {
   const [client, setClient] = useState("");
   const [messages, setMessages] = useState([]);
   const [receiverId, setReceiverId] = useState();
+  const [myId, setMyId] = useState();
   const textRef = useRef(null);
+  const getMyMessage = async () => {
+    try {
+      const response = await fetch(`${Base_URL}/api/message/getMyMessages`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      setMessages(data);
+      const user = sessionStorage.getItem("user");
+      const userI = JSON.parse(user);
+      const senderId = userI.id;
+      setMyId(senderId);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
 
   useEffect(() => {
     const stompClient = new Client({
@@ -26,6 +43,8 @@ function Message() {
     });
     stompClient.activate();
     setClient(stompClient);
+    getMyMessage();
+
     return () => stompClient.deactivate();
   }, [receiverId]);
   const sendMessage = async () => {
@@ -40,15 +59,16 @@ function Message() {
           receiverId,
           content,
         };
-        console.log(msg);
         client.publish({
           destination: "/app/chat",
           body: JSON.stringify(msg),
         });
+        setMessages((prev) => [...prev, msg]);
+
         setContent("");
       }
     } catch (err) {
-      console.log(err);
+      toast.error("Error Occurred");
     }
   };
   const handleInput = (e) => {
@@ -64,7 +84,6 @@ function Message() {
         });
         const data = await response.json();
         setReceiverId(data);
-        console.log(data);
       } catch (err) {
         toast.error("Error Loading The Page");
       }
@@ -73,14 +92,35 @@ function Message() {
   }, [receiverId]);
   return (
     <div className={style.container}>
-      <h2>Chat with User Support Group</h2>
+      <div className={style.label}>
+        Chat with User Support Group
+        <MdArrowForward
+          style={{ position: "absolute", right: "5px", color: "black" }}
+        />
+      </div>
       <div className={style.contentContainer}>
-        {messages.map((msg, index) => (
-          <div key={index}>
-            <strong>{msg.sender.username || msg.senderId}:</strong>{" "}
-            {msg.content}
-          </div>
-        ))}
+        {messages.length > 0 &&
+          messages.map((mes, index) => (
+            <div key={index}>
+              {!mes.sender == myId ? (
+                <div className={style.content}>
+                  <div className={style.text}>{mes.content}</div>
+                </div>
+              ) : (
+                <div style={{ justifyItems: "end" }} className={style.content}>
+                  <div
+                    style={{
+                      borderRadius: "20px",
+                      borderBottomRightRadius: "0px",
+                    }}
+                    className={style.text}
+                  >
+                    {mes.content}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
       </div>
       <div className={style.inputContainer}>
         <textarea

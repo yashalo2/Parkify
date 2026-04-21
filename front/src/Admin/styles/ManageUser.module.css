@@ -1,0 +1,199 @@
+.container {
+  width: 100%;
+  height: 100%;
+}
+.container .boxContainer {
+  width: calc(100% - 1em - 0.5em);
+  margin-left: 0.5em;
+  height: calc(300px - 1em);
+  background: #e3e3e3;
+  padding: 0.5em;
+  display: flex;
+  gap: 2px;
+  border-radius: 5px;
+}
+.container .boxContainer .activity,
+.topUsers {
+  flex: 1;
+  background: #fff;
+}
+.container .boxContainer .activity {
+  display: grid;
+  gap: 2px;
+  grid-template-columns: repeat(2, 1fr);
+}
+.container .boxContainer .activity .div {
+  display: flex;
+  gap: 1px;
+  height: 140px;
+}
+.container .boxContainer .activity .div div {
+  flex: 1;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+.container .userContainer {
+  width: calc(100% - 1em);
+  height: calc(100% - 305px - 1em);
+  padding: 0.5em;
+  background: snow;
+}
+.container .userContainer .searchContainer {
+  width: 100%;
+  height: 50px;
+  background: #e3e3e3;
+  border-radius: 10px;
+  text-align: center;
+  align-content: center;
+}
+.container .userContainer .searchContainer input {
+  width: 80%;
+  height: 80%;
+  outline: none;
+  border-radius: 10px;
+  border: 0.5px solid rgba(128, 128, 128, 0.451);
+  text-align: center;
+  font-size: large;
+  color: grey;
+}
+.container .userContainer .users {
+  width: calc(100% - 1em);
+  height: calc(100% - 55px - 1em);
+  margin-top: 5px;
+  overflow-y: auto;
+  background: #e3e3e3;
+  padding: 0.5em;
+}
+.container .userContainer .users .user {
+  width: calc(100% - 1em);
+  height: calc(55px - 1em);
+  padding: 0.5em;
+  background: #fff;
+  display: flex;
+  gap: 2px;
+  border-radius: 5px;
+  margin-bottom: 1px;
+}
+.container .userContainer .users .user .profile {
+  width: 40px;
+  height: 40px;
+  background: rgb(137, 137, 136);
+  border-radius: 50%;
+  align-content: center;
+  text-align: center;
+}
+.container .userContainer .users .user .info {
+  flex: 1;
+  align-content: center;
+  text-align: center;
+}
+.container .userInfoContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.18);
+  width: 100%;
+  height: 100%;
+  align-content: center;
+  justify-items: center;
+  backdrop-filter: blur(2px);
+}
+.container .userInfoContainer .userInfo {
+  position: relative;
+  padding: 0.5em;
+  padding: 0.5em;
+  background: #fff;
+  width: 70%;
+  height: 70%;
+  border-radius: 10px;
+}
+.container .userInfoContainer .userInfo .desc {
+  width: 100%;
+  height: 30%;
+  display: flex;
+  box-shadow: 0px 2px 4px #ededed;
+}
+.container .userInfoContainer .userInfo .desc .userProfile {
+  width: 30%;
+  height: 100%;
+  align-content: center;
+  text-align: center;
+  display: flex;
+}
+.container .userInfoContainer .userInfo .desc .userProfile .infos {
+  flex: 1;
+  height: 60%;
+  margin-top: 10%;
+}
+.container .userInfoContainer .userInfo .desc .userProfile .infos div {
+  align-content: end;
+  text-align: start;
+  border-bottom: 1px solid #80808057;
+  padding-left: 1em;
+  height: max-content;
+}
+.container .userInfoContainer .userInfo .desc .userProfile .profile {
+  width: 40%;
+  height: 100%;
+}
+.container .userInfoContainer .userInfo .desc .bookingInfo {
+  width: calc(70% - 1em);
+  height: calc(100% - 1em);
+  padding: 0.5em;
+  display: flex;
+  gap: 5px;
+}
+.container .userInfoContainer .userInfo .desc .bookingInfo div {
+  flex: 1;
+  background: #fff;
+  display: grid;
+  padding-left: 1em;
+}
+.container .userInfoContainer .userInfo .desc .bookingInfo .bookingStatus {
+  align-content: center;
+  box-shadow: 0px 0px 3px #ededed;
+}
+.container .userInfoContainer .userInfo .userBookings {
+  width: 100%;
+  height: 68%;
+  margin-top: 1%;
+  display: grid;
+  gap: 2px;
+  grid-template-columns: repeat(3, 1fr);
+  box-shadow: 0px 0px 3px #ededed;
+}
+.container .userInfoContainer .userInfo .userBookings .div {
+  box-shadow: 2px 1px 3px #ededed;
+  overflow: auto;
+}
+.container .userInfoContainer .userInfo .userBookings .div .label {
+  width: calc(100% - 1em);
+  height: calc(30px - 1em);
+  padding: 0.5em;
+}
+.container .userInfoContainer .userInfo .userBookings .div .display {
+  width: 100%;
+  height: calc(100% - 32px);
+  margin-top: 2px;
+  justify-items: center;
+  overflow-y: auto;
+}
+.container .userInfoContainer .userInfo .userBookings .div .display .booking {
+  width: 100%;
+  height: 40px;
+  background: #fff;
+  display: flex;
+}
+.container
+  .userInfoContainer
+  .userInfo
+  .userBookings
+  .div
+  .display
+  .booking
+  div {
+  flex: 1;
+  align-content: center;
+  text-align: center;
+}

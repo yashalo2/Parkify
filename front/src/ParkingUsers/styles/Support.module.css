@@ -11,6 +11,22 @@
   height: calc(100% - 200px);
   background: grey;
   margin-bottom: 10px;
+  overflow-y: auto;
+}
+.container .contentContainer .content {
+  width: calc(100% - 1em);
+  height: max-content;
+  padding: 0.5em;
+}
+.container .contentContainer .content .text {
+  height: max-content;
+  padding: 0.5em;
+  max-width: 300px;
+  background: #fff;
+  border-radius: 20px;
+  border-bottom-left-radius: 0px;
+  text-align: start;
+  align-content: center;
 }
 .container .inputContainer {
   width: 60%;
@@ -52,12 +68,21 @@
     position: fixed;
     height: calc(100% - 75px);
   }
-  .container .contentContainer {
+  .container .label {
     position: absolute;
     top: 0;
     width: 100%;
+    background: rgb(255, 153, 0);
+    color: #fff;
+    text-align: center;
+    align-content: center;
+  }
+  .container .contentContainer {
+    position: absolute;
+    top: 15px;
+    width: 100%;
     height: calc(100% - 120px);
-    background: #fff;
+    background: #ededed;
   }
   .container .inputContainer {
     width: 96%;

@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { MdArrowLeft, MdArrowRight, MdOutlineClose } from "react-icons/md";
+import {
+  MdArrowBack,
+  MdArrowLeft,
+  MdArrowRight,
+  MdOutlineClose,
+} from "react-icons/md";
 import logo from "../../assets/logo.png";
 import { Base_URL } from "../../config";
 import style from "../styles/Booking.module.css";
@@ -13,6 +18,9 @@ function Booking({ area }) {
   const bookRef = useRef(null);
   const [img, setImg] = useState();
   const [showQR, setShowQR] = useState(false);
+  const back = () => {
+    window.location.reload();
+  };
   const next = () => {
     if (currentLot == lots.length - 1) {
       setEnd(true);
@@ -79,14 +87,12 @@ function Booking({ area }) {
   };
   const getLots = async () => {
     try {
-      const response = await fetch(
-        `${Base_URL}/api/parkingLots/getLots/${34}`,
-        {
-          method: "GET",
-        },
-      );
+      const response = await fetch(`${Base_URL}/api/parkingLots/getLots/${1}`, {
+        method: "GET",
+      });
       const data = await response.json();
       setLots(data);
+      console.log(data);
     } catch (err) {
       console.log(err);
     }
@@ -100,6 +106,10 @@ function Booking({ area }) {
   }, []);
   return (
     <div className={style.container}>
+      <MdArrowBack
+        onClick={() => back()}
+        style={{ position: "absolute", top: "0", left: "0", color: "red" }}
+      />
       <div className={style.spotsContainer}>
         <div className={style.indicator}>
           <div>

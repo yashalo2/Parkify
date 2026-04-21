@@ -24,6 +24,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/spots/**").permitAll()
                         .requestMatchers("/api/booking/**").permitAll()
                         .requestMatchers("/api/payment/**").permitAll()
+                        .requestMatchers("/api/message/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
@@ -41,7 +42,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:5173","http://192.168.144.215:5173")
+                        .allowedOrigins("http://localhost:5173","http://10.240.212.243:5173")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowCredentials(true);
             }

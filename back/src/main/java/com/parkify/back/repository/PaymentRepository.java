@@ -3,6 +3,7 @@ package com.parkify.back.repository;
 import com.parkify.back.dto.ChartDTO;
 import com.parkify.back.dto.CompareGrossDTO;
 import com.parkify.back.dto.IdDTO;
+import com.parkify.back.dto.PaymentInfoDTO;
 import com.parkify.back.model.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -91,6 +92,23 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
  order by cast(p.date as date ),sum(p.amount) asc
 """)
     List<CompareGrossDTO> getLessGrossing(@Param("id") long id);
-
+    @Query("""
+     select new com.parkify.back.dto.PaymentInfoDTO(
+     p.id,
+     u.email,
+     pl.level,
+     s.spotName,
+     pl.price,
+     p.amount,
+     p.date,
+     pl.parkingArea.name
+     )
+     from Payment p
+     join p.booking b
+     join b.spot s
+     join s.parkingLots pl
+     join b.user u
+""")
+    List<PaymentInfoDTO> getPaymentInfo();
 
 }
