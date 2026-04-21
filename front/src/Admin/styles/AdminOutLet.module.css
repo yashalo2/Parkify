@@ -11,10 +11,10 @@
   width: calc(100% - 1em);
   padding: 0.5em;
   height: calc(70px - 1em);
-  box-shadow: 0px 0px 3px grey;
   z-index: -1;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  background: #fff;
 }
 .container .topBar .logoContainer {
   position: absolute;
@@ -59,46 +59,39 @@
   position: absolute;
   top: 75px;
   left: 0;
-  background: #252525;
+  background: #fff;
+  box-shadow: 0px 2px 3px #ad9b9b84;
+}
+.container .leftPanel .buttonContainer {
+  display: grid;
+  gap: 2px;
+}
+.container .leftPanel .buttonContainer button {
+  text-align: start;
+  padding: 0.3em;
+  padding-left: 0.5em;
+  border: none;
+  background: none;
+  transition: 0.3s ease;
+}
+.container .leftPanel .buttonContainer button:hover {
+  padding-left: 1.3em;
+  color: grey;
 }
 .container .leftPanel .decor {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100%;
-  height: 30%;
+  width: 90%;
+  height: 100px;
+  margin-left: 5%;
+  margin-bottom: 20px;
   overflow: hidden;
-}
-@keyframes glow {
-  from {
-    box-shadow: none;
-  }
-  to {
-    box-shadow: 0px 0px 10px snow;
-  }
-}
-.container .leftPanel .decor .one {
-  position: absolute;
-  bottom: 15%;
-  left: -70%;
-  border-radius: 50%;
-  width: 100%;
-  height: 90%;
   background: #fff;
-  animation: glow 1.5s ease infinite;
-  animation-delay: 1s;
+  border-radius: 10px;
+  box-shadow: 0px 0px 3px rgba(128, 128, 128, 0.305);
 }
-.container .leftPanel .decor .two {
-  position: absolute;
-  top: 15%;
-  right: -50%;
-  border-radius: 50%;
-  width: 100%;
-  height: 90%;
-  background: #fff;
-  animation: glow 15s ease infinite;
-  animation-duration: 2s;
-}
+
 .container .content {
   position: absolute;
   top: 75px;

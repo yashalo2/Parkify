@@ -16,6 +16,10 @@ public class User {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+    @Enumerated(EnumType.STRING)
+    private CustomerLevel userLevel;
 
 
 
@@ -23,6 +27,24 @@ public class User {
     @PrePersist
     public void prePersist() {
         role = Role.Customer;
+        status = UserStatus.Active;
+        userLevel = CustomerLevel.Silver;
+    }
+
+    public CustomerLevel getUserLevel() {
+        return userLevel;
+    }
+
+    public void setUserLevel(CustomerLevel userLevel) {
+        this.userLevel = userLevel;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
     }
 
     public long getId() {

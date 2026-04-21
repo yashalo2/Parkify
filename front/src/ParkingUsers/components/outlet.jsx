@@ -17,16 +17,25 @@ function OutLet() {
   const [role, setRole] = useState("");
   const isAuthenticated = !!sessionStorage.getItem("user");
   const user = sessionStorage.getItem("user");
+  const [loader, setLoader] = useState(false);
+
   useEffect(() => {
     if (user) {
       const userRole = JSON.parse(user);
       setRole(userRole.role);
     }
-  }, []);
+  }, [user]);
 
-  return !isAuthenticated ? (
-    navigate("/login")
-  ) : role == "Customer" ? (
+  useEffect(() => {
+    if (!isAuthenticated || (role && role !== "Customer")) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, role, navigate]);
+
+  if (!isAuthenticated || role !== "Customer") {
+    return null;
+  }
+  return (
     <div className={style.container}>
       <div className={style.topBar}>
         <div className={style.logoContainer}>
@@ -71,8 +80,6 @@ function OutLet() {
       </div>
       {showMenu && <div className={style.menu}></div>}
     </div>
-  ) : (
-    navigate("/login")
   );
 }
 export default OutLet;

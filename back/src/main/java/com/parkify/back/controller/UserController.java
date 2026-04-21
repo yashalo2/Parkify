@@ -1,5 +1,6 @@
 package com.parkify.back.controller;
 
+import com.parkify.back.dto.UserDTO;
 import com.parkify.back.model.ParkingArea;
 import com.parkify.back.model.Role;
 import com.parkify.back.model.User;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -85,6 +87,14 @@ public class UserController {
     public Long getAdmin(){
         User supporter=userRepository.findByRole(Role.Admin);
         return supporter.getId();
+    }
+    @GetMapping("/getUsers")
+    public List<UserDTO> getUsers(){
+        return userRepository.findAllUserDTO();
+    }
+    @GetMapping("/search/{search}")
+    public List<UserDTO> getUsers(@PathVariable String search){
+        return userRepository.search(search);
     }
 
 }

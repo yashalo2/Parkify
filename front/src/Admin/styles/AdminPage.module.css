@@ -1,3 +1,6 @@
+body {
+  background: #ededed;
+}
 .container {
   position: absolute;
   width: calc(100% - 1em);
@@ -5,6 +8,7 @@
   height: 100%;
   display: grid;
   gap: 2px;
+  background: #ffffff8a;
 }
 .container .top {
   display: flex;
