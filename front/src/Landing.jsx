@@ -65,7 +65,6 @@ function Landing() {
           </button>
         </div>
       </div>
-      <footer></footer>
     </div>
   );
 }
