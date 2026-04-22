@@ -9,9 +9,12 @@ import com.parkify.back.repository.ParkingAreaRepository;
 import com.parkify.back.repository.ParkingLotsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ParkingLotsService {
@@ -19,6 +22,8 @@ public class ParkingLotsService {
     private ParkingLotsRepository parkingLotsRepository;
     @Autowired
     private ParkingAreaRepository parkingAreaRepository;
+    @Autowired
+    private RestTemplate restTemplate;
     public String addLot(SpotDTO spotDTO) {
         ParkingLots parkingLots = new ParkingLots();
         parkingLots.setPrice(spotDTO.getPrice());
@@ -35,6 +40,12 @@ public class ParkingLotsService {
         }
         parkingLots.setSpots(spots);
         parkingLotsRepository.save(parkingLots);
-        return "SUCCESS";
+        Map<String, Object> config = new HashMap<>();
+        Map<String, Integer> levelConfig = new HashMap<>();
+        levelConfig.put("level" + spotDTO.getLevel(), spotDTO.getSpots());
+        config.put(parkingArea.getName(), levelConfig);
+
+
+         return "SUCCESS";
     }
 }

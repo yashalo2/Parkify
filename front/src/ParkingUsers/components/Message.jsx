@@ -38,6 +38,7 @@ function Message() {
         console.log("Connected to webSocket");
         stompClient.subscribe(`/topic/message/${receiverId}`, (message) => {
           setMessages((prev) => [...prev, JSON.parse(message.body)]);
+          console.log("message");
         });
       },
     });
@@ -102,11 +103,7 @@ function Message() {
         {messages.length > 0 &&
           messages.map((mes, index) => (
             <div key={index}>
-              {!mes.sender == myId ? (
-                <div className={style.content}>
-                  <div className={style.text}>{mes.content}</div>
-                </div>
-              ) : (
+              {mes.sender == myId ? (
                 <div style={{ justifyItems: "end" }} className={style.content}>
                   <div
                     style={{
@@ -117,6 +114,10 @@ function Message() {
                   >
                     {mes.content}
                   </div>
+                </div>
+              ) : (
+                <div className={style.content}>
+                  <div className={style.text}>{mes.content}</div>
                 </div>
               )}
             </div>

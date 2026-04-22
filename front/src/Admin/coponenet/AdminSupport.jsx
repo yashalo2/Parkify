@@ -61,6 +61,7 @@ function AdminSupportPage() {
         console.log("Connected to webSocket");
         stompClient.subscribe(`/topic/message/${receiverId}`, (message) => {
           setMessages((prev) => [...prev, JSON.parse(message.body)]);
+          console.log("message");
         });
       },
     });

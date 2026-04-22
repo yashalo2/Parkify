@@ -51,6 +51,11 @@ public class ParkingAreaController {
     public List<ActiveAreaDTO> getActiveParkingArea() {
         return parkingAreaRepository.getActiveArea();
     }
+    @PostMapping("/addArea")
+    public long createLot(@RequestBody ParkingArea lot) {
+        ParkingArea area = parkingAreaRepository.save(lot);
+        return area.getId();
 
+    }
 
 }

@@ -76,13 +76,7 @@ public class UserController {
                 "user not registered"
         );
     }
-    @PostMapping("/addArea")
-        public long createLot(@RequestBody ParkingArea lot) {
 
-        ParkingArea area = parkingAreaRepository.save(lot);
-    return area.getId(); 
-
-    }
     @GetMapping("/getSupport")
     public Long getAdmin(){
         User supporter=userRepository.findByRole(Role.Admin);
