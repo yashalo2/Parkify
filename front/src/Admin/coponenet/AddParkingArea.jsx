@@ -63,14 +63,13 @@ function AddParkingArea() {
       click(e) {
         const { lat, lng } = e.latlng;
         setLocation({ lat, lng });
-        console.log("Clicked location:", lat, lng);
       },
     });
     return null;
   };
   const addLocation = async (name, lat, lng) => {
     try {
-      const response = await fetch(`${Base_URL}/api/users/addArea`, {
+      const response = await fetch(`${Base_URL}/api/parkingArea/addArea`, {
         method: "POST",
         credentials: "include",
         body: JSON.stringify({
@@ -88,6 +87,7 @@ function AddParkingArea() {
       setShowNameForm(false);
       toast.success("Location added successfully!");
       getLocations();
+      getParkingArea(data);
     } catch (err) {
       toast.error("Failed to add location. Please try again.");
     }
@@ -243,14 +243,19 @@ function AddParkingArea() {
         )}
       </div>
       {showAddLevelForm && (
-        <form ref={lotRef} onSubmit={addLots} className={style.formContainer}>
+        <form
+          ref={lotRef}
+          style={{ color: "#fff" }}
+          onSubmit={addLots}
+          className={style.formContainer}
+        >
           <div style={{ width: "100%", textAlign: "center" }}>
             <p>Add New Level to {parkingArea[0].name} Parking</p>
           </div>
           <div className={style.name}>
             <div>
               <label htmlFor="name">Levels:</label>
-              <input type="number" name="level" />
+              <input type="number" style={{ color: "#fff" }} name="level" />
               <input
                 type="hidden"
                 name="parkingArea"
@@ -259,7 +264,7 @@ function AddParkingArea() {
             </div>
             <div>
               <label htmlFor="name">Price:</label>
-              <input type="number" name="price" /> /hr
+              <input style={{ color: "#fff" }} type="number" name="price" /> /hr
             </div>
           </div>
           <div className={style.spots}>
@@ -274,6 +279,7 @@ function AddParkingArea() {
                   gap: "5px",
                   width: "80%",
                   marginLeft: "10%",
+                  color: "#fff",
                 }}
               >
                 <label htmlFor="number">Number of Spots:</label>

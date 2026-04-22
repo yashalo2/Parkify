@@ -76,13 +76,7 @@ public class UserController {
                 "user not registered"
         );
     }
-    @PostMapping("/addArea")
-        public long createLot(@RequestBody ParkingArea lot) {
 
-        ParkingArea area = parkingAreaRepository.save(lot);
-    return area.getId(); 
-
-    }
     @GetMapping("/getSupport")
     public Long getAdmin(){
         User supporter=userRepository.findByRole(Role.Admin);
@@ -95,6 +89,20 @@ public class UserController {
     @GetMapping("/search/{search}")
     public List<UserDTO> getUsers(@PathVariable String search){
         return userRepository.search(search);
+    }
+    @GetMapping("/getUser/{id}")
+    public UserDTO getUser(@PathVariable long id,HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null) {
+            return null;
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)) {
+            return userRepository.getUserDTO(id);
+        }
+        return null;
+
+
     }
 
 }

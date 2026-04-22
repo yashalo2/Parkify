@@ -29,6 +29,14 @@ function ManageUser() {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("No User Registered Yet!");
   const [showUserInfo, setShowUserInfo] = useState(false);
+  const [used, setUsed] = useState({});
+  const [cancelled, setCancelled] = useState({});
+  const [total, setTotal] = useState({});
+  const [selectedUser, setSelectedUser] = useState({});
+  const [usedBookings, setUsedBookings] = useState([]);
+  const [bookings, setBookings] = useState([]);
+  const [cancelledBookings, setCancelledBookings] = useState([]);
+
   const data = [
     {
       status: "Active",
@@ -66,6 +74,118 @@ function ManageUser() {
       setUsers(data);
     } catch (err) {
       toast.error("Error Searching User");
+    }
+  };
+  const getUserHistory = async (id) => {
+    try {
+      const response = await fetch(`${Base_URL}/api/booking/getHistory/${id}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      setTotal(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getUsedHistory = async (id) => {
+    try {
+      const response = await fetch(`${Base_URL}/api/booking/getUsed/${id}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      console.log(data);
+      setUsed(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getCancelledHistory = async (id) => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/booking/getCancelled/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+      setCancelled(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getUser = async (id) => {
+    try {
+      const response = await fetch(`${Base_URL}/api/users/getUser/${id}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      setSelectedUser(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getAllUserBookings = async (id) => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/booking/getAllUserBookings/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+      console.log(data);
+      setBookings(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getAllUsedBookings = async (id) => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/booking/getAllUsedBookings/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+      setUsedBookings(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getAllCancelledBookings = async (id) => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/booking/getAllCancelledBookings/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+      console.log(data);
+      setCancelledBookings(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getUserInfo = async (id) => {
+    try {
+      getCancelledHistory(id);
+      getUsedHistory(id);
+      getUserHistory(id);
+      getUser(id);
+      getAllCancelledBookings(id);
+      getAllUsedBookings(id);
+      getAllUserBookings(id);
+    } catch (err) {
+      toast.error("Error Occurred");
     }
   };
   useEffect(() => {
@@ -234,7 +354,9 @@ function ManageUser() {
           {users.length > 0 ? (
             users.map((user, index) => (
               <div
-                onClick={() => setShowUserInfo(true)}
+                onClick={() => {
+                  (setShowUserInfo(true), getUserInfo(user.id));
+                }}
                 key={index}
                 className={style.user}
               >
@@ -313,9 +435,12 @@ function ManageUser() {
                   className={style.infos}
                   style={{ textAlign: "center", display: "grid", gap: "2px" }}
                 >
-                  <div> Yasin shalo</div>
-                  <div> yasin2ashalo@gmail.com</div>
-                  <div> Silver level</div>
+                  <div>
+                    {" "}
+                    {selectedUser.firstName} {selectedUser.lastName}
+                  </div>
+                  <div> {selectedUser.email}</div>
+                  <div> {selectedUser.userLevel} level user</div>
                   <div
                     style={{
                       textAlign: "center",
@@ -324,40 +449,42 @@ function ManageUser() {
                     }}
                   >
                     {" "}
-                    Active
+                    {selectedUser.status}
                   </div>
                 </div>
               </div>
               <div className={style.bookingInfo}>
                 <div className={style.bookingStatus}>
                   <div>
-                    <h2>Bookings</h2>
+                    <h2 style={{ fontSize: "medium" }}>Total Bookings</h2>
                   </div>
-                  <div>100 total bookings</div>
-                  <div>Currently Booked At</div>
+                  <div>{total.total} total bookings</div>
+                  <div>More Infos</div>
                   <div>
-                    <div>JID Parking Log</div>
-                    <div>Spot A3 at 12/23/2026 18:31 AM</div>
-                  </div>
-                </div>
-                <div className={style.bookingStatus}>
-                  <div>
-                    <h2>Used Bookings</h2>
-                  </div>
-                  <div>90 total bookings used</div>
-                  <div>This week</div>
-                  <div>
-                    <div>10 bookings used</div>
+                    <div>{total.thisWeek} this week</div>
+                    <div>{total.thisMonth} this month</div>
                   </div>
                 </div>
                 <div className={style.bookingStatus}>
                   <div>
-                    <h2>Cancelled Bookings</h2>
+                    <h2 style={{ fontSize: "medium" }}>Used Bookings</h2>
                   </div>
-                  <div>10 total bookings cancelled</div>
-                  <div>This week</div>
+                  <div>{used.total} total bookings used</div>
+                  <div>More Info</div>
                   <div>
-                    <div>5 bookings cancelled</div>
+                    <div>{used.thisWeek} this week</div>
+                    <div>{used.thisMonth} this month</div>
+                  </div>
+                </div>
+                <div className={style.bookingStatus}>
+                  <div>
+                    <h2 style={{ fontSize: "medium" }}>Cancelled Bookings</h2>
+                  </div>
+                  <div>{cancelled.total} total cancelled</div>
+                  <div>More Info</div>
+                  <div>
+                    <div>{cancelled.thisWeek} this week</div>
+                    <div>{cancelled.thisMonth} this month</div>
                   </div>
                 </div>
               </div>
@@ -367,196 +494,70 @@ function ManageUser() {
                 <div style={{ color: "blue" }} className={style.label}>
                   All Bookings
                 </div>
-                <div className={style.display}>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
+                <dv className={style.display}>
+                  {bookings.length > 0 ? (
+                    bookings.map((book, index) => (
+                      <div key={index} className={style.booking}>
+                        <div>
+                          {new Date(book.date).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </div>
+                        <div>{book.name}</div>
+                        <div>Level {book.level}</div>
 
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                </div>
+                        <div>{book.spot}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        textAlign: "center",
+                        alignContent: "center",
+                      }}
+                    >
+                      No Bookings Found
+                    </div>
+                  )}
+                </dv>
               </div>
               <div className={style.div}>
                 <div style={{ color: "green" }} className={style.label}>
                   Used Bookings
                 </div>
                 <div className={style.display}>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
+                  {usedBookings.length > 0 ? (
+                    usedBookings.map((book, index) => (
+                      <div className={style.booking}>
+                        <div>
+                          {new Date(book.date).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </div>
+                        <div>{book.name}</div>
+                        <div>Level {book.level}</div>
 
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
+                        <div>{book.spot}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        alignContent: "center",
+                        textAlign: "center",
+                      }}
+                    >
+                      No Used Bookings Found
+                    </div>
+                  )}
                 </div>
               </div>
               <div className={style.div}>
@@ -564,97 +565,34 @@ function ManageUser() {
                   Cancelled Bookings
                 </div>
                 <div className={style.display}>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
+                  {cancelledBookings.length > 0 ? (
+                    cancelledBookings.map((book, index) => (
+                      <div className={style.booking}>
+                        <div>
+                          {new Date(book.date).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </div>
+                        <div>{book.name}</div>
+                        <div>Level {book.level}</div>
 
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
-                  <div className={style.booking}>
-                    <div>12/12/2026</div>
-                    <div>JID Parkings</div>
-                    <div>Level 3</div>
-
-                    <div>Spots A4</div>
-                  </div>
+                        <div>{book.spot}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        alignContent: "center",
+                        textAlign: "center",
+                      }}
+                    >
+                      No Cancelled Booking Found
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

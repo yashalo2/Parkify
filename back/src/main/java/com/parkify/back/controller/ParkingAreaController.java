@@ -1,9 +1,9 @@
 package com.parkify.back.controller;
 
 import com.parkify.back.dto.*;
-import com.parkify.back.model.BookingStatus;
-import com.parkify.back.model.ParkingArea;
-import com.parkify.back.model.SpotStatus;
+import com.parkify.back.model.*;
+import com.parkify.back.repository.EntranceScannerRepository;
+import com.parkify.back.repository.ExitScannerRepository;
 import com.parkify.back.repository.ParkingAreaRepository;
 import com.parkify.back.service.ParkingAreaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,10 @@ public class ParkingAreaController {
     private ParkingAreaRepository parkingAreaRepository;
     @Autowired
     private ParkingAreaService parkingAreaService;
+    @Autowired
+    private ExitScannerRepository exitScannerRepository;
+    @Autowired
+    private EntranceScannerRepository entranceScannerRepository;
     @GetMapping("/getLocations")
     public List<LocationDTO> getLocations() {
          return parkingAreaRepository.getLocations();
@@ -51,6 +55,20 @@ public class ParkingAreaController {
     public List<ActiveAreaDTO> getActiveParkingArea() {
         return parkingAreaRepository.getActiveArea();
     }
+    @PostMapping("/addArea")
+    public long createLot(@RequestBody ParkingArea lot) {
+        ParkingArea area = parkingAreaRepository.save(lot);
 
+        return area.getId();
+
+    }
+    @GetMapping("/getManageArea")
+    public List<ManageAreaDTO> getManageArea() {
+        return parkingAreaRepository.getManageArea();
+    }
+    @GetMapping("/search/{search}")
+    public List<ManageAreaDTO> search(@PathVariable String search) {
+        return parkingAreaRepository.search(search);
+    }
 
 }

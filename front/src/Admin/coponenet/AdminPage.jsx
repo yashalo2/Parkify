@@ -248,7 +248,6 @@ function AdminPage() {
       );
       const data = await response.json();
       setOccupied(data);
-      console.log(data);
     } catch (err) {
       toast.error("Error Loading Page");
     }

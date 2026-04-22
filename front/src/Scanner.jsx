@@ -2,6 +2,7 @@ import { Html5Qrcode } from "html5-qrcode";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { MdClose, MdDone } from "react-icons/md";
+import logo from "./assets/logo.png";
 import { Base_URL } from "./config";
 import style from "./Scanner.module.css";
 import FailMp from "./Sounds/fail.mp3";
@@ -74,7 +75,6 @@ function Scanner() {
       console.log(err);
     }
   };
-
   return (
     <div
       style={{
@@ -86,8 +86,14 @@ function Scanner() {
       }}
     >
       <div className={style.container}>
+        <div className={style.logoContainer}>
+          <div className={style.logo}>
+            <img src={logo} alt="" />
+          </div>
+          <div className={style.name}>Parkify Entrance</div>
+        </div>
         <div style={{ justifyItems: "center" }}>
-          <h1>QR Scanner</h1>
+          <h1>Scan Your Entrance Code</h1>
           <div id="reader" className={style.reader} ref={containerRef}></div>
         </div>
         {scanned && (

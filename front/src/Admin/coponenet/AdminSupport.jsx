@@ -61,6 +61,7 @@ function AdminSupportPage() {
         console.log("Connected to webSocket");
         stompClient.subscribe(`/topic/message/${receiverId}`, (message) => {
           setMessages((prev) => [...prev, JSON.parse(message.body)]);
+          console.log("message");
         });
       },
     });
@@ -174,7 +175,11 @@ function AdminSupportPage() {
               </button>
             </div>
           </div>
-          <div className={style.body}></div>
+          <div className={style.body}>
+            <div className={style.message}>
+              <p className={style.messageContent}></p>
+            </div>
+          </div>
           <div className={style.input}>
             <div className={style.textarea}>
               <textarea

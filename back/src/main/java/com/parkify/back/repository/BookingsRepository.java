@@ -1,18 +1,26 @@
 package com.parkify.back.repository;
-import com.parkify.back.dto.ChartDTO;
-import com.parkify.back.dto.GetBookingDTO;
-import com.parkify.back.dto.ReceiptDTO;
+import com.parkify.back.dto.*;
 import com.parkify.back.model.BookingStatus;
 import com.parkify.back.model.Bookings;
+import com.parkify.back.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface BookingsRepository extends JpaRepository<Bookings, Long> {
+    @Query("""
+select case when count(b) > 0 then true else false end
+from Bookings b
+where b.user.id = :userId
+""")
+    boolean hasBooking(@Param("userId") Long userId);
+
     @Query("""
  select new com.parkify.back.dto.GetBookingDTO(
  b.id,
@@ -60,4 +68,61 @@ where b.status = :status
 group by b.bookingDate
 """)
     List<ChartDTO> getChart(@Param("status") BookingStatus status);
+    @Query("""
+select new com.parkify.back.dto.UserBookingHistoryDTO(
+    count(b),
+    sum(case when b.bookingDate between :weekStart and :weekEnd then 1 else 0 end),
+    sum(case when b.bookingDate between :monthStart and :monthEnd then 1 else 0 end)
+)
+from Bookings b
+where b.user.id = :id
+""")
+    UserBookingHistoryDTO getBookingStats(
+            @Param("weekStart") Instant weekStart,
+            @Param("weekEnd") Instant weekEnd,
+            @Param("monthStart") Instant monthStart,
+            @Param("monthEnd") Instant monthEnd,
+            @Param("id") long id
+    );
+
+    @Query("""
+select new com.parkify.back.dto.UserBookingHistoryDTO(
+    count(b),
+    sum(case when b.bookingDate between :weekStart and :weekEnd then 1 else 0 end),
+    sum(case when b.bookingDate between :monthStart and :monthEnd then 1 else 0 end)
+)
+from Bookings b
+where b.user.id = :id and b.status = :status
+""")
+    UserBookingHistoryDTO getBookingStatus(
+            @Param("weekStart") Instant weekStart,
+            @Param("weekEnd") Instant weekEnd,
+            @Param("monthStart") Instant monthStart,
+            @Param("monthEnd") Instant monthEnd,
+            @Param("id") long id,
+            @Param("status") BookingStatus status
+    );
+    @Query("""
+select new com.parkify.back.dto.UserBookingsDTO(
+    b.bookingDate,
+    b.spot.parkingLots.parkingArea.name,
+    b.spot.parkingLots.level,
+    b.spot.spotName
+)
+from Bookings b
+where b.user.id = :id
+""")
+    List<UserBookingsDTO> getUserBookings(@Param("id") long id);
+    @Query("""
+select new com.parkify.back.dto.UserBookingsDTO(
+    b.bookingDate,
+    b.spot.parkingLots.parkingArea.name,
+    b.spot.parkingLots.level,
+    b.spot.spotName
+)
+from Bookings b
+where b.user.id = :id and b.status = :status
+""")
+    List<UserBookingsDTO> getUserBookingsByStatus(@Param("id") long id, @Param("status") BookingStatus status);
+
 }
