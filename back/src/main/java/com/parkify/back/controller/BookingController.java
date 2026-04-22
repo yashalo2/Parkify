@@ -5,6 +5,8 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.encoder.QRCode;
+import com.parkify.back.dto.UserBookingHistoryDTO;
+import com.parkify.back.dto.UserBookingsDTO;
 import com.parkify.back.model.*;
 import com.parkify.back.repository.BookingsRepository;
 import com.parkify.back.repository.SpotsRepository;
@@ -21,7 +23,9 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -118,5 +122,84 @@ public class BookingController {
     @GetMapping("/getCancelledBookings")
     public ResponseEntity<?> getCancelledBooking(){
         return ResponseEntity.ok().body(bookingService.getCancelled());
+    }
+    @GetMapping("/getHistory/{id}")
+    public UserBookingHistoryDTO getUserBookingHistory(@PathVariable long id,HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return null;
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)) {
+            return bookingService.getBookingHistory(id);
+        }
+        return null;
+    }
+    @GetMapping("/getUsed/{id}")
+    public UserBookingHistoryDTO getUsedBookingHistory(@PathVariable long id,HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return null;
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)) {
+            return bookingService.getUsedBooking(id);
+        }
+        return null;
+    }
+    @GetMapping("/getCancelled/{id}")
+    public UserBookingHistoryDTO getCancelledBookingHistory(@PathVariable long id,HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return null;
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            return bookingService.getCancelledBooking(id);
+
+        }
+        return null;
+    }
+    @GetMapping("/getAllUserBookings/{id}")
+    public List<UserBookingsDTO> getAllUserBookings(@PathVariable long id,HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            ArrayList<UserBookingsDTO> userBookingsDTO = new ArrayList<>();
+            return userBookingsDTO;
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            return bookingService.getAllBookings(id);
+        }
+        ArrayList<UserBookingsDTO> userBookingsDTO = new ArrayList<>();
+        return userBookingsDTO;
+    }
+    @GetMapping("/getAllUsedBookings/{id}")
+    public List<UserBookingsDTO> getAllUsedBookings(@PathVariable long id,HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            ArrayList<UserBookingsDTO> userBookingsDTO = new ArrayList<>();
+            return userBookingsDTO;
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            return bookingService.getAllUsedBookings(id);
+        }
+        ArrayList<UserBookingsDTO> userBookingsDTO = new ArrayList<>();
+        return userBookingsDTO;
+    }
+    @GetMapping("/getAllCancelledBookings/{id}")
+    public List<UserBookingsDTO> getAllCancelledBookings(@PathVariable long id,HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            ArrayList<UserBookingsDTO> userBookingsDTO = new ArrayList<>();
+            return userBookingsDTO;
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            return bookingService.getAllCancelledBookings(id);
+        }
+        ArrayList<UserBookingsDTO> userBookingsDTO = new ArrayList<>();
+        return userBookingsDTO;
     }
 }

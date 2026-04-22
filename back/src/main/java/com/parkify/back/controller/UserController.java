@@ -90,5 +90,19 @@ public class UserController {
     public List<UserDTO> getUsers(@PathVariable String search){
         return userRepository.search(search);
     }
+    @GetMapping("/getUser/{id}")
+    public UserDTO getUser(@PathVariable long id,HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null) {
+            return null;
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)) {
+            return userRepository.getUserDTO(id);
+        }
+        return null;
+
+
+    }
 
 }

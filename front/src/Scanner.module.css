@@ -24,3 +24,25 @@
   backdrop-filter: blur(5px);
   animation: resize 1s ease;
 }
+.container .logoContainer {
+  position: absolute;
+  top: 10px;
+  width: 80%;
+  height: 250px;
+  display: flex;
+  gap: 10px;
+}
+.container .logoContainer .logo {
+  width: 200px;
+  height: 200px;
+  margin-top: 25px;
+}
+.container .logoContainer .logo img {
+  width: 100%;
+  height: 100%;
+}
+.container .logoContainer .name {
+  flex: 1;
+  align-content: center;
+  font-size: 60px;
+}

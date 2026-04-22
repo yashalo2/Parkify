@@ -175,7 +175,11 @@ function AdminSupportPage() {
               </button>
             </div>
           </div>
-          <div className={style.body}></div>
+          <div className={style.body}>
+            <div className={style.message}>
+              <p className={style.messageContent}></p>
+            </div>
+          </div>
           <div className={style.input}>
             <div className={style.textarea}>
               <textarea

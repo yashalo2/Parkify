@@ -122,6 +122,9 @@
 }
 
 @media (max-width: 600px) {
+  /* .container {
+    display: none;
+  } */
   .container {
     position: static;
     height: auto;

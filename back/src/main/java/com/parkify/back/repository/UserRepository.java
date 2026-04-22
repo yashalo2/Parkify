@@ -41,5 +41,18 @@ from User u
 where u.firstName like %:search% or u.lastName like %:search% or u.email like %:search%
 """)
     List<UserDTO> search(@Param("search") String search);
+    @Query("""
+select new com.parkify.back.dto.UserDTO(
+u.id,
+ u.firstName,
+ u.lastName,
+ u.email,
+ u.status,
+ u.userLevel
+)
+from User u
+where u.id = :id
+""")
+    UserDTO getUserDTO(@Param("id") long id);
 
 }

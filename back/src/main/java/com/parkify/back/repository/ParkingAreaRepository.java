@@ -72,4 +72,32 @@ public interface ParkingAreaRepository extends JpaRepository<ParkingArea, Long> 
         group by p.areaStatus
 """)
     List<ActiveAreaDTO> getActiveArea();
+    @Query("""
+select new com.parkify.back.dto.ManageAreaDTO(
+    p.id,
+    p.name,
+    count(pa),
+    p.areaStatus
+)
+from ParkingArea p
+left join p.parkingLots pa
+group by p.id, p.areaStatus
+""")
+
+    List<ManageAreaDTO> getManageArea();
+    @Query("""
+select new com.parkify.back.dto.ManageAreaDTO(
+    p.id,
+    p.name,
+    count(pa),
+    p.areaStatus
+)
+from ParkingArea p
+left join p.parkingLots pa
+where p.name like %:name%
+group by p.id, p.areaStatus
+
+""")
+    List<ManageAreaDTO> search(@Param("name") String name);
+
 }

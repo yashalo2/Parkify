@@ -1,0 +1,86 @@
+.container {
+  width: calc(100% - 1em);
+  height: calc(100% - 1em);
+  padding: 0.5em;
+}
+.container .top {
+  width: 100%;
+  height: 30%;
+  display: flex;
+  gap: 5px;
+}
+.container .top div {
+  flex: 1;
+  background: #fff;
+  border-radius: 5px;
+}
+.container .bottom {
+  width: 100%;
+  height: calc(70% - 5px - 0.4em);
+  margin-top: 5px;
+  justify-items: center;
+  padding-top: 0.4em;
+  background: #ededed;
+  border-radius: 10px;
+}
+.container .bottom .searchContainer {
+  width: 90%;
+  height: 60px;
+  background: #00000071;
+  align-content: center;
+  text-align: center;
+  border-radius: 10px;
+  backdrop-filter: blur(3px);
+}
+.container .bottom .searchContainer input {
+  width: 95%;
+  height: 80%;
+  outline: none;
+  border-radius: 10px;
+  border: none;
+  border: 1px solid grey;
+  text-align: center;
+}
+.container .bottom .display {
+  width: 100%;
+  height: calc(100% - 65px);
+  margin-top: 5px;
+  justify-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.container .bottom .display .parking {
+  width: calc(90% - 1em);
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+  height: 60px;
+  background: #fff;
+  margin-top: 3px;
+  border-radius: 10px;
+  display: flex;
+  gap: 10px;
+  z-index: 1;
+}
+.container .bottom .display .parking div {
+  flex: 1;
+  align-content: center;
+  text-align: center;
+  font-size: large;
+}
+.container .bottom .display .parking .text {
+  flex: 1;
+}
+.container .bottom .display .parking div button {
+  border: none;
+  padding: 0.5em;
+  width: 100px;
+  height: 60%;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+  z-index: 10;
+}
+.container .bottom .display .parking div button:hover {
+  transform: translateY(-5px);
+}
