@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { MdArrowBack, MdClose } from "react-icons/md";
 import logo from "../../assets/logo.png";
 import { Base_URL } from "../../config";
 import style from "../styles/HistoryPage.module.css";
-import toast from "react-hot-toast";
 function History() {
   const [bookings, setBookings] = useState([]);
   const [showBooking, setShowBooking] = useState(true);
@@ -11,20 +11,18 @@ function History() {
   const [receipt, setReceipt] = useState([]);
   const [bookingId, setBookingId] = useState();
   const [showPayment, setShowPayment] = useState(false);
-  const pay=async(booking,e)=>{
-    e.preventDefault()
-    
-    
-    try{
-      const response = await fetch(`${Base_URL}/api/payment/pay/${booking}`,{
-        method:"POST",
-        body:
-      })
+  const [amount,setAmount]=useState(0);
+  const pay = async (booking, e) => {
+    e.preventDefault();
 
-    }catch(err){
-      toast.error("Error Occurred")
+    try {
+      const response = await fetch(`${Base_URL}/api/payment/pay/${booking}`, {
+        method: "POST",
+      });
+    } catch (err) {
+      toast.error("Error Occurred");
     }
-  }
+  };
   const getMyBooking = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/booking/getMyBooking`, {

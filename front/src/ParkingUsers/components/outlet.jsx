@@ -54,7 +54,7 @@ function OutLet() {
             <button>Find Parking</button>
             <button>History</button>
             <button>Settings</button>
-            <button>Support</button>
+            <button onClick={() => navigate("support")}>Support</button>
           </div>
         </div>
       </div>
@@ -74,7 +74,7 @@ function OutLet() {
         <button>
           <MdSettings size={24} />
         </button>
-        <button>
+        <button onClick={() => navigate("support")}>
           <MdHeadphones size={24} />
         </button>
       </div>

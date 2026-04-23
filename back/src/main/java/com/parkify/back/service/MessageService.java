@@ -27,12 +27,16 @@ public class MessageService {
     public void sendMessage(Message message){
 
         Message saved = messageRepository.save(message);
-        messagingTemplate.convertAndSend("/topic/message/" + message.getReceiver(),saved);
+        MessageSendDTO messageSendDTO =new  MessageSendDTO(saved.getReceiver().getId(),saved.getSender().getId(),saved.getContent(),saved.getDate());
+        messagingTemplate.convertAndSend("/topic/message/" + message.getReceiver().getId(),messageSendDTO);
     }
     public List<MessageSendDTO> getMyMessages(long id){
         return messageRepository.findMyMessages(id);
     }
     public List<UserDTO> getNeedyUsers(){
         return messageRepository.findNeedyUsers(Role.Customer);
+    }
+    public List<UserDTO> getNeedyUsersBySearch(String search){
+        return messageRepository.findNeedyUsersBySearch(search,Role.Customer);
     }
 }

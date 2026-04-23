@@ -36,6 +36,7 @@
   border-radius: 10px;
   outline: none;
   border: 1px solid grey;
+  text-align: center;
 }
 .container .userContainer .users {
   width: calc(100% - 0.8em);
@@ -127,26 +128,30 @@
   cursor: pointer;
 }
 .container .messageContainer .body {
+  position: relative;
   width: calc(100% - 0.8em);
   height: calc(100% - 120px);
   padding-left: 0.4em;
   padding-right: 0.4em;
-  background: grey;
+  background: #ededed;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 .container .messageContainer .body .message {
   width: calc(100% - 1em);
-  background: blue;
+  display: flex;
+  justify-content: flex-end;
   padding: 0.5em;
-  align-content: center;
-  n: end;
 }
 .container .messageContainer .body .message .messageContent {
   max-width: 200px;
-  height: 150px;
   background: #fff;
   border-radius: 20px;
   border-bottom-left-radius: 0px;
+  padding: 0.5em;
+}
+.container .messageContainer .body .sent {
+  background: black;
 }
 .container .messageContainer .input {
   position: absolute;

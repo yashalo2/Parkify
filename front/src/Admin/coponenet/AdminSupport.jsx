@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { MdBlock, MdFilterAlt, MdPerson, MdSend } from "react-icons/md";
 import SockJS from "sockjs-client";
 import { Base_URL } from "../../config";
+import notifications from "../../Sounds/notification.mp3";
 import style from "../styles/AdminSupport.module.css";
 function AdminSupportPage() {
   const [content, setContent] = useState();
@@ -14,6 +15,7 @@ function AdminSupportPage() {
   const [users, setUsers] = useState([]);
   const [fullName, setFullName] = useState("");
   const [showMessage, setShowMessage] = useState(false);
+  const notification = new Audio(notifications);
   const textRef = useRef(null);
   const getNeedyUsers = async () => {
     try {
@@ -22,7 +24,25 @@ function AdminSupportPage() {
         credentials: "include",
       });
       const data = await response.json();
-      console.log(data);
+      setUsers(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const search = async (user) => {
+    if (user.length == 0) {
+      getNeedyUsers();
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/message/searchUser/${user}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
       setUsers(data);
     } catch (err) {
       toast.error("Error Occurred");
@@ -42,11 +62,6 @@ function AdminSupportPage() {
       );
       const data = await response.json();
       setMessages(data);
-      const user = sessionStorage.getItem("user");
-      const userI = JSON.parse(user);
-      const senderId = userI.id;
-      setMyId(senderId);
-      console.log(data);
     } catch (err) {
       toast.error("Error Occurred");
     }
@@ -59,9 +74,15 @@ function AdminSupportPage() {
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("Connected to webSocket");
-        stompClient.subscribe(`/topic/message/${receiverId}`, (message) => {
+        const user = sessionStorage.getItem("user");
+        const userI = JSON.parse(user);
+        const senderId = userI.id;
+        stompClient.subscribe(`/topic/message/${senderId}`, (message) => {
           setMessages((prev) => [...prev, JSON.parse(message.body)]);
-          console.log("message");
+          const mg = JSON.parse(message.body);
+          notification.play();
+          toast.success(mg.content);
+          requestMessages();
         });
       },
     });
@@ -76,19 +97,18 @@ function AdminSupportPage() {
         const user = sessionStorage.getItem("user");
         const userI = JSON.parse(user);
         const senderId = userI.id;
-
+        const date = new Date().toISOString();
         const msg = {
           senderId,
           receiverId,
           content,
+          date,
         };
-        console.log(msg);
         client.publish({
           destination: "/app/chat",
           body: JSON.stringify(msg),
         });
         setMessages((prev) => [...prev, msg]);
-
         setContent("");
       }
     } catch (err) {
@@ -98,8 +118,16 @@ function AdminSupportPage() {
   const handleInput = (e) => {
     const el = textRef.current;
     el.style.height = "auto";
-    el.style.height = Math.min(el.scrollHeight, 100) + "px"; // cap at 200px
+    el.style.height = Math.min(el.scrollHeight, 100) + "px";
   };
+  useEffect(() => {
+    const user = sessionStorage.getItem("user");
+    if (user) {
+      const userI = JSON.parse(user);
+      setMyId(Number(userI.id));
+    }
+  }, []);
+
   return (
     <div className={style.container}>
       <div className={style.userContainer}>
@@ -114,7 +142,11 @@ function AdminSupportPage() {
           <h3>Support Center</h3>
         </div>
         <div className={style.filter}>
-          <input type="text" />
+          <input
+            type="text"
+            onChange={(e) => search(e.target.value)}
+            placeholder="search by first name ,last name or email"
+          />
           <button>
             <MdFilterAlt size={25} />
           </button>
@@ -155,7 +187,7 @@ function AdminSupportPage() {
                 textAlign: "center",
               }}
             >
-              <h2>No User Looking For Support</h2>
+              <h2>No User Found</h2>
             </div>
           )}
         </div>
@@ -176,9 +208,38 @@ function AdminSupportPage() {
             </div>
           </div>
           <div className={style.body}>
-            <div className={style.message}>
-              <p className={style.messageContent}></p>
-            </div>
+            {messages.length > 0 ? (
+              messages.map((message, index) => (
+                <div key={index}>
+                  {message.senderId == myId ? (
+                    <div className={style.message}>
+                      <div
+                        style={{
+                          borderBottomRightRadius: "0px",
+                          borderBottomLeftRadius: "20px",
+                          color: "#fff",
+                          background: "#303dfac9",
+                        }}
+                        className={style.messageContent}
+                      >
+                        {message.content}
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      style={{ justifyContent: "flex-start" }}
+                      className={style.message}
+                    >
+                      <div className={style.messageContent}>
+                        {message.content}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div></div>
+            )}
           </div>
           <div className={style.input}>
             <div className={style.textarea}>

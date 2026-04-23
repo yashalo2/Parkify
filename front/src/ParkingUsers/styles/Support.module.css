@@ -9,7 +9,7 @@
 .container .contentContainer {
   width: 80%;
   height: calc(100% - 200px);
-  background: grey;
+  background: #ededed;
   margin-bottom: 10px;
   overflow-y: auto;
 }
@@ -27,6 +27,8 @@
   border-bottom-left-radius: 0px;
   text-align: start;
   align-content: center;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: small;
 }
 .container .inputContainer {
   width: 60%;
