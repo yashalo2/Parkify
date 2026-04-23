@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -45,6 +46,22 @@ public class MessageController {
         }
         return null;
     }
+    @GetMapping("/searchUser/{name}")
+    public List<UserDTO> getSearchUser(@PathVariable String name,HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            ArrayList<UserDTO> list = new ArrayList<>();
+            return list;
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole() == Role.Admin){
+            return messageService.getNeedyUsersBySearch(name);
+        }
+        ArrayList<UserDTO> list = new ArrayList<>();
+        return list;
+
+
+    }
     @GetMapping("/{id}/messages")
     public List<MessageSendDTO> getMessages(HttpSession session, @PathVariable long id){
         String email = (String) session.getAttribute("email");
@@ -64,11 +81,9 @@ public class MessageController {
         User sender = userRepository.findMeById(senderId);
         User receiver = userRepository.findMeById(receiverId);
         Message message = new Message();
-
         message.setSender(sender);
         message.setReceiver(receiver);
         message.setContent(dto.getContent());
-
         messageService.sendMessage(message);
     }
 

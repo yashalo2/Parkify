@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { MdArrowForward, MdArrowUpward } from "react-icons/md";
 import SockJS from "sockjs-client";
+import notifications from "../..//Sounds/notification.mp3";
 import { Base_URL } from "../../config";
 import style from "../styles/Support.module.css";
 function Message() {
@@ -12,6 +13,7 @@ function Message() {
   const [receiverId, setReceiverId] = useState();
   const [myId, setMyId] = useState();
   const textRef = useRef(null);
+  const notification = new Audio(notifications);
   const getMyMessage = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/message/getMyMessages`, {
@@ -20,10 +22,6 @@ function Message() {
       });
       const data = await response.json();
       setMessages(data);
-      const user = sessionStorage.getItem("user");
-      const userI = JSON.parse(user);
-      const senderId = userI.id;
-      setMyId(senderId);
     } catch (err) {
       toast.error("Error Occurred");
     }
@@ -36,16 +34,21 @@ function Message() {
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("Connected to webSocket");
-        stompClient.subscribe(`/topic/message/${receiverId}`, (message) => {
+        const user = sessionStorage.getItem("user");
+        const userI = JSON.parse(user);
+        const senderId = userI.id;
+        stompClient.subscribe(`/topic/message/${senderId}`, (message) => {
           setMessages((prev) => [...prev, JSON.parse(message.body)]);
-          console.log("message");
+          const mg = JSON.parse(message.body);
+          notification.play();
+          toast.success(mg.content);
+          getMyMessage();
         });
       },
     });
     stompClient.activate();
     setClient(stompClient);
     getMyMessage();
-
     return () => stompClient.deactivate();
   }, [receiverId]);
   const sendMessage = async () => {
@@ -54,11 +57,12 @@ function Message() {
         const user = sessionStorage.getItem("user");
         const userI = JSON.parse(user);
         const senderId = userI.id;
-
+        const date = new Date().toISOString();
         const msg = {
           senderId,
           receiverId,
           content,
+          date,
         };
         client.publish({
           destination: "/app/chat",
@@ -75,7 +79,7 @@ function Message() {
   const handleInput = (e) => {
     const el = textRef.current;
     el.style.height = "auto";
-    el.style.height = Math.min(el.scrollHeight, 100) + "px"; // cap at 200px
+    el.style.height = Math.min(el.scrollHeight, 100) + "px";
   };
   useEffect(() => {
     const getAdmin = async () => {
@@ -89,8 +93,17 @@ function Message() {
         toast.error("Error Loading The Page");
       }
     };
+
     getAdmin();
   }, [receiverId]);
+  useEffect(() => {
+    const user = sessionStorage.getItem("user");
+    if (user) {
+      const userI = JSON.parse(user);
+      setMyId(Number(userI.id));
+    }
+  }, []);
+
   return (
     <div className={style.container}>
       <div className={style.label}>
@@ -109,6 +122,8 @@ function Message() {
                     style={{
                       borderRadius: "20px",
                       borderBottomRightRadius: "0px",
+                      color: "#fff",
+                      background: "#303dfac9",
                     }}
                     className={style.text}
                   >
@@ -116,7 +131,7 @@ function Message() {
                   </div>
                 </div>
               ) : (
-                <div className={style.content}>
+                <div style={{ display: "flex" }} className={style.content}>
                   <div className={style.text}>{mes.content}</div>
                 </div>
               )}

@@ -19,7 +19,8 @@ public interface MessageRepository extends JpaRepository<Message,Long> {
  select new com.parkify.back.dto.MessageSendDTO(
  m.sender.id,
  m.receiver.id,
- m.content
+ m.content,
+ m.date
  
  )
  from Message m
@@ -48,5 +49,27 @@ public interface MessageRepository extends JpaRepository<Message,Long> {
  
 """)
     List<UserDTO> findNeedyUsers(@Param("role") Role role);
+    @Query("""
+ select new com.parkify.back.dto.UserDTO(
+ m.sender.id,
+ m.sender.firstName,
+ m.sender.lastName,
+ m.sender.email,
+ m.sender.status,
+ m.sender.userLevel
+ 
+ )
+ from Message m
+ where m.sender.role = :role and m.sender.email like %:search% or m.sender.firstName like %:search% or m.sender.lastName like %:search%
+ group by m.sender.id,
+ m.sender.firstName,
+ m.sender.lastName,
+ m.sender.email,
+ m.sender.status,
+ m.sender.userLevel
+ 
+ 
+""")
+    List<UserDTO> findNeedyUsersBySearch(@Param("search") String search,@Param("role")  Role role);
 
 }
