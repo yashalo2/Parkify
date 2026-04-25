@@ -95,6 +95,30 @@
   border-radius: 50%;
   animation: rotate 1s ease-out infinite;
 }
+.container .formContainer .loading {
+  animation: loading 2s ease infinite;
+}
+@keyframes loading {
+  0% {
+    background: linear-gradient(135deg, orange, orange, #00000068);
+  }
+  50% {
+    background: linear-gradient(
+      135deg orange,
+      #00000068,
+      #00000068,
+      #00000068,
+      #00000068,
+      #00000068,
+      #00000068,
+      #00000068,
+      #00000068
+    );
+  }
+  100% {
+    background: linear-gradient(135deg, orange, orange, #00000068);
+  }
+}
 @keyframes rotate {
   from {
     transform: rotate(0deg);

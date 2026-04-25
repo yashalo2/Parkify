@@ -19,7 +19,12 @@ function Register() {
         body: formData,
       });
       const data = await response.text();
-      console.log(data);
+      if (data == "Verification Code Sent") {
+        toast.success(data);
+        navigate("/verify");
+      } else {
+        toast.error(data);
+      }
     } catch (err) {
       toast.error("Error Occurred");
     }

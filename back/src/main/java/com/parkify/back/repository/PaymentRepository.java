@@ -1,10 +1,8 @@
 package com.parkify.back.repository;
 
-import com.parkify.back.dto.ChartDTO;
-import com.parkify.back.dto.CompareGrossDTO;
-import com.parkify.back.dto.IdDTO;
-import com.parkify.back.dto.PaymentInfoDTO;
+import com.parkify.back.dto.*;
 import com.parkify.back.model.Payment;
+import com.parkify.back.model.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -110,5 +108,23 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
      join b.user u
 """)
     List<PaymentInfoDTO> getPaymentInfo();
+    @Query("""
+ select new com.parkify.back.dto.GetBookingDTO(
+ py.id,
+ b.bookingDate,
+ b.status,
+ p.name,
+ pa.level,
+ s.spotName,
+ pa.price
+ )
+ from Payment py
+ join py.booking b
+ join b.spot s
+ join s.parkingLots pa
+ join pa.parkingArea p
+ where b.user.id = :id and py.status = :status
+""")
+    List<GetBookingDTO> getBookingInfo(@Param("id") long id,@Param("status") PaymentStatus status);
 
 }

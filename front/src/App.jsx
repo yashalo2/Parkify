@@ -17,6 +17,7 @@ import OutLet from "./ParkingUsers/components/outlet.jsx";
 import PaymentPage from "./ParkingUsers/components/PaymentPage.jsx";
 import Register from "./Register.jsx";
 import Scanner from "./Scanner.jsx";
+import Verify from "./Verification.jsx";
 function App() {
   return (
     <Router>
@@ -27,6 +28,7 @@ function App() {
         <Route path="scanner" element={<Scanner />}></Route>
         <Route path="login" element={<Login />}></Route>
         <Route path="register" element={<Register />}></Route>
+        <Route path="verify" element={<Verify />}></Route>
         <Route path="customer" element={<OutLet />}>
           <Route path="home" element={<Home />}></Route>
           <Route path="payment" element={<PaymentPage />}></Route>

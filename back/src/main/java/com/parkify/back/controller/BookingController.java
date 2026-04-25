@@ -86,15 +86,25 @@ public class BookingController {
         String base64Image = Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
         return ResponseEntity.ok().body(base64Image);
     }
-    @GetMapping("/getMyBooking")
-    public ResponseEntity<?> getMyBooking(HttpSession session){
+    @GetMapping("/getMyBooking/{status}")
+    public ResponseEntity<?> getMyBooking(@PathVariable String status ,HttpSession session){
         long id = (long) session.getAttribute("id");
         String email = (String) session.getAttribute("email");
         if(email == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
         }
         User user = userRepository.findByEmail(email);
-        return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId()));
+        if(status.equals(BookingStatus.Open.toString())){
+            return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId(),BookingStatus.Open));
+
+        }
+        if(status.equals(BookingStatus.Used.toString())){
+            return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId(),BookingStatus.Used));
+
+        }if(status.equals(BookingStatus.Cancelled.toString())){
+            return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId(),BookingStatus.Cancelled));
+        }
+        return ResponseEntity.ok().body(bookingsRepository.getBooking(user.getId()));
 
 
     }

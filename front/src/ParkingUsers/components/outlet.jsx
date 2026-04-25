@@ -68,7 +68,7 @@ function OutLet() {
         <button>
           <MdSearch size={24} />
         </button>
-        <button>
+        <button onClick={() => navigate("history")}>
           <MdHistory size={24} />
         </button>
         <button>

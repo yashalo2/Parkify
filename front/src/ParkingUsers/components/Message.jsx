@@ -2,6 +2,7 @@ import { Client } from "@stomp/stompjs";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { MdArrowForward, MdArrowUpward } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import SockJS from "sockjs-client";
 import notifications from "../..//Sounds/notification.mp3";
 import { Base_URL } from "../../config";
@@ -12,6 +13,7 @@ function Message() {
   const [messages, setMessages] = useState([]);
   const [receiverId, setReceiverId] = useState();
   const [myId, setMyId] = useState();
+  const navigate = useNavigate();
   const textRef = useRef(null);
   const notification = new Audio(notifications);
   const getMyMessage = async () => {
@@ -109,6 +111,7 @@ function Message() {
       <div className={style.label}>
         Chat with User Support Group
         <MdArrowForward
+          onClick={() => navigate("/customer/home")}
           style={{ position: "absolute", right: "5px", color: "black" }}
         />
       </div>

@@ -40,11 +40,11 @@ public class EmailService {
                                 overflow: hidden;
                               "
                             >
-                          <h1>P</h1>
+                          <h1>Parkify</h1>
                             </div>
                 
                             <h2 style="color: #2c3e50; margin: 0 0 15px 0; text-align: center">
-                              Parkify Smart Parking
+                              Smart Parking
                             </h2>
                 
                             <hr style="border: none; border-top: 1px solid #eee; margin: 15px 0" />
