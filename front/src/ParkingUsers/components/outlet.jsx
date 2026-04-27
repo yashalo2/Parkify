@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  MdHeadphones,
-  MdHistory,
-  MdHome,
-  MdPerson,
-  MdSearch,
-  MdSettings,
-} from "react-icons/md";
+import { MdHeadphones, MdHistory, MdHome, MdPerson } from "react-icons/md";
 import { Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import style from "../styles/OutLet.module.css";
@@ -18,7 +11,7 @@ function OutLet() {
   const isAuthenticated = !!sessionStorage.getItem("user");
   const user = sessionStorage.getItem("user");
   const [loader, setLoader] = useState(false);
-
+  const them = localStorage.getItem("them") || "home";
   useEffect(() => {
     if (user) {
       const userRole = JSON.parse(user);
@@ -62,19 +55,29 @@ function OutLet() {
         <Outlet />
       </main>
       <div className={style.bottomBar}>
-        <button onClick={() => navigate("home")}>
-          <MdHome size={24} />
-        </button>
-        <button>
-          <MdSearch size={24} />
-        </button>
-        <button>
+        <button
+          className={them == "history" ? style.current : ""}
+          onClick={() => {
+            (navigate("history"), localStorage.setItem("them", "history"));
+          }}
+        >
           <MdHistory size={24} />
         </button>
-        <button>
-          <MdSettings size={24} />
+        <button
+          className={them == "home" ? style.current : ""}
+          onClick={() => {
+            (navigate("home"), localStorage.setItem("them", "home"));
+          }}
+        >
+          <MdHome size={24} />
         </button>
-        <button onClick={() => navigate("support")}>
+
+        <button
+          className={them == "support" ? style.current : ""}
+          onClick={() => {
+            (navigate("support"), localStorage.setItem("them", "support"));
+          }}
+        >
           <MdHeadphones size={24} />
         </button>
       </div>

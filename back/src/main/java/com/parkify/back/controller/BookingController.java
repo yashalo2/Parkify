@@ -5,6 +5,8 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.encoder.QRCode;
+import com.parkify.back.dto.AreaBookingDTO;
+import com.parkify.back.dto.ChartDTO;
 import com.parkify.back.dto.UserBookingHistoryDTO;
 import com.parkify.back.dto.UserBookingsDTO;
 import com.parkify.back.model.*;
@@ -86,15 +88,25 @@ public class BookingController {
         String base64Image = Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
         return ResponseEntity.ok().body(base64Image);
     }
-    @GetMapping("/getMyBooking")
-    public ResponseEntity<?> getMyBooking(HttpSession session){
+    @GetMapping("/getMyBooking/{status}")
+    public ResponseEntity<?> getMyBooking(@PathVariable String status ,HttpSession session){
         long id = (long) session.getAttribute("id");
         String email = (String) session.getAttribute("email");
         if(email == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
         }
         User user = userRepository.findByEmail(email);
-        return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId()));
+        if(status.equals(BookingStatus.Open.toString())){
+            return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId(),BookingStatus.Open));
+
+        }
+        if(status.equals(BookingStatus.Used.toString())){
+            return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId(),BookingStatus.Used));
+
+        }if(status.equals(BookingStatus.Cancelled.toString())){
+            return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId(),BookingStatus.Cancelled));
+        }
+        return ResponseEntity.ok().body(bookingsRepository.getBooking(user.getId()));
 
 
     }
@@ -202,4 +214,21 @@ public class BookingController {
         ArrayList<UserBookingsDTO> userBookingsDTO = new ArrayList<>();
         return userBookingsDTO;
     }
+    @GetMapping("/getAreaBooking/{id}")
+    public List<ChartDTO> getAreaBooking(@PathVariable long id){
+        return bookingsRepository.getAreaBooking(id,BookingStatus.Open);
+    }
+    @GetMapping("/getAreaCancelledBooking/{id}")
+    public List<ChartDTO> getAreaCancelledBooking(@PathVariable long id){
+        return bookingsRepository.getAreaBooking(id,BookingStatus.Cancelled);
+    }
+    @GetMapping("/getAllAreaBooking/{id}")
+    public List<AreaBookingDTO> getAllAreaBokking(@PathVariable long id){
+        return bookingsRepository.getAreaAllBooking(id);
+    }
+    @GetMapping("/searchAreaBooking/{id}/{email}")
+    public List<AreaBookingDTO> searchAreaBooking(@PathVariable long id, @PathVariable String email){
+        return bookingsRepository.getAreaBookingByEmail(email,id);
+    }
+
 }

@@ -2,9 +2,11 @@ package com.parkify.back.controller;
 
 import com.parkify.back.dto.UserDTO;
 import com.parkify.back.model.ParkingArea;
+import com.parkify.back.model.PendingUser;
 import com.parkify.back.model.Role;
 import com.parkify.back.model.User;
 import com.parkify.back.repository.ParkingAreaRepository;
+import com.parkify.back.repository.PendingUserRepository;
 import com.parkify.back.repository.UserRepository;
 import com.parkify.back.service.EmailService;
 import jakarta.mail.MessagingException;
@@ -29,24 +31,53 @@ public class UserController {
     @Autowired
     private EmailService emailService;
     private static final SecureRandom random = new SecureRandom();
+    @Autowired
+    private PendingUserRepository pendingUserRepository;
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user) throws MessagingException {
-
+    public String registerUser(@ModelAttribute PendingUser user, HttpSession session) throws MessagingException {
+        session.setAttribute("email", user.getEmail());
+        System.out.println(user.getEmail());
         if(userRepository.existsByEmail(user.getEmail())) {
             return "User with the email already exists";
         }
+        if(pendingUserRepository.existsByEmail(user.getEmail())) {
+            int code = 100000 + random.nextInt(900000);
+            emailService.sendEmail(user.getEmail(),"Registration",code);
 
-        User register = new User();
+            return "send email";
+        }
+        PendingUser register = new PendingUser();
         register.setEmail(user.getEmail());
         register.setPassword(user.getPassword());
         register.setFirstName(user.getFirstName());
         register.setLastName(user.getLastName());
-        userRepository.save(register);
         int code = 100000 + random.nextInt(900000);
-        emailService.sendEmail("yasin2ashalo@gmail.com","Registration",code);
+        register.setCode(code);
+        pendingUserRepository.save(register);
+        emailService.sendEmail(register.getEmail(), "Registration", code);
 
-        return "User Registered Successfully";
+        return "Verification Code Sent";
+    }
+    @PostMapping("/verify/{code}")
+    public String verify(@PathVariable int code,HttpSession session) {
+        String email =  (String) session.getAttribute("email");
+        System.out.println(email);
+        if(email == null) {
+            return "Time Out";
+        }
+        PendingUser pendingUser = pendingUserRepository.findByEmail(email);
+        if(pendingUser.getCode() == code) {
+            User user = new User();
+            user.setEmail(email);
+            user.setPassword(pendingUser.getPassword());
+            user.setFirstName(pendingUser.getFirstName());
+            user.setLastName(pendingUser.getLastName());
+            userRepository.save(user);
+            return "User Successfully Verified";
+        }
+        return "Invalid Code";
+
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@ModelAttribute User user, HttpSession session) {

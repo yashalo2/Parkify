@@ -36,9 +36,28 @@ where b.user.id = :userId
  join b.spot s
  join s.parkingLots pa
  join pa.parkingArea p
+ where b.user.id = :id and b.status = :status
+""")
+    List<GetBookingDTO> getBookings(@Param("id") long id,@Param("status") BookingStatus status);
+    @Query("""
+ select new com.parkify.back.dto.GetBookingDTO(
+ b.id,
+ b.bookingDate,
+ b.status,
+ p.name,
+ pa.level,
+ s.spotName,
+ pa.price
+ 
+ )
+ from Bookings b
+ join b.spot s
+ join s.parkingLots pa
+ join pa.parkingArea p
  where b.user.id = :id
 """)
-    List<GetBookingDTO> getBookings(@Param("id") long id);
+    List<GetBookingDTO> getBooking(@Param("id") long id);
+
     @Query("""
 select new com.parkify.back.dto.ReceiptDTO(
 b.id,
@@ -124,5 +143,35 @@ from Bookings b
 where b.user.id = :id and b.status = :status
 """)
     List<UserBookingsDTO> getUserBookingsByStatus(@Param("id") long id, @Param("status") BookingStatus status);
+    @Query("""
+select new com.parkify.back.dto.ChartDTO(
+b.bookingDate,
+count (*)
+)
+from Bookings b
+where b.spot.parkingLots.parkingArea.id = :id and b.status = :status
+group by b.bookingDate
+""")
+    List<ChartDTO> getAreaBooking(@Param("id") long id,@Param("status") BookingStatus status);
+    @Query("""
+select new com.parkify.back.dto.AreaBookingDTO(
+b.user.email,
+b.bookingDate,
+b.status
+)
+from Bookings b
+where b.spot.parkingLots.parkingArea.id = :id
+""")
+    List<AreaBookingDTO> getAreaAllBooking(@Param("id") long id);
+    @Query("""
+select new com.parkify.back.dto.AreaBookingDTO(
+b.user.email,
+b.bookingDate,
+b.status
+)
+from Bookings b
+where b.spot.parkingLots.parkingArea.id = :id and b.user.email like %:email%
+""")
+    List<AreaBookingDTO> getAreaBookingByEmail(@Param("email") String email, @Param("id") long id);
 
 }

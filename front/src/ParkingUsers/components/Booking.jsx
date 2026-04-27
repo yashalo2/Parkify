@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-hot-toast";
 import {
   MdArrowBack,
   MdArrowLeft,
@@ -92,9 +93,8 @@ function Booking({ area }) {
       });
       const data = await response.json();
       setLots(data);
-      console.log(data);
     } catch (err) {
-      console.log(err);
+      toast.error("Error occurred");
     }
   };
   const filteredSpot = spaces.filter(
@@ -108,7 +108,13 @@ function Booking({ area }) {
     <div className={style.container}>
       <MdArrowBack
         onClick={() => back()}
-        style={{ position: "absolute", top: "0", left: "0", color: "red" }}
+        style={{
+          position: "absolute",
+          top: "10px",
+          left: "0",
+          color: "red",
+          zIndex: "2",
+        }}
       />
       <div className={style.spotsContainer}>
         <div className={style.indicator}>

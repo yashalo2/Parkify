@@ -70,5 +70,13 @@ public class ParkingAreaController {
     public List<ManageAreaDTO> search(@PathVariable String search) {
         return parkingAreaRepository.search(search);
     }
+    @GetMapping("/searchArea/{search}")
+    public List<LocationDTO> searchLocation(@PathVariable String search) {
+        return parkingAreaRepository.searchLocation(search);
+    }
+    @GetMapping("/getAreaCoords/{id}")
+    public List<CoordsDTO> getCoords(@PathVariable long id) {
+        return parkingAreaRepository.getCoords(id);
+    }
 
 }

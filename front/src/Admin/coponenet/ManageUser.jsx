@@ -360,8 +360,14 @@ function ManageUser() {
                 key={index}
                 className={style.user}
               >
-                <div className={style.profile}>
-                  <MdPerson size={25} />
+                <div
+                  style={{
+                    background:
+                      "linear-gradient(135deg , #0ecf4f, #0ecfc5, #039132",
+                  }}
+                  className={style.profile}
+                >
+                  {user.firstName}
                 </div>
                 <div className={style.info}>
                   {user.firstName} {user.lastName}

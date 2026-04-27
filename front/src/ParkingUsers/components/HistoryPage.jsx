@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { MdArrowBack, MdClose } from "react-icons/md";
+import { MdArrowBack, MdClose, MdFilterAlt } from "react-icons/md";
 import logo from "../../assets/logo.png";
 import { Base_URL } from "../../config";
 import style from "../styles/HistoryPage.module.css";
@@ -11,7 +11,10 @@ function History() {
   const [receipt, setReceipt] = useState([]);
   const [bookingId, setBookingId] = useState();
   const [showPayment, setShowPayment] = useState(false);
-  const [amount,setAmount]=useState(0);
+  const [amount, setAmount] = useState(0);
+  const [showMenu, setShowMenu] = useState(false);
+  const [status, setStatus] = useState("Open");
+  const [history, setHistory] = useState("booking");
   const pay = async (booking, e) => {
     e.preventDefault();
 
@@ -23,20 +26,37 @@ function History() {
       toast.error("Error Occurred");
     }
   };
-  const getMyBooking = async () => {
+  const getExit = async () => {
     try {
-      const response = await fetch(`${Base_URL}/api/booking/getMyBooking`, {
+      const response = await fetch(`${Base_URL}/api/payments/getExit`, {
         method: "GET",
         credentials: "include",
       });
+      const data = await response.text();
+      console.log(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getMyBooking = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/${history}/getMyBooking/${status}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
       if (!response.ok) {
         toast.error("Please Login to book");
         return;
       }
       const data = await response.json();
-      setBookings(data);
+      setBookings(data.reverse());
     } catch (err) {
-      console.log(err);
+      toast.error("Error Occurred");
+    } finally {
+      setShowMenu(false);
     }
   };
   const getBook = async (id) => {
@@ -68,84 +88,156 @@ function History() {
   };
   useEffect(() => {
     getMyBooking();
-  }, []);
+  }, [status, history]);
   return (
     <div className={style.container}>
       {showBooking ? (
-        <div className={style.div}>
-          <div>
-            {bookings.length > 0 ? (
-              bookings.map((b, index) => (
+        <>
+          <div className={style.filterContainer}>
+            {showMenu && (
+              <div className={style.menu}>
+                <h2>Filter Booking By</h2>
+                <button onClick={() => setStatus("All")}>All Booking</button>
+                <button onClick={() => setStatus("Open")}>Pending</button>
+                <button onClick={() => setStatus("Used")}>Used </button>
+                <button onClick={() => setStatus("Cancelled")}>
+                  Cancelled
+                </button>
+              </div>
+            )}
+
+            <div>
+              <div style={{ flex: "1", fontFamily: "fangsong" }}>
+                Booking History
+              </div>
+              <div
+                style={{ borderRadius: "10px", cursor: "pointer" }}
+                onClick={() => setShowMenu(!showMenu)}
+              >
+                <MdFilterAlt color="orange" size={25} />
+              </div>
+            </div>
+            <div className={style.buttons}>
+              <button
+                onClick={() => setHistory("booking")}
+                style={
+                  history === "booking"
+                    ? { background: "#8e2de2", color: "#fff" }
+                    : {}
+                }
+              >
+                Entrance Code
+              </button>
+              <button
+                style={
+                  history === "payment"
+                    ? { background: "#8e2de2", color: "#fff" }
+                    : {}
+                }
+                onClick={() => setHistory("payment")}
+              >
+                Exit Code
+              </button>
+            </div>
+          </div>
+          <div className={style.div}>
+            <div>
+              {bookings.length > 0 ? (
+                bookings.map((b, index) => (
+                  <div
+                    key={index}
+                    className={style.book}
+                    onClick={() => {
+                      (getBook(b.id), getBookingQRCode(b.id));
+                    }}
+                  >
+                    <div className={style.info}>
+                      <div style={{ color: "black", fontWeight: "bold" }}>
+                        {new Date(b.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}{" "}
+                        <span
+                          style={{
+                            fontSize: "smaller",
+                            margin: "0px",
+                            color: "grey",
+                          }}
+                        >
+                          {new Date(b.date).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      {b.status == "Open" && (
+                        <div
+                          style={{
+                            textAlign: "end",
+                            color: "#22b814",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {b.status}
+                        </div>
+                      )}
+                      {b.status == "Cancelled" && (
+                        <div
+                          style={{
+                            textAlign: "end",
+                            color: "#b81414",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {b.status}
+                        </div>
+                      )}
+                      {b.status == "Used" && (
+                        <div
+                          style={{
+                            textAlign: "end",
+                            color: "#ffa600",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {b.status}
+                        </div>
+                      )}
+                    </div>
+                    <div
+                      className={style.info}
+                      style={{ border: "none", marginTop: "5px" }}
+                    >
+                      <div>Parking Area</div>
+                      <div style={{ textAlign: "end" }}>{b.area}</div>
+                    </div>
+                    <div className={style.info} style={{ border: "none" }}>
+                      <div>Level</div>
+                      <div style={{ textAlign: "end" }}>{b.level}</div>
+                    </div>
+                    <div className={style.info} style={{ border: "none" }}>
+                      <div>Space</div>
+                      <div style={{ textAlign: "end" }}>{b.spot}</div>
+                    </div>
+                    <div className={style.info} style={{ border: "none" }}>
+                      <div>Price</div>
+                      <div style={{ textAlign: "end" }}>{b.price} birr/hr</div>
+                    </div>
+                  </div>
+                ))
+              ) : (
                 <div
-                  key={index}
-                  style={{ marginBottom: "2,5px", marginTop: "2.5px" }}
-                  className={style.book}
-                  onClick={() => {
-                    (getBook(b.id), getBookingQRCode(b.id));
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    textAlign: "center",
+                    alignContent: "center",
                   }}
                 >
-                  <div className={style.info}>
-                    <div>{new Date(b.date).toLocaleDateString()}</div>
-                    {b.status == "Open" && (
-                      <div
-                        style={{
-                          textAlign: "end",
-                          color: "#22b814",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {b.status}
-                      </div>
-                    )}
-                    {b.status == "Cancelled" && (
-                      <div
-                        style={{
-                          textAlign: "end",
-                          color: "#b81414",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {b.status}
-                      </div>
-                    )}
-                    {b.status == "Used" && (
-                      <div
-                        style={{
-                          textAlign: "end",
-                          color: "#ffa600",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {b.status}
-                      </div>
-                    )}
-                  </div>
-                  <div
-                    className={style.info}
-                    style={{ border: "none", marginTop: "5px" }}
-                  >
-                    <div>Parking Area</div>
-                    <div style={{ textAlign: "end" }}>{b.area}</div>
-                  </div>
-                  <div className={style.info} style={{ border: "none" }}>
-                    <div>Level</div>
-                    <div style={{ textAlign: "end" }}>{b.level}</div>
-                  </div>
-                  <div className={style.info} style={{ border: "none" }}>
-                    <div>Space</div>
-                    <div style={{ textAlign: "end" }}>{b.spot}</div>
-                  </div>
-                  <div className={style.info} style={{ border: "none" }}>
-                    <div>Price</div>
-                    <div style={{ textAlign: "end" }}>{b.price} birr/hr</div>
-                  </div>
+                  No {history} Found
                 </div>
-              ))
-            ) : (
-              <h2>No Booking Found</h2>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        </>
       ) : (
         <div className={style.showBooking}>
           <div

@@ -99,5 +99,26 @@ group by p.id, p.areaStatus
 
 """)
     List<ManageAreaDTO> search(@Param("name") String name);
-
+    @Query("""
+ select new com.parkify.back.dto.LocationDTO(
+ a.name,
+ a.latitude,
+ a.longitude,
+ a.id
+ 
+ )
+ from ParkingArea a
+ where a.name like %:name%
+""")
+    List<LocationDTO> searchLocation(@Param("name") String name);
+    @Query("""
+ select new com.parkify.back.dto.CoordsDTO(
+ p.latitude,
+ p.longitude
+ 
+ )
+ FROM ParkingArea p
+ where p.id = :id
+""")
+    List<CoordsDTO> getCoords(@Param("id") long id);
 }

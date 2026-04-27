@@ -9,6 +9,7 @@ function AdminOutlet() {
   const isAuthenticated = !!sessionStorage.getItem("user");
   const [role, setRole] = useState("");
   const user = sessionStorage.getItem("user");
+  const current = localStorage.getItem("adminPage") || "home";
 
   useEffect(() => {
     if (user) {
@@ -46,17 +47,55 @@ function AdminOutlet() {
       </div>
       <div className={style.leftPanel}>
         <div className={style.buttonContainer}>
-          <button onClick={() => navigate("home")}>Dashboard</button>
-          <button onClick={() => navigate("newParkingLots")}>
+          <button
+            className={current == "home" ? style.current : ""}
+            onClick={() => {
+              (navigate("home"), localStorage.setItem("adminPage", "home"));
+            }}
+          >
+            Dashboard
+          </button>
+          <button
+            className={current == "new" ? style.current : ""}
+            onClick={() => {
+              (navigate("newParkingLots"),
+                localStorage.setItem("adminPage", "new"));
+            }}
+          >
             Add Parking Area
           </button>
-          <button onClick={() => navigate("manageParking")}>
+          <button
+            className={current == "manageArea" ? style.current : ""}
+            onClick={() => {
+              (navigate("manageParking"),
+                localStorage.setItem("adminPage", "manageArea"));
+            }}
+          >
             Manage Parking Area
           </button>
-          <button onClick={() => navigate("manageUser")}>Manage Users</button>
-          <button onClick={() => navigate("support")}>Support</button>
+          <button
+            className={current == "manageUser" ? style.current : ""}
+            onClick={() => {
+              (navigate("manageUser"),
+                localStorage.setItem("adminPage", "manageUser"));
+            }}
+          >
+            Manage Users
+          </button>
+          <button
+            className={current == "support" ? style.current : ""}
+            onClick={() => {
+              (navigate("support"),
+                localStorage.setItem("adminPage", "support"));
+            }}
+          >
+            Support
+          </button>
         </div>
-        <div className={style.decor}></div>
+        <div className={style.decor}>
+          <div className={style.profile}></div>
+          <div style={{ alignContent: "center" }}>Admin Name</div>
+        </div>
       </div>
       <main className={style.content}>
         <Outlet />

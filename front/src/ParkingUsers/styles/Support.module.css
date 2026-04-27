@@ -7,8 +7,8 @@
   justify-items: center;
 }
 .container .contentContainer {
-  width: 80%;
-  height: calc(100% - 200px);
+  width: 60%;
+  height: calc(100% - 150px);
   background: #ededed;
   margin-bottom: 10px;
   overflow-y: auto;
@@ -68,7 +68,7 @@
 @media (max-width: 700px) {
   .container {
     position: fixed;
-    height: calc(100% - 75px);
+    height: calc(100% - 125px);
   }
   .container .label {
     position: absolute;

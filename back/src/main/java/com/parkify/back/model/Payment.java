@@ -15,9 +15,12 @@ public class Payment {
     @JoinColumn(name="booking_id")
     private Bookings booking;
     private Instant date;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
     @PrePersist
     public void prePersist() {
         this.date = Instant.now();
+        this.status = PaymentStatus.Open;
     }
 
     public long getId() {
