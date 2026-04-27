@@ -68,7 +68,7 @@
   border-radius: 5px;
   display: flex;
   gap: 5px;
-  max-height: calc(100% - 110px);
+  max-height: calc(100% - 100px);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -256,8 +256,12 @@
     z-index: 2;
   }
   .container .div .book {
-    width: calc(100% - 1em);
+    width: calc(95% - 1em);
+    margin-left: 2.5%;
     background: #fff;
+    font-size: small;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: grey;
   }
   .container .showBooking {
     grid-template-columns: 1fr;

@@ -5,6 +5,8 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.encoder.QRCode;
+import com.parkify.back.dto.AreaBookingDTO;
+import com.parkify.back.dto.ChartDTO;
 import com.parkify.back.dto.UserBookingHistoryDTO;
 import com.parkify.back.dto.UserBookingsDTO;
 import com.parkify.back.model.*;
@@ -212,4 +214,21 @@ public class BookingController {
         ArrayList<UserBookingsDTO> userBookingsDTO = new ArrayList<>();
         return userBookingsDTO;
     }
+    @GetMapping("/getAreaBooking/{id}")
+    public List<ChartDTO> getAreaBooking(@PathVariable long id){
+        return bookingsRepository.getAreaBooking(id,BookingStatus.Open);
+    }
+    @GetMapping("/getAreaCancelledBooking/{id}")
+    public List<ChartDTO> getAreaCancelledBooking(@PathVariable long id){
+        return bookingsRepository.getAreaBooking(id,BookingStatus.Cancelled);
+    }
+    @GetMapping("/getAllAreaBooking/{id}")
+    public List<AreaBookingDTO> getAllAreaBokking(@PathVariable long id){
+        return bookingsRepository.getAreaAllBooking(id);
+    }
+    @GetMapping("/searchAreaBooking/{id}/{email}")
+    public List<AreaBookingDTO> searchAreaBooking(@PathVariable long id, @PathVariable String email){
+        return bookingsRepository.getAreaBookingByEmail(email,id);
+    }
+
 }

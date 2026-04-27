@@ -26,6 +26,7 @@ function AddParkingArea() {
   const [showAddLevelForm, setShowAddLevelForm] = useState(false);
   const [parkingArea, setParkingArea] = useState([]);
   const [lots, setLots] = useState([]);
+  console.log(position);
   const getLocations = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/parkingArea/getLocations`, {
@@ -35,7 +36,6 @@ function AddParkingArea() {
       setLocations(data);
     } catch (err) {
       toast.error("Failed to fetch parking areas. Please try again.");
-      console.log(err);
     }
   };
   const redIcon = new L.Icon({
@@ -106,7 +106,7 @@ function AddParkingArea() {
       getLots(parkingArea[0].id);
       setShowAddLevelForm(false);
     } catch (err) {
-      toast.error(err);
+      toast.error("Failed to add lot please try again");
     }
   };
   const getParkingArea = async (id) => {

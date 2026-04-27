@@ -84,3 +84,82 @@
 .container .bottom .display .parking div button:hover {
   transform: translateY(-5px);
 }
+.container .infoContainer {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background: #ededed;
+}
+.container .infoContainer .parkingInfo {
+  width: calc(100% - 1em);
+  height: calc(40% - 1em);
+  padding: 0.5em;
+  display: flex;
+  gap: 5px;
+}
+
+.container .infoContainer .parkingInfo .map {
+  width: 300px;
+}
+.container .infoContainer .parkingInfo .chart {
+  flex: 1;
+  background: #fff;
+  border-radius: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.container .infoContainer .parkingInfo .more {
+  width: 300px;
+  display: grid;
+  gap: 10px;
+}
+.container .infoContainer .parkingInfo .more div {
+  background: #fff;
+}
+.container .infoContainer .recentPayment {
+  width: calc(100% - 1em);
+  height: calc(60% - 1em);
+  padding: 0.5em;
+  justify-items: center;
+}
+.container .infoContainer .recentPayment .searchContainer {
+  width: 80%;
+  height: 60px;
+  background: #80808077;
+  text-align: center;
+  align-content: center;
+  border-radius: 5px;
+}
+.container .infoContainer .recentPayment .searchContainer input {
+  width: 90%;
+  height: 80%;
+  outline: none;
+  border: 1px solid #ededed;
+  border-radius: 10px;
+  text-align: center;
+}
+.container .infoContainer .recentPayment .displayContainer {
+  width: 80%;
+  height: calc(100% - 62px);
+  margin-top: 2px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.container .infoContainer .recentPayment .displayContainer .booking {
+  width: calc(100% - 1em);
+  padding: 0.5em;
+  height: 60px;
+  background: #fff;
+  margin-top: 5px;
+  border-radius: 5px;
+  display: flex;
+  gap: 2px;
+}
+.container .infoContainer .recentPayment .displayContainer .booking div {
+  flex: 1;
+  align-content: center;
+  text-align: center;
+}

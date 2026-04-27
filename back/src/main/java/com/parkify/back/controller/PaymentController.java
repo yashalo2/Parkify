@@ -67,19 +67,21 @@ public class PaymentController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
         }
         User user = userRepository.findByEmail(email);
-        if(status.equals(BookingStatus.Open.toString())){
-            return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId(),BookingStatus.Open));
+        if(status.equals(PaymentStatus.Open.toString())){
+            return ResponseEntity.ok().body(paymentRepository.getBookingInfo(user.getId(),PaymentStatus.Open));
 
         }
-        if(status.equals(BookingStatus.Used.toString())){
-            return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId(),BookingStatus.Used));
+        if(status.equals(PaymentStatus.Used.toString())){
+            return ResponseEntity.ok().body(paymentRepository.getBookingInfo(user.getId(),PaymentStatus.Used));
 
-        }if(status.equals(BookingStatus.Cancelled.toString())){
-            return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId(),BookingStatus.Cancelled));
         }
-        return ResponseEntity.ok().body(bookingsRepository.getBooking(user.getId()));
+        return ResponseEntity.ok().body(paymentRepository.getPayment(user.getId()));
 
 
+    }
+    @GetMapping("/getAreaGross/{id}")
+    public List<ChartDTO> getAreaGross(@PathVariable long id) {
+        return paymentRepository.getChart(id);
     }
 
 }

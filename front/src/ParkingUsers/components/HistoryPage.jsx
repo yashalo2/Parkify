@@ -14,6 +14,7 @@ function History() {
   const [amount, setAmount] = useState(0);
   const [showMenu, setShowMenu] = useState(false);
   const [status, setStatus] = useState("Open");
+  const [history, setHistory] = useState("booking");
   const pay = async (booking, e) => {
     e.preventDefault();
 
@@ -40,7 +41,7 @@ function History() {
   const getMyBooking = async () => {
     try {
       const response = await fetch(
-        `${Base_URL}/api/booking/getMyBooking/${status}`,
+        `${Base_URL}/api/${history}/getMyBooking/${status}`,
         {
           method: "GET",
           credentials: "include",
@@ -51,9 +52,9 @@ function History() {
         return;
       }
       const data = await response.json();
-      setBookings(data);
+      setBookings(data.reverse());
     } catch (err) {
-      console.log(err);
+      toast.error("Error Occurred");
     } finally {
       setShowMenu(false);
     }
@@ -87,7 +88,7 @@ function History() {
   };
   useEffect(() => {
     getMyBooking();
-  }, [status]);
+  }, [status, history]);
   return (
     <div className={style.container}>
       {showBooking ? (
@@ -117,10 +118,26 @@ function History() {
               </div>
             </div>
             <div className={style.buttons}>
-              <button style={{ background: "#8e2de2", color: "#fff" }}>
+              <button
+                onClick={() => setHistory("booking")}
+                style={
+                  history === "booking"
+                    ? { background: "#8e2de2", color: "#fff" }
+                    : {}
+                }
+              >
                 Entrance Code
               </button>
-              <button>Exit Code</button>
+              <button
+                style={
+                  history === "payment"
+                    ? { background: "#8e2de2", color: "#fff" }
+                    : {}
+                }
+                onClick={() => setHistory("payment")}
+              >
+                Exit Code
+              </button>
             </div>
           </div>
           <div className={style.div}>
@@ -135,7 +152,22 @@ function History() {
                     }}
                   >
                     <div className={style.info}>
-                      <div>{new Date(b.date).toLocaleDateString()}</div>
+                      <div style={{ color: "black", fontWeight: "bold" }}>
+                        {new Date(b.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}{" "}
+                        <span
+                          style={{
+                            fontSize: "smaller",
+                            margin: "0px",
+                            color: "grey",
+                          }}
+                        >
+                          {new Date(b.date).toLocaleTimeString()}
+                        </span>
+                      </div>
                       {b.status == "Open" && (
                         <div
                           style={{
@@ -200,7 +232,7 @@ function History() {
                     alignContent: "center",
                   }}
                 >
-                  No Booking Found
+                  No {history} Found
                 </div>
               )}
             </div>

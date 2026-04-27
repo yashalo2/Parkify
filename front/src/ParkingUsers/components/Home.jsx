@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import { MdSearch } from "react-icons/md";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
+import marker from "../../assets/marker-icon-orange.png";
+import shadow from "../../assets/marker-shadow.png";
 import { Base_URL } from "../../config";
 import style from "../styles/Home.module.css";
 import Booking from "./Booking";
@@ -30,10 +32,8 @@ function Home() {
   };
 
   const orangeIcon = new L.Icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png",
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    iconUrl: marker,
+    shadowUrl: shadow,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -49,7 +49,6 @@ function Home() {
       );
       const data = await response.json();
       setSelectedArea(data);
-      console.log(data);
     } catch (err) {
       toast.error("Error Occurred!");
     }

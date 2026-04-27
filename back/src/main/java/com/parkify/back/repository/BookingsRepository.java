@@ -143,5 +143,35 @@ from Bookings b
 where b.user.id = :id and b.status = :status
 """)
     List<UserBookingsDTO> getUserBookingsByStatus(@Param("id") long id, @Param("status") BookingStatus status);
+    @Query("""
+select new com.parkify.back.dto.ChartDTO(
+b.bookingDate,
+count (*)
+)
+from Bookings b
+where b.spot.parkingLots.parkingArea.id = :id and b.status = :status
+group by b.bookingDate
+""")
+    List<ChartDTO> getAreaBooking(@Param("id") long id,@Param("status") BookingStatus status);
+    @Query("""
+select new com.parkify.back.dto.AreaBookingDTO(
+b.user.email,
+b.bookingDate,
+b.status
+)
+from Bookings b
+where b.spot.parkingLots.parkingArea.id = :id
+""")
+    List<AreaBookingDTO> getAreaAllBooking(@Param("id") long id);
+    @Query("""
+select new com.parkify.back.dto.AreaBookingDTO(
+b.user.email,
+b.bookingDate,
+b.status
+)
+from Bookings b
+where b.spot.parkingLots.parkingArea.id = :id and b.user.email like %:email%
+""")
+    List<AreaBookingDTO> getAreaBookingByEmail(@Param("email") String email, @Param("id") long id);
 
 }

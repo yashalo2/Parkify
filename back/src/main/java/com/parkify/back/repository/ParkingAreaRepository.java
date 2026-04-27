@@ -111,4 +111,14 @@ group by p.id, p.areaStatus
  where a.name like %:name%
 """)
     List<LocationDTO> searchLocation(@Param("name") String name);
+    @Query("""
+ select new com.parkify.back.dto.CoordsDTO(
+ p.latitude,
+ p.longitude
+ 
+ )
+ FROM ParkingArea p
+ where p.id = :id
+""")
+    List<CoordsDTO> getCoords(@Param("id") long id);
 }

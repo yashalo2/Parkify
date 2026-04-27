@@ -111,9 +111,9 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("""
  select new com.parkify.back.dto.GetBookingDTO(
  py.id,
- b.bookingDate,
+ py.date,
  b.status,
- p.name,
+ p.name,    
  pa.level,
  s.spotName,
  pa.price
@@ -126,5 +126,32 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
  where b.user.id = :id and py.status = :status
 """)
     List<GetBookingDTO> getBookingInfo(@Param("id") long id,@Param("status") PaymentStatus status);
+    @Query("""
+ select new com.parkify.back.dto.GetBookingDTO(
+ py.id,
+ b.bookingDate,
+ b.status,
+ p.name,
+ pa.level,
+ s.spotName,
+ pa.price
+ )
+ from Payment py
+ join py.booking b
+ join b.spot s
+ join s.parkingLots pa
+ join pa.parkingArea p
+ where b.user.id = :id
+""")
+    List<GetBookingDTO> getPayment(@Param("id") long id);
+    @Query("""
+select new com.parkify.back.dto.ChartDTO(
+    p.date,
+    p.amount
 
+)
+from Payment p
+where p.booking.spot.parkingLots.parkingArea.id = :id
+""")
+    List<ChartDTO> getChart(@Param("id") long id);
 }
