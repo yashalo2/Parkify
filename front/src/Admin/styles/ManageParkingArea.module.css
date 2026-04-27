@@ -81,9 +81,7 @@
   transition: 0.3s;
   z-index: 10;
 }
-.container .bottom .display .parking div button:hover {
-  transform: translateY(-5px);
-}
+
 .container .infoContainer {
   position: absolute;
   top: 0px;
