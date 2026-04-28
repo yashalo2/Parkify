@@ -3,9 +3,7 @@ package com.parkify.back.controller;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.parkify.back.dto.ChartDTO;
-import com.parkify.back.dto.CompareGrossDTO;
-import com.parkify.back.dto.PaymentInfoDTO;
+import com.parkify.back.dto.*;
 import com.parkify.back.model.*;
 import com.parkify.back.repository.BookingsRepository;
 import com.parkify.back.repository.PaymentRepository;
@@ -82,6 +80,31 @@ public class PaymentController {
     @GetMapping("/getAreaGross/{id}")
     public List<ChartDTO> getAreaGross(@PathVariable long id) {
         return paymentRepository.getChart(id);
+    }
+    @GetMapping("/getTopGrossingAllTime")
+    public List<CompareGrossDTO> getTopGrossingAllTime() {
+        return paymentService.getTopGrossingAllTime();
+    }
+
+    @GetMapping("/getLessGrossingAllTime")
+    public List<CompareGrossDTO> getLessGrossingAllTime() {
+        return paymentService.getLessGrossingAllTime();
+    }
+    @GetMapping("/getLessGrossingCount")
+    public List<CountInfoDTO> getLessGrossingCount() {
+        return paymentService.getLessCount();
+    }
+    @GetMapping("/getTopGrossingCount")
+    public List<CountInfoDTO> getTopGrossingCount() {
+        return paymentService.getTopCount();
+    }
+    @GetMapping("/getTopArea")
+    public AreaDTO getTopArea() {
+        return paymentService.getTopArea();
+    }
+    @GetMapping("/getLessArea")
+    public AreaDTO getLessArea() {
+        return paymentService.getLessArea();
     }
 
 }

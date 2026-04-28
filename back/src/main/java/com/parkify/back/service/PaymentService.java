@@ -1,6 +1,8 @@
 package com.parkify.back.service;
 
+import com.parkify.back.dto.AreaDTO;
 import com.parkify.back.dto.CompareGrossDTO;
+import com.parkify.back.dto.CountInfoDTO;
 import com.parkify.back.dto.IdDTO;
 import com.parkify.back.model.Bookings;
 import com.parkify.back.model.Payment;
@@ -60,6 +62,55 @@ public class PaymentService {
             return new ArrayList<>();
         }
         return paymentRepository.getLessGrossing(top.getId());
+    }
+    public List<CompareGrossDTO> getTopGrossingAllTime(){
+        List<IdDTO> results = paymentRepository.getTopGrossingAllTime();
+        IdDTO top = results.isEmpty() ? null : results.get(0);
+        if(top == null){
+            return new ArrayList<>();
+
+        }
+        return paymentRepository.getTopGrossing(top.getId());
+    }
+    public List<CompareGrossDTO> getLessGrossingAllTime(){
+        List<IdDTO> results = paymentRepository.getLessGrossingAllTime();
+        IdDTO top = results.isEmpty() ? null : results.get(0);
+        if(top == null){
+            return new ArrayList<>();
+        }
+        return paymentRepository.getLessGrossing(top.getId());
+    }
+    public List<CountInfoDTO> getLessCount(){
+        List<IdDTO> results = paymentRepository.getLessGrossingAllTime();
+        IdDTO top = results.isEmpty() ? null : results.get(0);
+        if(top == null){
+            return new ArrayList<>();
+        }
+        return paymentRepository.getCountInfo(top.getId());
+    }
+    public List<CountInfoDTO> getTopCount(){
+        List<IdDTO> results = paymentRepository.getTopGrossingAllTime();
+        IdDTO top = results.isEmpty() ? null : results.get(0);
+        if(top == null){
+            return new ArrayList<>();
+        }
+        return paymentRepository.getCountInfo(top.getId());
+    }
+    public AreaDTO getTopArea(){
+        List<IdDTO> results = paymentRepository.getTopGrossingAllTime();
+        IdDTO top = results.isEmpty() ? null : results.get(0);
+        if(top == null){
+            return null;
+        }
+        return paymentRepository.getAreaInfo(top.getId());
+    }
+    public AreaDTO getLessArea(){
+        List<IdDTO> results = paymentRepository.getLessGrossingAllTime();
+        IdDTO top = results.isEmpty() ? null : results.get(0);
+        if(top == null){
+            return null;
+        }
+        return paymentRepository.getAreaInfo(top.getId());
     }
 
 }

@@ -1,5 +1,6 @@
 package com.parkify.back.service;
 
+import com.parkify.back.dto.ActiveBookingUsersDTO;
 import com.parkify.back.dto.ChartDTO;
 import com.parkify.back.dto.UserBookingHistoryDTO;
 import com.parkify.back.dto.UserBookingsDTO;
@@ -110,5 +111,19 @@ public class BookingService {
             return list;
         }
         return bookingsRepository.getUserBookingsByStatus(id,BookingStatus.Used);
+    }
+    public ActiveBookingUsersDTO getActiveBookingUsers() {
+        Instant startTime = Instant.now();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDate today = LocalDate.now(zoneId);
+        LocalDate WeekStartDate = today.with(DayOfWeek.MONDAY);
+        LocalDate WeekEndDate = today.with(DayOfWeek.SUNDAY);
+        Instant startWeekStartTime = WeekStartDate.atStartOfDay().atZone(zoneId).toInstant();
+        Instant weekEnd=WeekEndDate.atStartOfDay().atZone(zoneId).toInstant();
+        LocalDate monthStart = today.withDayOfMonth(1);
+        LocalDate monthEnd = monthStart.plusMonths(1).minusDays(1);
+        Instant monthStartTime = monthStart.atStartOfDay().atZone(zoneId).toInstant();
+        Instant monthEndTime = monthEnd.atTime(LocalTime.MAX).atZone(zoneId).toInstant();
+        return bookingsRepository.getActiveBookingUsers(startWeekStartTime,weekEnd,monthStartTime,monthEndTime);
     }
 }

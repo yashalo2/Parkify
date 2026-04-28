@@ -5,11 +5,15 @@ import com.parkify.back.model.*;
 import com.parkify.back.repository.EntranceScannerRepository;
 import com.parkify.back.repository.ExitScannerRepository;
 import com.parkify.back.repository.ParkingAreaRepository;
+import com.parkify.back.repository.UserRepository;
 import com.parkify.back.service.ParkingAreaService;
+import jakarta.servlet.http.HttpSession;
+import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,6 +27,9 @@ public class ParkingAreaController {
     private ExitScannerRepository exitScannerRepository;
     @Autowired
     private EntranceScannerRepository entranceScannerRepository;
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping("/getLocations")
     public List<LocationDTO> getLocations() {
          return parkingAreaRepository.getLocations();
@@ -78,5 +85,31 @@ public class ParkingAreaController {
     public List<CoordsDTO> getCoords(@PathVariable long id) {
         return parkingAreaRepository.getCoords(id);
     }
+    @GetMapping("/getAddGateInfo/{id}")
+    public List<AddGateDTO> getAddGateInfo(@PathVariable long id, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return new ArrayList<>();
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            return parkingAreaRepository.getAddGateInfo(id);
+        }
+        return new ArrayList<>();
+
+    }
+    @PostMapping("/entrance/{id}")
+    public String entrance(String password, @PathVariable long id, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return "User Not Logged In";
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+
+        }
+        return "UnAuthorized User";
+    }
+
 
 }

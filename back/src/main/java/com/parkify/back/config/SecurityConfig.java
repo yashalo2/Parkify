@@ -43,7 +43,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:5173","http://192.168.2.215:5173")
+                        .allowedOrigins("http://localhost:5173","http://192.168.22.215:5173")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowCredentials(true);
             }

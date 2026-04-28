@@ -121,4 +121,18 @@ group by p.id, p.areaStatus
  where p.id = :id
 """)
     List<CoordsDTO> getCoords(@Param("id") long id);
+    @Query("""
+select new com.parkify.back.dto.AddGateDTO(
+p.id,
+p.name,
+Size(p.parkingLots),
+Count(s)
+)
+from ParkingArea p
+join p.parkingLots pa
+join pa.spots s
+where p.id = :id
+group by p.id
+""")
+    List<AddGateDTO> getAddGateInfo(@Param("id") long id);
 }

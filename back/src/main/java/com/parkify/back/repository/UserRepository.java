@@ -54,5 +54,11 @@ from User u
 where u.id = :id
 """)
     UserDTO getUserDTO(@Param("id") long id);
+    @Query("""
+    select Count(u)
+    from User u
+    where u.role = :role
+""")
+    long count(@Param("role") Role role);
 
 }

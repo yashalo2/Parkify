@@ -5,10 +5,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.encoder.QRCode;
-import com.parkify.back.dto.AreaBookingDTO;
-import com.parkify.back.dto.ChartDTO;
-import com.parkify.back.dto.UserBookingHistoryDTO;
-import com.parkify.back.dto.UserBookingsDTO;
+import com.parkify.back.dto.*;
 import com.parkify.back.model.*;
 import com.parkify.back.repository.BookingsRepository;
 import com.parkify.back.repository.SpotsRepository;
@@ -229,6 +226,23 @@ public class BookingController {
     @GetMapping("/searchAreaBooking/{id}/{email}")
     public List<AreaBookingDTO> searchAreaBooking(@PathVariable long id, @PathVariable String email){
         return bookingsRepository.getAreaBookingByEmail(email,id);
+    }
+    @GetMapping("/getActiveBookingUsers")
+    public ActiveBookingUsersDTO getActiveBookingUsers(){
+        return bookingService.getActiveBookingUsers();
+    }
+    @GetMapping("/getAllAreaCount")
+    public List<CountInfoDTO> getAllAreaCount(HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return new ArrayList<>();
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            return bookingsRepository.getAllTimeCountInfo();
+        }
+        return new ArrayList<>();
+
     }
 
 }
