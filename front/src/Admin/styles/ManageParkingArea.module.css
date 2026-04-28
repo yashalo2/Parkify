@@ -9,10 +9,44 @@
   display: flex;
   gap: 5px;
 }
-.container .top div {
+.container .top .div {
   flex: 1;
   background: #fff;
   border-radius: 5px;
+}
+.container .top .div .upperInfo {
+  width: 100%;
+  height: 60%;
+}
+.container .top .div .upperInfo .numbers {
+  width: calc(100% - 1em);
+  height: 40%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding-left: 1em;
+  justify-items: center;
+  gap: 20px;
+  overflow: hidden;
+}
+.container .top .div .upperInfo .numbers .number {
+  flex: 1;
+  display: grid;
+  align-content: top;
+  gap: 0px;
+  height: max-content;
+  padding: 0px;
+}
+.container .top .div .upperInfo .lines {
+  width: 100%;
+  height: 30%;
+}
+.container .top .div .upperInfo .labels {
+  width: 100%;
+  height: 30%;
+}
+.container .top .div .lower {
+  width: 100%;
+  height: 40%;
 }
 .container .bottom {
   width: 100%;
@@ -42,6 +76,7 @@
   text-align: center;
 }
 .container .bottom .display {
+  position: relative;
   width: 100%;
   height: calc(100% - 65px);
   margin-top: 5px;
@@ -49,8 +84,13 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
+.container .bottom .display .parkings {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
 .container .bottom .display .parking {
-  width: calc(90% - 1em);
+  width: calc(100% - 1em);
   padding-right: 0.5em;
   padding-left: 0.5em;
   height: 60px;
@@ -81,7 +121,116 @@
   transition: 0.3s;
   z-index: 10;
 }
-
+.container .bottom .display .addGate {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background: #ededed8a;
+  backdrop-filter: blur(2px);
+  align-content: center;
+  justify-items: center;
+}
+.container .bottom .display .addGate .form {
+  padding: 0.5em;
+  background: #fff;
+  width: 60%;
+  height: 60%;
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px #8080805e;
+}
+.container .bottom .display .addGate .form .parkingName {
+  width: 100%;
+  height: 50px;
+  align-content: center;
+}
+.container .bottom .display .addGate .form .parkingLevelInfo {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  gap: 20px;
+}
+.container .bottom .display .addGate .form .parkingLevelInfo div {
+  flex: 1;
+  align-content: center;
+  text-align: center;
+  font-size: larger;
+  display: flex;
+}
+.container .bottom .display .addGate .form .parkingLevelInfo div p {
+  flex: 1;
+}
+.container .bottom .display .addGate .form .dataForm {
+  width: 100%;
+  height: calc(100% - 130px);
+  display: grid;
+}
+.container .bottom .display .addGate .form .dataForm div {
+  display: flex;
+  gap: 5px;
+  padding: 0.5em;
+}
+.container .bottom .display .addGate .form .dataForm div input,
+select {
+  flex: 1;
+  height: 30%;
+  outline: none;
+  border: 1px solid grey;
+  text-align: center;
+  border-radius: 10px;
+  padding: 0.5em;
+}
+.container .bottom .display .addGate .form .dataForm div select {
+  height: max-content;
+}
+.container .bottom .display .addGate .form .dataForm div button {
+  width: 60%;
+  margin-left: 20%;
+  height: 80%;
+  font-size: larger;
+  background: blue;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+}
+.container .bottom .display .closeOrOpen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #ededed7e;
+  top: 0px;
+  left: 0px;
+  align-content: center;
+  justify-items: center;
+  backdrop-filter: blur(2px);
+}
+.container .bottom .display .closeOrOpen .confirm {
+  padding: 0.5em;
+  background: #fff;
+  width: 60%;
+  height: 20%;
+  border-radius: 10px;
+  box-shadow: 0px 0px 100px grey;
+  display: grid;
+}
+.container .bottom .display .closeOrOpen .confirm div {
+  display: flex;
+  gap: 40px;
+  text-align: center;
+}
+.container .bottom .display .closeOrOpen .confirm div button {
+  flex: 1;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+.container .bottom .display .closeOrOpen .confirm div button:hover {
+  transform: translateY(-5px);
+}
 .container .infoContainer {
   position: absolute;
   top: 0px;
@@ -140,11 +289,12 @@
   text-align: center;
 }
 .container .infoContainer .recentPayment .displayContainer {
-  width: 80%;
-  height: calc(100% - 62px);
+  width: calc(100% - 1em);
+  height: calc(100% - 62px - 1em);
   margin-top: 2px;
   overflow-y: auto;
   overflow-x: hidden;
+  padding: 0.5em;
 }
 .container .infoContainer .recentPayment .displayContainer .booking {
   width: calc(100% - 1em);

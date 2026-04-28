@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdArrowBack, MdClose, MdFilterAlt } from "react-icons/md";
+import cbe from "../../assets/cbeBirr.png";
 import logo from "../../assets/logo.png";
+import mpesa from "../../assets/Mpesa.png";
+import tele from "../../assets/teleBirr (2).png";
 import { Base_URL } from "../../config";
 import style from "../styles/HistoryPage.module.css";
 function History() {
@@ -15,6 +18,7 @@ function History() {
   const [showMenu, setShowMenu] = useState(false);
   const [status, setStatus] = useState("Open");
   const [history, setHistory] = useState("booking");
+  const [currentOn, setCurrent] = useState("cbe");
   const pay = async (booking, e) => {
     e.preventDefault();
 
@@ -417,14 +421,47 @@ function History() {
                 <MdClose color="#fff" size={24} />
               </div>
               <div className={style.form}>
-                <div>
-                  <label>select payment method</label>
-                  <select name="bank" id="">
-                    <option value=""></option>
-                    <option value="cbeBirr"> cbeBirr</option>
-                    <option value="teleBirr"> telebirr</option>
-                    <option value="Mpesa"> MPESA</option>
-                  </select>
+                <div style={{ display: "flex", height: "60px" }}>
+                  <div
+                    className={(currentOn = "cbe" ? style.current : "")}
+                    onClick={() => setCurrent("cbe")}
+                    style={{
+                      background: "#8d2de2ad",
+                      borderRadius: "20px",
+                      flex: "1",
+                    }}
+                  >
+                    <img
+                      style={{
+                        width: "100%",
+                        height: "50%",
+                      }}
+                      src={cbe}
+                      alt=""
+                    />
+                  </div>
+                  <div
+                    onClick={() => setCurrent("tele")}
+                    className={(currentOn = "tele" ? style.current : "")}
+                    style={{ flex: "1" }}
+                  >
+                    <img
+                      style={{ width: "100%", height: "50%" }}
+                      src={tele}
+                      alt=""
+                    />
+                  </div>
+                  <div
+                    onClick={() => setCurrent("mpesa")}
+                    className={(currentOn = "mpesa" ? style.current : "")}
+                    style={{ flex: "1" }}
+                  >
+                    <img
+                      style={{ width: "100%", height: "50%" }}
+                      src={mpesa}
+                      alt=""
+                    />
+                  </div>
                 </div>
                 <div>
                   <label>Enter account number</label>

@@ -26,7 +26,6 @@ function AddParkingArea() {
   const [showAddLevelForm, setShowAddLevelForm] = useState(false);
   const [parkingArea, setParkingArea] = useState([]);
   const [lots, setLots] = useState([]);
-  console.log(position);
   const getLocations = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/parkingArea/getLocations`, {

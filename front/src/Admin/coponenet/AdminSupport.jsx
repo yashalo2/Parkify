@@ -16,6 +16,11 @@ function AdminSupportPage() {
   const [fullName, setFullName] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const notification = new Audio(notifications);
+  const viewRef = useRef(null);
+  const scrollDown = () => {
+    viewRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const textRef = useRef(null);
   const getNeedyUsers = async () => {
     try {
@@ -127,7 +132,9 @@ function AdminSupportPage() {
       setMyId(Number(userI.id));
     }
   }, []);
-
+  useEffect(() => {
+    scrollDown();
+  }, [messages]);
   return (
     <div className={style.container}>
       <div className={style.userContainer}>
@@ -240,6 +247,7 @@ function AdminSupportPage() {
             ) : (
               <div></div>
             )}
+            <div ref={viewRef}></div>
           </div>
           <div className={style.input}>
             <div className={style.textarea}>

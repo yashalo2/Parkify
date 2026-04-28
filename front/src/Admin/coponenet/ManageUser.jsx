@@ -36,7 +36,21 @@ function ManageUser() {
   const [usedBookings, setUsedBookings] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [cancelledBookings, setCancelledBookings] = useState([]);
-
+  const [counts, setCounts] = useState({});
+  const getActiveUsers = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/booking/getActiveBookingUsers`,
+        {
+          method: "GET",
+        },
+      );
+      const data = await response.json();
+      setCounts(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
   const data = [
     {
       status: "Active",
@@ -95,7 +109,6 @@ function ManageUser() {
         credentials: "include",
       });
       const data = await response.json();
-      console.log(data);
       setUsed(data);
     } catch (err) {
       toast.error("Error Occurred");
@@ -138,7 +151,6 @@ function ManageUser() {
         },
       );
       const data = await response.json();
-      console.log(data);
       setBookings(data);
     } catch (err) {
       toast.error("Error Occurred");
@@ -169,7 +181,6 @@ function ManageUser() {
         },
       );
       const data = await response.json();
-      console.log(data);
       setCancelledBookings(data);
     } catch (err) {
       toast.error("Error Occurred");
@@ -190,6 +201,7 @@ function ManageUser() {
   };
   useEffect(() => {
     getUsers();
+    getActiveUsers();
   }, []);
   return (
     <div className={style.container}>
@@ -211,6 +223,9 @@ function ManageUser() {
                     ],
                   }}
                   options={{
+                    // rotation: -90,
+                    // circumference: 180,
+                    // cutout: "70%",
                     plugins: {
                       legend: {
                         display: false,
@@ -240,7 +255,7 @@ function ManageUser() {
                     datasets: [
                       {
                         label: "count",
-                        data: data.map((d) => d.number),
+                        data: [counts.thisWeek, counts.total],
                         backgroundColor: ["#f8972089", "#ededed"],
                         BsBorderWidth: 0,
                       },
@@ -276,7 +291,7 @@ function ManageUser() {
                     datasets: [
                       {
                         label: "count",
-                        data: data.map((d) => d.number),
+                        data: [counts.thisMonth, counts.total],
                         backgroundColor: ["#ededed", "#51f610ad"],
                         BsBorderWidth: 0,
                       },
@@ -312,7 +327,7 @@ function ManageUser() {
                     datasets: [
                       {
                         label: "count",
-                        data: [300, 150],
+                        data: [counts.total, counts.total],
                         backgroundColor: ["#e70ad5", "#ededed"],
                         BsBorderWidth: 0,
                       },

@@ -13,7 +13,7 @@ import {
 } from "chart.js";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import toast from "react-hot-toast";
 import { MdClose, MdLocalParking, MdPerson } from "react-icons/md";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
@@ -44,6 +44,7 @@ function ManageParkingArea() {
   const [position, setPosition] = useState([
     9.045140273532223, 38.74912261962891,
   ]);
+  const [areaName, setAreaName] = useState("");
   const [message, setMessage] = useState("No Parking Area found");
   const [gross, setGross] = useState([]);
   const [booked, setBooked] = useState([]);
@@ -53,6 +54,137 @@ function ManageParkingArea() {
   const [bookingMessage, setBookingMessage] = useState("No Booking Found!");
   const [areaId, setAreaId] = useState();
   const [loading, setLoading] = useState(false);
+  const [topGrossing, setTopGrossing] = useState([]);
+  const [lessGrossing, setLessGrossing] = useState([]);
+  const [paymentChart, setPaymentChart] = useState([]);
+  const [less, setLess] = useState([]);
+  const [top, setTop] = useState([]);
+  const [topArea, setTopArea] = useState({});
+  const [lessArea, setLessArea] = useState({});
+  const [allTime, setAllTime] = useState([]);
+  const [showAddGate, setShowAddGate] = useState(false);
+  const [addGateInfo, setAddGateInfo] = useState([]);
+  const [toggleStatus, setToggleStatus] = useState(false);
+  const getAddGateInfo = async (id) => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingArea/getAddGateInfo/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+      setAddGateInfo(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getChart = async () => {
+    try {
+      const response = await fetch(`${Base_URL}/api/payment/getChartInfo`, {
+        method: "GET",
+      });
+      const data = await response.json();
+      setPaymentChart(data);
+    } catch (err) {
+      toast.error("Please check your network connection");
+    }
+  };
+  const getTopArea = async () => {
+    try {
+      const response = await fetch(`${Base_URL}/api/payment/getTopArea`, {
+        method: "GET",
+      });
+      const data = await response.json();
+      setTopArea(data);
+    } catch (err) {
+      toast.error("Please check your network connection");
+    }
+  };
+  const getLessArea = async () => {
+    try {
+      const response = await fetch(`${Base_URL}/api/payment/getLessArea`, {
+        method: "GET",
+      });
+      const data = await response.json();
+      setLessArea(data);
+    } catch (err) {
+      toast.error("Please check your network connection");
+    }
+  };
+  const getLessCount = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/payment/getLessGrossingCount`,
+        {
+          method: "GET",
+        },
+      );
+      const data = await response.json();
+      setLess(data);
+    } catch (err) {
+      toast.error("Please check your network connection");
+    }
+  };
+  const getTopCount = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/payment/getTopGrossingCount`,
+        {
+          method: "GET",
+        },
+      );
+      const data = await response.json();
+      setTop(data);
+    } catch (err) {
+      toast.error("Please check your network connection");
+    }
+  };
+  const getAll = async () => {
+    try {
+      const response = await fetch(`${Base_URL}/api/booking/getAllAreaCount`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      setAllTime(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const groupedAll = paymentChart.reduce((acc, item) => {
+    const day = new Date(item.date).toISOString().split("T")[0];
+    acc[day] = (acc[day] || 0) + item.gross;
+    return acc;
+  }, {});
+  const labelsAll = Object.keys(groupedAll)
+    .sort()
+    .map((day) => {
+      const d = new Date(day);
+      return d.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    });
+  const dataAll = Object.keys(groupedAll)
+    .sort()
+    .map((day) => groupedAll[day]);
+  const dataSetAll = {
+    labels: labelsAll,
+    datasets: [
+      {
+        label: "Payment Gross",
+        data: dataAll,
+        borderColor: "#0b49f356",
+        backgroundColor: "#1e3b8a6c",
+        fill: true,
+        pointRadius: 5,
+        tension: 0.4,
+      },
+    ],
+  };
   const search = async (search) => {
     if (search.length == 0) {
       getAreas();
@@ -170,11 +302,20 @@ function ManageParkingArea() {
     },
     scales: {
       x: {
+        ticks: {
+          callback: function (value, index) {
+            const label = this.getLabelForValue(value);
+            return label.length > 3 ? label.substring(0, 3) + "…" : label;
+          },
+        },
         grid: {
           display: false,
         },
       },
       y: {
+        ticks: {
+          display: true,
+        },
         grid: {
           display: false,
         },
@@ -266,7 +407,7 @@ function ManageParkingArea() {
     labels: bookedLabels,
     datasets: [
       {
-        label: "Payment Gross",
+        label: "Pending Bookings",
         data: bookedData,
         borderColor: "#0483009a",
         backgroundColor: "#0307ce6c",
@@ -298,7 +439,7 @@ function ManageParkingArea() {
     labels: cancelledLabels,
     datasets: [
       {
-        label: "Payment Gross",
+        label: "Cancelled Bookings",
         data: cancelledData,
         borderColor: "#830000",
         backgroundColor: "#ce03036c",
@@ -327,16 +468,240 @@ function ManageParkingArea() {
       toast.error("Error Occurred");
     }
   };
+  const getTopGrossing = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/payment/getTopGrossingAllTime`,
+        {
+          method: "GET",
+        },
+      );
+      const data = await response.json();
+      setTopGrossing(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getLessGrossing = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/payment/getLessGrossingAllTime`,
+        {
+          method: "GET",
+        },
+      );
+      const data = await response.json();
+      setLessGrossing(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
   useEffect(() => {
     getAreas();
+    getTopGrossing();
+    getLessGrossing();
+    getChart();
+    getLessCount();
+    getTopCount();
+    getLessArea();
+    getTopArea();
+    getAll();
   }, []);
-
   return (
     <div className={style.container}>
       <div className={style.top}>
-        <div></div>
-        <div></div>
-        <div></div>
+        <div className={style.div}>
+          <div className={style.upperInfo}>
+            <div style={{ display: "flex" }} className={style.labels}>
+              Total Grossing
+              <h3>All Parking Area Info</h3>
+            </div>
+            <div className={style.numbers}>
+              {allTime.length > 0 &&
+                allTime.map((top, index) => (
+                  <div key={index}>
+                    <div className={style.number}>
+                      <h4 style={{ margin: "0px" }}>{top.total}</h4>
+                      <p>{top.status}</p>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            <div className={style.lines}>
+              <Bar
+                data={{
+                  labels: allTime.map((b) => b.status),
+                  datasets: [
+                    {
+                      label: "Booking History",
+                      data: allTime.map((b) => b.total),
+                      backgroundColor: [
+                        "rgba(59, 130, 246, 0.8)",
+                        "rgba(245, 158, 11, 0.8)",
+                        "rgba(205, 68, 239, 0.8)",
+                      ],
+                      borderRadius: 8,
+                    },
+                  ],
+                }}
+                options={{
+                  indexAxis: "y",
+                  responsive: true,
+                  plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true },
+                  },
+                  scales: {
+                    x: { stacked: true, display: false },
+                    y: { stacked: true, display: false },
+                  },
+                  maintainAspectRatio: false,
+                }}
+              />
+            </div>
+          </div>
+          <div className={style.lower}>
+            <Line data={dataSetAll} options={options} />
+          </div>
+        </div>
+        <div className={style.div}>
+          <div className={style.upperInfo}>
+            <div style={{ display: "flex" }} className={style.labels}>
+              Top Grossing <h3>{topArea.name}</h3>
+            </div>
+            <div className={style.numbers}>
+              {top.length > 0 &&
+                top.map((top, index) => (
+                  <div key={index}>
+                    <div className={style.number}>
+                      <h4 style={{ margin: "0px" }}>{top.total}</h4>
+                      <p>{top.status}</p>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            <div className={style.lines}>
+              <Bar
+                data={{
+                  labels: top.map((b) => b.status),
+                  datasets: [
+                    {
+                      label: "Booking History",
+                      data: top.map((b) => b.total),
+                      backgroundColor: [
+                        "rgba(59, 130, 246, 0.8)",
+                        "rgba(245, 158, 11, 0.8)",
+                        "rgba(205, 68, 239, 0.8)",
+                      ],
+                      borderRadius: 8,
+                    },
+                  ],
+                }}
+                options={{
+                  indexAxis: "y",
+                  responsive: true,
+                  plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true },
+                  },
+                  scales: {
+                    x: { stacked: true, display: false },
+                    y: { stacked: true, display: false },
+                  },
+                  maintainAspectRatio: false,
+                }}
+              />
+            </div>
+          </div>
+          <div className={style.lower}>
+            <Line
+              data={{
+                labels: topGrossing.map((d) => d.date),
+                datasets: [
+                  {
+                    label: "Less Grossing",
+                    data: topGrossing.map((d) => d.gross),
+                    backgroundColor: "#06f5069a",
+                    borderColor: "#02991b",
+                    fill: true,
+                    pointRadius: 3,
+                    tension: 0.3,
+                  },
+                ],
+              }}
+              options={{ ...options, maintainAspectRatio: false }}
+            />
+          </div>
+        </div>{" "}
+        <div className={style.div}>
+          <div className={style.upperInfo}>
+            <div style={{ display: "flex" }} className={style.labels}>
+              Less Grossing <h3>{lessArea.name}</h3>
+            </div>
+            <div className={style.numbers}>
+              {less.length > 0 &&
+                less.map((top, index) => (
+                  <div key={index}>
+                    <div className={style.number}>
+                      <h4 style={{ margin: "0px" }}>{top.total}</h4>
+                      <p>{top.status}</p>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            <div className={style.lines}>
+              <Bar
+                data={{
+                  labels: less.map((b) => b.status),
+                  datasets: [
+                    {
+                      label: "Booking History",
+                      data: less.map((b) => b.total),
+                      backgroundColor: [
+                        "rgba(59, 130, 246, 0.8)",
+                        "rgba(245, 158, 11, 0.8)",
+                        "rgba(205, 68, 239, 0.8)",
+                      ],
+                      borderRadius: 8,
+                    },
+                  ],
+                }}
+                options={{
+                  indexAxis: "y",
+                  responsive: true,
+                  plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true },
+                  },
+                  scales: {
+                    x: { stacked: true, display: false },
+                    y: { stacked: true, display: false },
+                  },
+                  maintainAspectRatio: false,
+                }}
+              />
+            </div>
+          </div>
+          <div className={style.lower}>
+            <Line
+              data={{
+                labels: lessGrossing.map((d) => d.date),
+                datasets: [
+                  {
+                    label: "Less Grossing",
+                    data: lessGrossing.map((d) => d.gross),
+                    backgroundColor: "#f54b02",
+                    borderColor: "#990202",
+                    fill: true,
+                    pointRadius: 5,
+                    tension: 0.3,
+                  },
+                ],
+              }}
+              options={{ ...options, maintainAspectRatio: false }}
+            />
+          </div>
+        </div>
       </div>
       <div className={style.bottom}>
         <div className={style.searchContainer}>
@@ -347,62 +712,174 @@ function ManageParkingArea() {
           />
         </div>
         <div className={style.display}>
-          {areas.length > 0 ? (
-            areas.map((area, index) => (
-              <div
-                key={index}
-                className={style.parking}
-                onClick={() => getInfo(area.id)}
-              >
-                <div style={{ paddingLeft: "1em", textAlign: "start" }}>
-                  <MdLocalParking color="green" />
-                </div>
-                <div>{area.name}</div>
-                <div>
-                  {area.status == "Closed" && (
-                    <div style={{ background: "red" }}>{area.status}</div>
-                  )}
-                  {area.status == "Open" && (
-                    <div
-                      style={{
-                        background: "#03e20a9a",
-                        boxShadow: "0px 0px 10px #03e20a94",
-                        color: "#007000",
-                        cursor: "default",
-                      }}
-                    >
-                      {area.status}
-                    </div>
-                  )}
-                </div>
-                <div className={style.text}>{area.name}</div>
-                <div className={style.text}>Levels {area.levels}</div>
+          <div className={style.parkings}>
+            {areas.length > 0 ? (
+              areas.map((area, index) => (
+                <div key={index} className={style.parking}>
+                  <div style={{ paddingLeft: "1em", textAlign: "start" }}>
+                    <MdLocalParking color="green" />
+                  </div>
+                  <div>{area.name}</div>
+                  <div>
+                    {area.status == "Closed" && (
+                      <div style={{ background: "red" }}>{area.status}</div>
+                    )}
+                    {area.status == "Open" && (
+                      <div
+                        style={{
+                          background: "#03e20a9a",
+                          boxShadow: "0px 0px 10px #03e20a94",
+                          color: "#007000",
+                          cursor: "default",
+                        }}
+                      >
+                        {area.status}
+                      </div>
+                    )}
+                  </div>
+                  <div className={style.text}>{area.name}</div>
+                  <div className={style.text}>Levels {area.levels}</div>
 
+                  <div>
+                    <button
+                      onClick={() => {
+                        (getInfo(area.id), setAreaName(area.name));
+                      }}
+                      style={{ background: "blue" }}
+                    >
+                      View More
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => {
+                        (setShowAddGate(true),
+                          getAddGateInfo(area.id),
+                          setAreaName(area.name));
+                      }}
+                      style={{ background: "orange" }}
+                    >
+                      Add Gate
+                    </button>
+                  </div>
+
+                  <div>
+                    <button
+                      onClick={() => {
+                        (setToggleStatus(true), setAreaName(area.name));
+                      }}
+                      style={{ background: "#f82626" }}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  alignContent: "center",
+                  textAlign: "center",
+                }}
+              >
+                {message}
+              </div>
+            )}
+          </div>
+          {showAddGate && (
+            <div className={style.addGate}>
+              <MdClose
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "10px",
+                  color: "red",
+                  cursor: "pointer",
+                }}
+                size={30}
+                onClick={() => setShowAddGate(false)}
+              />
+              <div className={style.form}>
+                <div className={style.parkingName}>
+                  <h3>{areaName}</h3>
+                </div>
+                <div className={style.parkingLevelInfo}>
+                  {addGateInfo.length > 0 ? (
+                    <>
+                      <div>
+                        <p style={{ textAlign: "end" }}>Total Levels :</p>{" "}
+                        <p
+                          style={{
+                            fontSize: "50px",
+                            margin: "0px",
+                            textAlign: "start",
+                          }}
+                        >
+                          {addGateInfo[0].levels}
+                        </p>
+                      </div>
+                      <div>
+                        <p style={{ textAlign: "end" }}>Total Spots : </p>{" "}
+                        <p
+                          style={{
+                            fontSize: "50px",
+                            margin: "0px",
+                            textAlign: "start",
+                          }}
+                        >
+                          {addGateInfo[0].spots}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <div>Parking Has No Levels</div>
+                  )}
+                </div>
+                <form className={style.dataForm}>
+                  <div>Fill Gate Info</div>
+                  <div>
+                    <input type="text" placeholder="Enter Gate Code" />
+                    <input type="text" placeholder="Enter Gate Password" />
+                    <select name="gateType" id="">
+                      <option value="">select Gate Type</option>
+                      <option value="Entrance">Entrance</option>
+                      <option value="Exit">Exit</option>
+                    </select>
+                  </div>
+                  <div>
+                    <button>Add gate</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+          {toggleStatus && (
+            <div className={style.closeOrOpen}>
+              <MdClose
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "10px",
+                  color: "red",
+                  cursor: "pointer",
+                }}
+                size={30}
+                onClick={() => setToggleStatus(false)}
+              />
+              <div className={style.confirm}>
                 <div>
-                  <button style={{ background: "blue" }}>Add Level</button>
+                  <h3 style={{ flex: "1" }}>
+                    Area You Sure You want To close{" "}
+                    <span style={{ color: "blue" }}>{areaName}</span>
+                  </h3>
                 </div>
                 <div>
-                  <button style={{ background: "orange" }}>
-                    Add Entrance Gate
-                  </button>
-                </div>
-                <div>
-                  <button style={{ background: "orange" }}>
-                    Add Exit Gate
-                  </button>
+                  <button style={{ background: "#3acc0e" }}>Yes</button>
+                  <button style={{ background: "#ec0303" }}>No</button>
                 </div>
               </div>
-            ))
-          ) : (
-            <div
-              style={{
-                width: "100%",
-                height: "100%",
-                alignContent: "center",
-                textAlign: "center",
-              }}
-            >
-              {message}
             </div>
           )}
         </div>
@@ -435,7 +912,7 @@ function ManageParkingArea() {
                           <button
                             style={{ background: "none", border: "none" }}
                           >
-                            Parking Area Location
+                            {areaName}
                           </button>
                         </div>
                       </Popup>

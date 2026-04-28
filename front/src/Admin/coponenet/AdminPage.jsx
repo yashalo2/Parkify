@@ -705,7 +705,7 @@ function AdminPage() {
                   labels: topGrossing.map((d) => d.date),
                   datasets: [
                     {
-                      label: "Top Grossing",
+                      label: "Today's Top Grossing",
                       data: topGrossing.map((d) => d.gross),
                       backgroundColor: "#02f5a4ff",
                       borderColor: "rgb(2, 245, 2)",
@@ -724,7 +724,7 @@ function AdminPage() {
                   labels: lessGrossing.map((d) => d.date),
                   datasets: [
                     {
-                      label: "Less Grossing",
+                      label: "Today's Less Grossing",
                       data: lessGrossing.map((d) => d.gross),
                       backgroundColor: "#f54b02",
                       borderColor: "#990202",
