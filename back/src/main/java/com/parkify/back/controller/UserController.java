@@ -9,6 +9,7 @@ import com.parkify.back.repository.ParkingAreaRepository;
 import com.parkify.back.repository.PendingUserRepository;
 import com.parkify.back.repository.UserRepository;
 import com.parkify.back.service.EmailService;
+import com.parkify.back.service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +35,8 @@ public class UserController {
     private static final SecureRandom random = new SecureRandom();
     @Autowired
     private PendingUserRepository pendingUserRepository;
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute PendingUser user, HttpSession session) throws MessagingException {
@@ -133,6 +137,19 @@ public class UserController {
         }
         return null;
 
+
+    }
+    @GetMapping("/getGoldenUser")
+    public List<UserDTO> getGoldenUser(HttpSession session){
+        String email=(String) session.getAttribute("email");
+        if(email == null) {
+            return new ArrayList<>();
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)) {
+            return userService.getGoldenUser();
+        }
+        return new ArrayList<>();
 
     }
 

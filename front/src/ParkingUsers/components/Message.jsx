@@ -1,7 +1,7 @@
 import { Client } from "@stomp/stompjs";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
-import { MdArrowForward, MdArrowUpward } from "react-icons/md";
+import { MdArrowUpward } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import SockJS from "sockjs-client";
 import notifications from "../..//Sounds/notification.mp3";
@@ -16,6 +16,10 @@ function Message() {
   const navigate = useNavigate();
   const textRef = useRef(null);
   const notification = new Audio(notifications);
+  const viewRef = useRef(null);
+  const scrollDown = () => {
+    viewRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
   const getMyMessage = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/message/getMyMessages`, {
@@ -105,16 +109,12 @@ function Message() {
       setMyId(Number(userI.id));
     }
   }, []);
-
+  useEffect(() => {
+    scrollDown();
+  }, [messages]);
   return (
     <div className={style.container}>
-      <div className={style.label}>
-        Chat with User Support Group
-        <MdArrowForward
-          onClick={() => navigate("/customer/home")}
-          style={{ position: "absolute", right: "5px", color: "black" }}
-        />
-      </div>
+      <div className={style.label}>Chat with User Support Group</div>
       <div className={style.contentContainer}>
         {messages.length > 0 &&
           messages.map((mes, index) => (
@@ -131,15 +131,42 @@ function Message() {
                     className={style.text}
                   >
                     {mes.content}
+                    <div>
+                      <p
+                        style={{
+                          fontSize: "smaller",
+                          margin: "0px",
+                          textAlign: "end",
+                          color: "black",
+                        }}
+                      >
+                        {new Date(mes.date).toDateString()}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ) : (
                 <div style={{ display: "flex" }} className={style.content}>
-                  <div className={style.text}>{mes.content}</div>
+                  <div className={style.text}>
+                    {mes.content}
+                    <div>
+                      <p
+                        style={{
+                          fontSize: "smaller",
+                          margin: "0px",
+                          textAlign: "end",
+                          color: "grey",
+                        }}
+                      >
+                        {new Date(mes.date).toDateString()}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
           ))}
+        <div ref={viewRef} />
       </div>
       <div className={style.inputContainer}>
         <textarea

@@ -44,7 +44,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
  pa.name,
  cast(p.date as date),
  sum(p.amount)
- 
  )
  from Payment p
  join p.booking b
@@ -61,7 +60,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
  p.booking.spot.parkingLots.parkingArea.name,
  cast(p.date as date),
  sum(p.amount)
- 
  )
  from Payment p
  join p.booking b
@@ -78,7 +76,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
  pa.name,
  cast(p.date as date),
  sum(p.amount)
- 
  )
  from Payment p
  join p.booking b
@@ -113,7 +110,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
  py.id,
  py.date,
  b.status,
- p.name,    
+ p.name,
  pa.level,
  s.spotName,
  pa.price
@@ -154,4 +151,77 @@ from Payment p
 where p.booking.spot.parkingLots.parkingArea.id = :id
 """)
     List<ChartDTO> getChart(@Param("id") long id);
+    @Query("""
+ select new com.parkify.back.dto.IdDTO(
+    pa.id,
+    pa.name,
+ cast(p.date as date),
+ sum(p.amount)
+ )
+ from Payment p
+ join p.booking b
+ join b.spot s
+ join s.parkingLots pl
+ join pl.parkingArea pa
+ group by pa.name,function('DATE',p.date),pa.id
+ order by cast(p.date as date ),sum(p.amount) desc
+""")
+    List<IdDTO> getTopGrossingAllTime();
+    @Query("""
+ select new com.parkify.back.dto.IdDTO(
+ pa.id,
+ pa.name,
+ cast(p.date as date),
+ sum(p.amount)
+ )
+ from Payment p
+ join p.booking b
+ join b.spot s
+ join s.parkingLots pl
+ join pl.parkingArea pa
+ group by pa.name,cast(p.date as date),pa.id
+ order by cast(p.date as date ),sum(p.amount) asc
+""")
+    List<IdDTO> getLessGrossingAllTime();
+    @Query("""
+select new com.parkify.back.dto.CountInfoDTO(
+Count(*),
+b.status
+)
+from Bookings b
+where b.spot.parkingLots.parkingArea.id = :id
+group by b.status
+""")
+    List<CountInfoDTO> getCountInfo(@Param("id") long id);
+    @Query("""
+select new com.parkify.back.dto.AreaDTO(
+    p.booking.spot.parkingLots.parkingArea.name,
+    p.booking.spot.parkingLots.parkingArea.id
+)
+from Payment p
+where p.booking.spot.parkingLots.parkingArea.id = :id
+group by p.booking.spot.parkingLots.parkingArea.id,p.booking.spot.parkingLots.parkingArea.name
+""")
+    AreaDTO getAreaInfo(@Param("id") long id);
+    @Query("""
+select new com.parkify.back.dto.GoldenUserDTO(
+p.booking.user.id,
+count(*)
+)
+from Payment p
+group by p.booking.user.id
+order by count(*) desc
+""")
+    List<GoldenUserDTO> getGoldenUser();
+    @Query("""
+select new com.parkify.back.dto.HeatMapDTO(
+    p.date,
+    count(*)
+)
+from Payment p
+where p.booking.user.id = :id
+group by p.date
+""")
+    List<HeatMapDTO> getHeatMapInfo(@Param("id") long id);
+
 }

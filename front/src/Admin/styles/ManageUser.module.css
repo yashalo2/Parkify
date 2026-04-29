@@ -33,11 +33,70 @@
   justify-items: center;
   text-align: center;
 }
+.container .boxContainer .topUsers {
+  display: flex;
+  gap: 5px;
+}
+.container .boxContainer .topUsers .leftUser {
+  width: 30%;
+  border-radius: 10px;
+}
+.container .boxContainer .topUsers .leftUser .goldenProfile {
+  position: relative;
+  width: 100%;
+  height: 60%;
+  align-content: center;
+  text-align: center;
+}
+.container .boxContainer .topUsers .leftUser .goldenInfo {
+  width: 100%;
+  height: 40%;
+}
+.container .boxContainer .topUsers .leftUser .goldenInfo div {
+  padding-left: 1em;
+  font-weight: bolder;
+}
+.container .boxContainer .topUsers .leftUser .goldenInfo div button {
+  width: 60%;
+  margin-left: calc(20% - 1em);
+  padding: 0.5em;
+  border-radius: 10px;
+  border: none;
+  background: blue;
+  color: #fff;
+}
+.container .boxContainer .topUsers .heatMapAndChart {
+  flex: 1;
+}
+.container .boxContainer .topUsers .heatMapAndChart .doughnut {
+  width: 100%;
+  height: 40%;
+  display: flex;
+}
+.container .boxContainer .topUsers .heatMapAndChart .heatMap {
+  position: relative;
+  width: calc(100% - 1em);
+  height: calc(60% - 1em);
+  padding: 0.5em;
+}
+.container .boxContainer .topUsers .heatMapAndChart .doughnut .labels {
+  width: 60%;
+  height: 100%;
+  display: flex;
+  gap: 2px;
+}
+.container .boxContainer .topUsers .heatMapAndChart .doughnut .labels div {
+  flex: 1;
+  text-align: center;
+}
+.container .boxContainer .topUsers .heatMapAndChart .doughnut .theChart {
+  flex: 1;
+  justify-items: center;
+}
 .container .userContainer {
   width: calc(100% - 1em);
   height: calc(100% - 305px - 1em);
   padding: 0.5em;
-  background: snow;
 }
 .container .userContainer .searchContainer {
   width: 100%;
@@ -54,8 +113,7 @@
   border-radius: 10px;
   border: 0.5px solid rgba(128, 128, 128, 0.451);
   text-align: center;
-  font-size: large;
-  color: grey;
+  color: black;
 }
 .container .userContainer .users {
   width: calc(100% - 1em);
@@ -196,4 +254,11 @@
   flex: 1;
   align-content: center;
   text-align: center;
+}
+.color-empty {
+  fill: #ededed;
+}
+
+.color-selected {
+  fill: #fe7c01e1;
 }

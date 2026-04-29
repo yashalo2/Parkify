@@ -173,5 +173,39 @@ from Bookings b
 where b.spot.parkingLots.parkingArea.id = :id and b.user.email like %:email%
 """)
     List<AreaBookingDTO> getAreaBookingByEmail(@Param("email") String email, @Param("id") long id);
-
+    @Query("""
+select new com.parkify.back.dto.ActiveBookingUsersDTO(
+    b.user.id,
+    count(b),
+    sum(case when b.bookingDate between :weekStart and :weekEnd then 1 else 0 end),
+    sum(case when b.bookingDate between :monthStart and :monthEnd then 1 else 0 end)
+)
+from Bookings b
+group by b.user.id
+""")
+    ActiveBookingUsersDTO getActiveBookingUsers(
+            @Param("weekStart") Instant weekStart,
+            @Param("weekEnd") Instant weekEnd,
+            @Param("monthStart") Instant monthStart,
+            @Param("monthEnd") Instant monthEnd
+    );
+    @Query("""
+select new com.parkify.back.dto.CountInfoDTO(
+Count(*),
+b.status
+)
+from Bookings b
+group by b.status
+""")
+    List<CountInfoDTO> getAllTimeCountInfo();
+    @Query("""
+select new com.parkify.back.dto.CountInfoDTO(
+Count(*),
+b.status
+)
+from Bookings b
+where b.user.id = :id
+group by b.status
+""")
+    List<CountInfoDTO> getGoldenUserBookingHistory(@Param("id") long id);
 }

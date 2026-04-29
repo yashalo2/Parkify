@@ -16,6 +16,11 @@ function AdminSupportPage() {
   const [fullName, setFullName] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const notification = new Audio(notifications);
+  const viewRef = useRef(null);
+  const scrollDown = () => {
+    viewRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const textRef = useRef(null);
   const getNeedyUsers = async () => {
     try {
@@ -127,7 +132,9 @@ function AdminSupportPage() {
       setMyId(Number(userI.id));
     }
   }, []);
-
+  useEffect(() => {
+    scrollDown();
+  }, [messages]);
   return (
     <div className={style.container}>
       <div className={style.userContainer}>
@@ -223,6 +230,18 @@ function AdminSupportPage() {
                         className={style.messageContent}
                       >
                         {message.content}
+                        <div>
+                          <p
+                            style={{
+                              fontSize: "smaller",
+                              margin: "0px",
+                              textAlign: "end",
+                              color: "black",
+                            }}
+                          >
+                            {new Date(message.date).toDateString()}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   ) : (
@@ -232,6 +251,18 @@ function AdminSupportPage() {
                     >
                       <div className={style.messageContent}>
                         {message.content}
+                        <div>
+                          <p
+                            style={{
+                              fontSize: "smaller",
+                              margin: "0px",
+                              textAlign: "end",
+                              color: "grey",
+                            }}
+                          >
+                            {new Date(message.date).toDateString()}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -240,6 +271,7 @@ function AdminSupportPage() {
             ) : (
               <div></div>
             )}
+            <div ref={viewRef}></div>
           </div>
           <div className={style.input}>
             <div className={style.textarea}>
