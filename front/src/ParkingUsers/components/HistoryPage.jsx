@@ -18,14 +18,24 @@ function History() {
   const [showMenu, setShowMenu] = useState(false);
   const [status, setStatus] = useState("Open");
   const [history, setHistory] = useState("booking");
-  const [currentOn, setCurrent] = useState("cbe");
-  const pay = async (booking, e) => {
-    e.preventDefault();
+  const [currentOn, setCurrentOn] = useState("cbe");
+  const [payAmount, setPayAmount] = useState(0);
+  const [payBookingId, setPayBookingId] = useState();
 
+  const pay = async () => {
     try {
-      const response = await fetch(`${Base_URL}/api/payment/pay/${booking}`, {
-        method: "POST",
-      });
+      const response = await fetch(
+        `${Base_URL}/api/payment/pay/${payBookingId}/${payAmount}`,
+        {
+          method: "GET",
+        },
+      );
+      const data = await response.text();
+      if (data == "Payment Successfully Made") {
+        toast.success(data);
+      } else {
+        toast.error(data);
+      }
     } catch (err) {
       toast.error("Error Occurred");
     }
@@ -71,7 +81,7 @@ function History() {
       const data = await response.json();
       setReceipt(data);
     } catch (err) {
-      console.log(err);
+      toast.error("Error Occurred");
     }
   };
   const getBookingQRCode = async (id) => {
@@ -152,7 +162,9 @@ function History() {
                     key={index}
                     className={style.book}
                     onClick={() => {
-                      (getBook(b.id), getBookingQRCode(b.id));
+                      (getBook(b.id),
+                        getBookingQRCode(b.id),
+                        setPayBookingId(b.id));
                     }}
                   >
                     <div className={style.info}>
@@ -380,17 +392,7 @@ function History() {
                     </p>
                   </div>
                 </div>
-                {receipt[0].duration < 0.31 ? (
-                  <div className={style.btnContainer}>
-                    <button
-                      style={{ background: "blue" }}
-                      onClick={() => setShowPayment(true)}
-                    >
-                      Pay
-                    </button>
-                    <button style={{ background: "red" }}>Cancel</button>
-                  </div>
-                ) : (
+                {history == "payment" ? (
                   <div
                     style={{ display: "flex" }}
                     className={style.btnContainer}
@@ -402,6 +404,11 @@ function History() {
                       Pay
                     </button>
                   </div>
+                ) : (
+                  <div
+                    style={{ display: "flex" }}
+                    className={style.btnContainer}
+                  ></div>
                 )}
               </div>
             )}
@@ -423,10 +430,9 @@ function History() {
               <div className={style.form}>
                 <div style={{ display: "flex", height: "60px" }}>
                   <div
-                    className={(currentOn = "cbe" ? style.current : "")}
-                    onClick={() => setCurrent("cbe")}
+                    className={currentOn == "cbe" ? style.current : ""}
+                    onClick={() => setCurrentOn("cbe")}
                     style={{
-                      background: "#8d2de2ad",
                       borderRadius: "20px",
                       flex: "1",
                     }}
@@ -441,8 +447,8 @@ function History() {
                     />
                   </div>
                   <div
-                    onClick={() => setCurrent("tele")}
-                    className={(currentOn = "tele" ? style.current : "")}
+                    onClick={() => setCurrentOn("tele")}
+                    className={currentOn == "tele" ? style.current : ""}
                     style={{ flex: "1" }}
                   >
                     <img
@@ -452,8 +458,8 @@ function History() {
                     />
                   </div>
                   <div
-                    onClick={() => setCurrent("mpesa")}
-                    className={(currentOn = "mpesa" ? style.current : "")}
+                    onClick={() => setCurrentOn("mpesa")}
+                    className={currentOn == "mpesa" ? style.current : ""}
                     style={{ flex: "1" }}
                   >
                     <img
@@ -466,15 +472,17 @@ function History() {
                 <div>
                   <label>Enter account number</label>
 
-                  <input type="number" />
+                  <input
+                    type="number"
+                    onChange={(e) => setPayAmount(e.target.value)}
+                  />
                 </div>
                 <div>
                   <label>Enter Amount</label>
-
                   <input type="number" />
                 </div>
                 <div>
-                  <button>Pay</button>
+                  <button onClick={() => pay()}>Pay</button>
                 </div>
               </div>
             </div>

@@ -230,6 +230,18 @@ function AdminSupportPage() {
                         className={style.messageContent}
                       >
                         {message.content}
+                        <div>
+                          <p
+                            style={{
+                              fontSize: "smaller",
+                              margin: "0px",
+                              textAlign: "end",
+                              color: "black",
+                            }}
+                          >
+                            {new Date(message.date).toDateString()}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   ) : (
@@ -239,6 +251,18 @@ function AdminSupportPage() {
                     >
                       <div className={style.messageContent}>
                         {message.content}
+                        <div>
+                          <p
+                            style={{
+                              fontSize: "smaller",
+                              margin: "0px",
+                              textAlign: "end",
+                              color: "grey",
+                            }}
+                          >
+                            {new Date(message.date).toDateString()}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   )}

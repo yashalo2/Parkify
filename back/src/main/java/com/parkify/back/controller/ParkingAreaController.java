@@ -110,6 +110,89 @@ public class ParkingAreaController {
         }
         return "UnAuthorized User";
     }
+    @PostMapping("/close/{id}")
+    public String close(@PathVariable long id, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return "User Not Logged In";
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            ParkingArea area = parkingAreaRepository.findById(id).get();
+            area.setAreaStatus(AreaStatus.Closed);
+            parkingAreaRepository.save(area);
+            return "Area Closed";
+        }
+        return "UnAuthorized User";
+
+    }
+    @PostMapping("/Open/{id}")
+    public String open(@PathVariable long id, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return "User Not Logged In";
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            ParkingArea area = parkingAreaRepository.findById(id).get();
+            area.setAreaStatus(AreaStatus.Open);
+            parkingAreaRepository.save(area);
+            return "Area Opened";
+        }
+        return "UnAuthorized User";
+    }
+    @PostMapping("/addEntrance/{id}")
+    public String addEntrance(@PathVariable long id, HttpSession session,@ModelAttribute EntranceScanner entranceScanner) {
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return "User Not Logged In";
+        }
+        User user = userRepository.findByEmail(email);
+        if(!user.getRole().equals(Role.Admin)){
+            return "UnAuthorized User";
+        }
+        ParkingArea area = parkingAreaRepository.findById(id).get();
+        if(entranceScannerRepository.findByParkingAreaId(area.getId()) != null){
+            return "Parking has Gate";
+        }
+        if(entranceScannerRepository.codeExists(entranceScanner.getCode()) != null){
+            return "Gate With This Code Exists";
+        }
+        entranceScanner.setParkingArea(area);
+        EntranceScanner newScanner = new EntranceScanner();
+        newScanner.setCode(entranceScanner.getCode());
+        newScanner.setParkingArea(area);
+        newScanner.setPassword(entranceScanner.getPassword());
+        entranceScannerRepository.save(newScanner);
+        return "Gate Added Successfully";
+
+    }
+    @PostMapping("/addExit/{id}")
+    public String addExit(@PathVariable long id, HttpSession session,@ModelAttribute ExitScanner exitScanner) {
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return "User Not Logged In";
+        }
+        User user = userRepository.findByEmail(email);
+        if(!user.getRole().equals(Role.Admin)){
+            return "UnAuthorized User";
+        }
+        ParkingArea area = parkingAreaRepository.findById(id).get();
+        if(exitScannerRepository.findByParkingAreaId(area.getId()) != null){
+            return "Parking has Gate";
+        }
+        if(exitScannerRepository.codeExists(exitScanner.getCode()) != null){
+            return "Gate With This Code Exists";
+        }
+        ExitScanner newScanner = new ExitScanner();
+        newScanner.setParkingArea(area);
+        newScanner.setCode(exitScanner.getCode());
+        newScanner.setPassword(exitScanner.getPassword());
+        exitScanner.setParkingArea(area);
+        ExitScanner exit = exitScannerRepository.save(newScanner);
+        System.out.println(exit.getId());
+        return "Gate Added Successfully";
+    }
 
 
 }

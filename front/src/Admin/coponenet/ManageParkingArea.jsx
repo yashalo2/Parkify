@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from "chart.js";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import toast from "react-hot-toast";
 import { MdClose, MdLocalParking, MdPerson } from "react-icons/md";
@@ -65,6 +65,65 @@ function ManageParkingArea() {
   const [showAddGate, setShowAddGate] = useState(false);
   const [addGateInfo, setAddGateInfo] = useState([]);
   const [toggleStatus, setToggleStatus] = useState(false);
+  const [status, setStatus] = useState("");
+  const [toggleId, setToggleId] = useState();
+  const [parkingAreaId, setParkingAreaId] = useState();
+  const [gateType, setGateType] = useState();
+  const gateRef = useRef(null);
+  const [addForm, setAddForm] = useState(true);
+  const addGate = async (e) => {
+    e.preventDefault();
+
+    if (gateType == null) {
+      toast.error("Select gate Type");
+      return;
+    }
+    const formData = new FormData(gateRef.current);
+
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingArea/${gateType}/${parkingAreaId}`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        },
+      );
+      const data = await response.text();
+      if (data == "Gate Added Successfully") {
+        toast.success(data);
+        setShowAddGate(false);
+      } else if (data == "Parking has Gate") {
+        toast.error(data);
+        setAddForm(false);
+      } else {
+        toast.error(data);
+      }
+    } catch (err) {
+      toast.error("Error Occuured");
+    }
+  };
+  const ToggleStatus = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingArea/${status}/${toggleId}`,
+        {
+          method: "POST",
+          credentials: "include",
+        },
+      );
+      const data = await response.text();
+      if (data == "Area Closed" || data == "Area Opened") {
+        toast.success(data);
+        getAreas();
+        setToggleStatus(false);
+      } else {
+        toast.error(data);
+      }
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
   const getAddGateInfo = async (id) => {
     try {
       const response = await fetch(
@@ -755,24 +814,44 @@ function ManageParkingArea() {
                       onClick={() => {
                         (setShowAddGate(true),
                           getAddGateInfo(area.id),
-                          setAreaName(area.name));
+                          setAreaName(area.name),
+                          setParkingAreaId(area.id));
                       }}
                       style={{ background: "orange" }}
                     >
                       Add Gate
                     </button>
                   </div>
-
-                  <div>
-                    <button
-                      onClick={() => {
-                        (setToggleStatus(true), setAreaName(area.name));
-                      }}
-                      style={{ background: "#f82626" }}
-                    >
-                      Close
-                    </button>
-                  </div>
+                  {area.status == "Open" && (
+                    <div>
+                      <button
+                        onClick={() => {
+                          (setToggleStatus(true),
+                            setAreaName(area.name),
+                            setToggleId(area.id),
+                            setStatus("close"));
+                        }}
+                        style={{ background: "#f82626" }}
+                      >
+                        Close
+                      </button>
+                    </div>
+                  )}
+                  {area.status == "Closed" && (
+                    <div>
+                      <button
+                        onClick={() => {
+                          (setToggleStatus(true),
+                            setAreaName(area.name),
+                            setToggleId(area.id),
+                            setStatus("Open"));
+                        }}
+                        style={{ background: "#26f842" }}
+                      >
+                        Open
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))
             ) : (
@@ -799,60 +878,129 @@ function ManageParkingArea() {
                   cursor: "pointer",
                 }}
                 size={30}
-                onClick={() => setShowAddGate(false)}
+                onClick={() => {
+                  (setShowAddGate(false), setAddForm(true));
+                }}
               />
-              <div className={style.form}>
-                <div className={style.parkingName}>
-                  <h3>{areaName}</h3>
-                </div>
-                <div className={style.parkingLevelInfo}>
-                  {addGateInfo.length > 0 ? (
-                    <>
-                      <div>
-                        <p style={{ textAlign: "end" }}>Total Levels :</p>{" "}
-                        <p
-                          style={{
-                            fontSize: "50px",
-                            margin: "0px",
-                            textAlign: "start",
-                          }}
-                        >
-                          {addGateInfo[0].levels}
-                        </p>
-                      </div>
-                      <div>
-                        <p style={{ textAlign: "end" }}>Total Spots : </p>{" "}
-                        <p
-                          style={{
-                            fontSize: "50px",
-                            margin: "0px",
-                            textAlign: "start",
-                          }}
-                        >
-                          {addGateInfo[0].spots}
-                        </p>
-                      </div>
-                    </>
-                  ) : (
-                    <div>Parking Has No Levels</div>
-                  )}
-                </div>
-                <form className={style.dataForm}>
-                  <div>Fill Gate Info</div>
-                  <div>
-                    <input type="text" placeholder="Enter Gate Code" />
-                    <input type="text" placeholder="Enter Gate Password" />
-                    <select name="gateType" id="">
-                      <option value="">select Gate Type</option>
-                      <option value="Entrance">Entrance</option>
-                      <option value="Exit">Exit</option>
-                    </select>
+              {addForm ? (
+                <div className={style.form}>
+                  <div className={style.parkingName}>
+                    <h3>{areaName}</h3>
                   </div>
-                  <div>
-                    <button>Add gate</button>
+                  <div className={style.parkingLevelInfo}>
+                    {addGateInfo.length > 0 ? (
+                      <>
+                        <div>
+                          <p style={{ textAlign: "end" }}>Total Levels :</p>{" "}
+                          <p
+                            style={{
+                              fontSize: "50px",
+                              margin: "0px",
+                              textAlign: "start",
+                            }}
+                          >
+                            {addGateInfo[0].levels}
+                          </p>
+                        </div>
+                        <div>
+                          <p style={{ textAlign: "end" }}>Total Spots : </p>{" "}
+                          <p
+                            style={{
+                              fontSize: "50px",
+                              margin: "0px",
+                              textAlign: "start",
+                            }}
+                          >
+                            {addGateInfo[0].spots}
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <div>Parking Has No Levels</div>
+                    )}
                   </div>
-                </form>
-              </div>
+                  <form
+                    ref={gateRef}
+                    onSubmit={addGate}
+                    className={style.dataForm}
+                  >
+                    <div>Fill Gate Info</div>
+                    <div>
+                      <input
+                        type="text"
+                        name="code"
+                        placeholder="Enter Gate Code"
+                      />
+                      <input
+                        type="text"
+                        name="password"
+                        placeholder="Enter Gate Password"
+                      />
+                      <select
+                        onChange={(e) => setGateType(e.target.value)}
+                        name="gateType"
+                        id=""
+                      >
+                        <option value="">select Gate Type</option>
+                        <option value="addEntrance">Entrance</option>
+                        <option value="addExit">Exit</option>
+                      </select>
+                    </div>
+                    <div>
+                      <button>Add gate</button>
+                    </div>
+                  </form>
+                </div>
+              ) : (
+                <div className={style.form}>
+                  <div style={{ textAlign: "center", height: "50%" }}>
+                    <h1>Parking Area Already Has Gate</h1>
+                  </div>{" "}
+                  <div
+                    style={{
+                      display: "flex",
+                      width: "100%",
+                      height: "50%",
+                      gap: "20px",
+                    }}
+                  >
+                    <button
+                      style={{
+                        flex: "1",
+                        padding: "1em",
+                        borderRadius: "20px",
+                        border: "none",
+                        background: "#24d800",
+                        fontSize: "large",
+                        color: "#fff",
+                        height: "80px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {" "}
+                      Replace Gate
+                    </button>
+                    <button
+                      style={{
+                        flex: "1",
+                        padding: "1em",
+                        borderRadius: "20px",
+                        border: "none",
+                        background: "#e92d2d",
+                        fontSize: "large",
+                        color: "#fff",
+                        height: "80px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        (setShowAddGate(false), setAddForm(true));
+                      }}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
           {toggleStatus && (
@@ -871,13 +1019,23 @@ function ManageParkingArea() {
               <div className={style.confirm}>
                 <div>
                   <h3 style={{ flex: "1" }}>
-                    Area You Sure You want To close{" "}
+                    Area You Sure You want To {status}{" "}
                     <span style={{ color: "blue" }}>{areaName}</span>
                   </h3>
                 </div>
                 <div>
-                  <button style={{ background: "#3acc0e" }}>Yes</button>
-                  <button style={{ background: "#ec0303" }}>No</button>
+                  <button
+                    onClick={() => ToggleStatus()}
+                    style={{ background: "#3acc0e" }}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => setToggleStatus(false)}
+                    style={{ background: "#ec0303" }}
+                  >
+                    No
+                  </button>
                 </div>
               </div>
             </div>

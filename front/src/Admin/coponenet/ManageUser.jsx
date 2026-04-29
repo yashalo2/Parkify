@@ -10,6 +10,8 @@ import {
   Tooltip,
 } from "chart.js";
 import { useEffect, useState } from "react";
+import CalendarHeatMap from "react-calendar-heatmap";
+import "react-calendar-heatmap/dist/styles.css";
 import { Doughnut } from "react-chartjs-2";
 import toast from "react-hot-toast";
 import { MdClose, MdPerson } from "react-icons/md";
@@ -37,6 +39,48 @@ function ManageUser() {
   const [bookings, setBookings] = useState([]);
   const [cancelledBookings, setCancelledBookings] = useState([]);
   const [counts, setCounts] = useState({});
+  const [heatData, setHeatData] = useState([]);
+  const [goldenUserBookings, setGoldenUserBookings] = useState([]);
+  const [goldenUser, setGoldenUser] = useState([]);
+  const getGoldenUserInfo = async () => {
+    try {
+      const response = await fetch(`${Base_URL}/api/users/getGoldenUser`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      setGoldenUser(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getGoldenUserBookingHistory = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/booking/getGoldenUserBookingHistory`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+      setGoldenUserBookings(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getGoldenUser = async () => {
+    try {
+      const response = await fetch(`${Base_URL}/api/payment/getGoldenUser`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      setHeatData(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
   const getActiveUsers = async () => {
     try {
       const response = await fetch(
@@ -90,6 +134,15 @@ function ManageUser() {
       toast.error("Error Searching User");
     }
   };
+  const groupedAll = heatData.reduce((acc, item) => {
+    const day = new Date(item.date).toISOString().split("T")[0];
+    acc[day] = (acc[day] || 0) + item.count;
+    return acc;
+  }, {});
+  const result = Object.entries(groupedAll).map(([date, count]) => ({
+    date,
+    count,
+  }));
   const getUserHistory = async (id) => {
     try {
       const response = await fetch(`${Base_URL}/api/booking/getHistory/${id}`, {
@@ -202,6 +255,9 @@ function ManageUser() {
   useEffect(() => {
     getUsers();
     getActiveUsers();
+    getGoldenUser();
+    getGoldenUserBookingHistory();
+    getGoldenUserInfo();
   }, []);
   return (
     <div className={style.container}>
@@ -355,7 +411,124 @@ function ManageUser() {
             </div>
           </div>
         </div>
-        <div className={style.topUsers}></div>
+        <div className={style.topUsers}>
+          <div className={style.leftUser}>
+            <div className={style.goldenProfile}>
+              <MdPerson size={100} />
+              <div
+                style={{
+                  position: "absolute",
+                  top: "5px",
+                  right: "5px",
+                  color: "#dc7806",
+                }}
+              >
+                Top User
+              </div>
+            </div>
+            <div className={style.goldenInfo}>
+              {goldenUser.length > 0 &&
+                goldenUser.map((u, index) => (
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      padding: "0",
+                      display: "grid",
+                    }}
+                    key={index}
+                  >
+                    <div>
+                      {u.firstName} {u.lastName}
+                    </div>
+                    <div>{u.email}</div>
+                    <div>
+                      <button>send email</button>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+          <div className={style.heatMapAndChart}>
+            <div className={style.doughnut}>
+              <div className={style.labels}>
+                {goldenUserBookings.length > 0 &&
+                  goldenUserBookings.map((b, index) => (
+                    <div key={index}>
+                      <h2>{b.total}</h2>
+                      <p>{b.status}</p>
+                    </div>
+                  ))}
+              </div>
+              <div className={style.theChart}>
+                <Doughnut
+                  data={{
+                    labels: goldenUserBookings.map((d) => d.status),
+                    datasets: [
+                      {
+                        label: "count",
+                        data: goldenUserBookings.map((d) => d.total),
+                        backgroundColor: ["#0a83e7", "#10deed", "#e51ef0"],
+                        BsBorderWidth: 0,
+                      },
+                    ],
+                  }}
+                  options={{
+                    rotation: -90,
+                    circumference: 180,
+                    cutout: "70%",
+                    plugins: {
+                      legend: {
+                        display: false,
+                      },
+                    },
+                    maintainAspectRatio: true,
+                  }}
+                />
+              </div>
+            </div>
+            <div className={style.heatMap}>
+              <CalendarHeatMap
+                startDate={new Date("2026-04-01")}
+                endDate={new Date("2026-12-31")}
+                values={result}
+                gutterSize={1}
+                horizontal={true}
+                showMonthLabels={true}
+                classForValue={(value) => {
+                  if (!value || value.count === 0) return style["color-empty"];
+                  if (value.count > 0) return style["color-selected"];
+                  return style["color-scale-3"];
+                }}
+                tooltipDataAttrs={(value) => {
+                  if (!value || !value.date) return null;
+                  return {
+                    "data-tip": `${value.date}: ${value.count} bookings`,
+                  };
+                }}
+              />
+              <select
+                style={{
+                  padding: "0px",
+                  height: "max-content",
+                  borderRadius: "0px",
+                  marginTop: "5px",
+                  border: "1px solid #ededed",
+                  color: "grey",
+                }}
+                name="date"
+                id=""
+              >
+                <option value="">2026</option>
+                <option value="">2025</option>
+                <option value="">2024</option>
+                <option value="">2023</option>
+                <option value="">2022</option>
+                <option value="">2021</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
       <div className={style.userContainer}>
         <div className={style.searchContainer}>
@@ -382,7 +555,7 @@ function ManageUser() {
                   }}
                   className={style.profile}
                 >
-                  {user.firstName}
+                  <MdPerson size={24} color="#fff" />
                 </div>
                 <div className={style.info}>
                   {user.firstName} {user.lastName}
@@ -515,7 +688,7 @@ function ManageUser() {
                 <div style={{ color: "blue" }} className={style.label}>
                   All Bookings
                 </div>
-                <dv className={style.display}>
+                <div className={style.display}>
                   {bookings.length > 0 ? (
                     bookings.map((book, index) => (
                       <div key={index} className={style.booking}>
@@ -544,7 +717,7 @@ function ManageUser() {
                       No Bookings Found
                     </div>
                   )}
-                </dv>
+                </div>
               </div>
               <div className={style.div}>
                 <div style={{ color: "green" }} className={style.label}>
@@ -553,7 +726,7 @@ function ManageUser() {
                 <div className={style.display}>
                   {usedBookings.length > 0 ? (
                     usedBookings.map((book, index) => (
-                      <div className={style.booking}>
+                      <div key={index} className={style.booking}>
                         <div>
                           {new Date(book.date).toLocaleDateString("en-US", {
                             month: "short",
@@ -588,7 +761,7 @@ function ManageUser() {
                 <div className={style.display}>
                   {cancelledBookings.length > 0 ? (
                     cancelledBookings.map((book, index) => (
-                      <div className={style.booking}>
+                      <div key={index} className={style.booking}>
                         <div>
                           {new Date(book.date).toLocaleDateString("en-US", {
                             month: "short",

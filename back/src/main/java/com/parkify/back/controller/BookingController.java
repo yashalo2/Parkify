@@ -244,5 +244,17 @@ public class BookingController {
         return new ArrayList<>();
 
     }
+    @GetMapping("/getGoldenUserBookingHistory")
+    public List<CountInfoDTO> getGoldenUserBookingHistory(HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return new ArrayList<>();
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            return bookingService.getGoldenUserBookingHistory();
+        }
+        return new ArrayList<>();
+    }
 
 }

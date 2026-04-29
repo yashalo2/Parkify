@@ -60,5 +60,18 @@ where u.id = :id
     where u.role = :role
 """)
     long count(@Param("role") Role role);
-
+    @Query("""
+ select new com.parkify.back.dto.UserDTO(
+ u.id,
+ u.firstName,
+ u.lastName,
+ u.email,
+ u.status,
+ u.userLevel
+ )
+ from User u
+ where u.id = :id
+ 
+""")
+    List<UserDTO> getGoldenUser(@Param("id") long id);
 }

@@ -1,9 +1,6 @@
 package com.parkify.back.service;
 
-import com.parkify.back.dto.AreaDTO;
-import com.parkify.back.dto.CompareGrossDTO;
-import com.parkify.back.dto.CountInfoDTO;
-import com.parkify.back.dto.IdDTO;
+import com.parkify.back.dto.*;
 import com.parkify.back.model.Bookings;
 import com.parkify.back.model.Payment;
 import com.parkify.back.repository.BookingsRepository;
@@ -25,10 +22,10 @@ public class PaymentService {
     private PaymentRepository paymentRepository;
     @Autowired
     private BookingsRepository bookingsRepository;
-    public ResponseEntity<?> Pay(double pricePerHour, long bookingId) {
+    public String Pay(double pricePerHour, long bookingId) {
         Optional<Bookings> bookingOpt = bookingsRepository.findById(bookingId);
         if (!bookingOpt.isPresent()) {
-            return ResponseEntity.badRequest().body("Booking not found");
+            return "Booking not found";
         }
         Bookings booking = bookingOpt.get();
         Instant end = Instant.now();
@@ -37,14 +34,14 @@ public class PaymentService {
         double hours = duration.toMinutes() / 60.0;
         double amount = booking.getPrice() * hours;
         if(amount > pricePerHour) {
-            return ResponseEntity.ok().body("Amount not enough");
+            return "Amount not enough";
         }
 
         Payment payment = new Payment();
         payment.setBooking(booking);
         payment.setAmount(amount);
         paymentRepository.save(payment);
-        return ResponseEntity.ok().body(payment);
+        return "Payment Successfully Made";
     }
     public List<CompareGrossDTO> getTopGrossing(){
         List<IdDTO> results = paymentRepository.getTopGrossing(Date.from(Instant.now()));
@@ -111,6 +108,14 @@ public class PaymentService {
             return null;
         }
         return paymentRepository.getAreaInfo(top.getId());
+    }
+    public List<HeatMapDTO> getTopHeatMap(){
+        List<GoldenUserDTO> results = paymentRepository.getGoldenUser();
+        GoldenUserDTO top = results.isEmpty() ? null : results.get(0);
+        if(top == null){
+            return new ArrayList<>();
+        }
+        return paymentRepository.getHeatMapInfo(top.getId());
     }
 
 }

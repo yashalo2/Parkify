@@ -203,6 +203,25 @@ where p.booking.spot.parkingLots.parkingArea.id = :id
 group by p.booking.spot.parkingLots.parkingArea.id,p.booking.spot.parkingLots.parkingArea.name
 """)
     AreaDTO getAreaInfo(@Param("id") long id);
-
+    @Query("""
+select new com.parkify.back.dto.GoldenUserDTO(
+p.booking.user.id,
+count(*)
+)
+from Payment p
+group by p.booking.user.id
+order by count(*) desc
+""")
+    List<GoldenUserDTO> getGoldenUser();
+    @Query("""
+select new com.parkify.back.dto.HeatMapDTO(
+    p.date,
+    count(*)
+)
+from Payment p
+where p.booking.user.id = :id
+group by p.date
+""")
+    List<HeatMapDTO> getHeatMapInfo(@Param("id") long id);
 
 }

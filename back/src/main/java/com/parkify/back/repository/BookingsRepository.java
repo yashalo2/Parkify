@@ -198,4 +198,14 @@ from Bookings b
 group by b.status
 """)
     List<CountInfoDTO> getAllTimeCountInfo();
+    @Query("""
+select new com.parkify.back.dto.CountInfoDTO(
+Count(*),
+b.status
+)
+from Bookings b
+where b.user.id = :id
+group by b.status
+""")
+    List<CountInfoDTO> getGoldenUserBookingHistory(@Param("id") long id);
 }

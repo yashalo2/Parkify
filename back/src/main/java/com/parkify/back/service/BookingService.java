@@ -1,12 +1,10 @@
 package com.parkify.back.service;
 
-import com.parkify.back.dto.ActiveBookingUsersDTO;
-import com.parkify.back.dto.ChartDTO;
-import com.parkify.back.dto.UserBookingHistoryDTO;
-import com.parkify.back.dto.UserBookingsDTO;
+import com.parkify.back.dto.*;
 import com.parkify.back.model.BookingStatus;
 import com.parkify.back.model.User;
 import com.parkify.back.repository.BookingsRepository;
+import com.parkify.back.repository.PaymentRepository;
 import com.parkify.back.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -23,6 +21,8 @@ import java.util.List;
 public class BookingService {
     @Autowired
     private BookingsRepository bookingsRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     public List<ChartDTO> getBooked() {
         return bookingsRepository.getChart(BookingStatus.Open);
@@ -125,5 +125,13 @@ public class BookingService {
         Instant monthStartTime = monthStart.atStartOfDay().atZone(zoneId).toInstant();
         Instant monthEndTime = monthEnd.atTime(LocalTime.MAX).atZone(zoneId).toInstant();
         return bookingsRepository.getActiveBookingUsers(startWeekStartTime,weekEnd,monthStartTime,monthEndTime);
+    }
+    public List<CountInfoDTO> getGoldenUserBookingHistory(){
+        List<GoldenUserDTO> results = paymentRepository.getGoldenUser();
+        GoldenUserDTO top = results.isEmpty() ? null : results.get(0);
+        if(top == null){
+            return new ArrayList<>();
+        }
+        return bookingsRepository.getGoldenUserBookingHistory(top.getId());
     }
 }

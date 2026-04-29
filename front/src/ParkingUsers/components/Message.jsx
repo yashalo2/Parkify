@@ -131,11 +131,37 @@ function Message() {
                     className={style.text}
                   >
                     {mes.content}
+                    <div>
+                      <p
+                        style={{
+                          fontSize: "smaller",
+                          margin: "0px",
+                          textAlign: "end",
+                          color: "black",
+                        }}
+                      >
+                        {new Date(mes.date).toDateString()}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ) : (
                 <div style={{ display: "flex" }} className={style.content}>
-                  <div className={style.text}>{mes.content}</div>
+                  <div className={style.text}>
+                    {mes.content}
+                    <div>
+                      <p
+                        style={{
+                          fontSize: "smaller",
+                          margin: "0px",
+                          textAlign: "end",
+                          color: "grey",
+                        }}
+                      >
+                        {new Date(mes.date).toDateString()}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

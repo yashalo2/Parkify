@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -33,9 +34,9 @@ public class PaymentController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/pay/{booking}")
-    public ResponseEntity<?> pay(@RequestBody Payment payment, @PathVariable long booking) {
-        return ResponseEntity.ok().body(paymentService.Pay(payment.getAmount(), booking));
+    @GetMapping("/pay/{booking}/{amount}")
+    public ResponseEntity<String> pay(@PathVariable double amount, @PathVariable long booking) {
+        return ResponseEntity.ok().body(paymentService.Pay(amount, booking));
     }
 
     @GetMapping("/getChartInfo")
@@ -105,6 +106,19 @@ public class PaymentController {
     @GetMapping("/getLessArea")
     public AreaDTO getLessArea() {
         return paymentService.getLessArea();
+    }
+    @GetMapping("/getGoldenUser")
+    public List<HeatMapDTO> getGoldenUser(HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return new ArrayList<>();
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            return paymentService.getTopHeatMap();
+
+        }
+        return new ArrayList<>();
     }
 
 }
