@@ -19,17 +19,16 @@ public class ParkingArea {
     private AreaStatus areaStatus;
     @OneToMany(mappedBy="parkingArea",cascade=CascadeType.ALL)
     private List<ParkingLots> parkingLots;
-    @OneToOne(mappedBy = "parkingArea",cascade=CascadeType.ALL)
-    private ExitScanner exitScanner;
-    @OneToOne(mappedBy = "parkingArea",cascade=CascadeType.ALL)
-    private EntranceScanner entranceScanner;
 
-    public EntranceScanner getEntranceScanner() {
-        return entranceScanner;
+    @OneToOne(mappedBy = "parkingArea",cascade=CascadeType.ALL)
+    private Gate gateScanner;
+
+    public Gate getGateScanner() {
+        return gateScanner;
     }
 
-    public void setEntranceScanner(EntranceScanner entranceScanner) {
-        this.entranceScanner = entranceScanner;
+    public void setGateScanner(Gate gateScanner) {
+        this.gateScanner = gateScanner;
     }
 
     public AreaStatus getAreaStatus() {
@@ -39,16 +38,6 @@ public class ParkingArea {
     public void setAreaStatus(AreaStatus areaStatus) {
         this.areaStatus = areaStatus;
     }
-
-    public ExitScanner getExitScanner() {
-        return exitScanner;
-    }
-
-    public void setExitScanner(ExitScanner exitScanner) {
-        this.exitScanner = exitScanner;
-    }
-
-
 
     @PrePersist
     public void prePersist() {

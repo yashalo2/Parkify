@@ -2,13 +2,9 @@ package com.parkify.back.controller;
 
 import com.parkify.back.dto.*;
 import com.parkify.back.model.*;
-import com.parkify.back.repository.EntranceScannerRepository;
-import com.parkify.back.repository.ExitScannerRepository;
-import com.parkify.back.repository.ParkingAreaRepository;
-import com.parkify.back.repository.UserRepository;
+import com.parkify.back.repository.*;
 import com.parkify.back.service.ParkingAreaService;
 import jakarta.servlet.http.HttpSession;
-import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +20,11 @@ public class ParkingAreaController {
     @Autowired
     private ParkingAreaService parkingAreaService;
     @Autowired
-    private ExitScannerRepository exitScannerRepository;
-    @Autowired
-    private EntranceScannerRepository entranceScannerRepository;
+    private GateRepository gateRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SpotsRepository spotsRepository;
 
     @GetMapping("/getLocations")
     public List<LocationDTO> getLocations() {
@@ -141,9 +137,10 @@ public class ParkingAreaController {
         }
         return "UnAuthorized User";
     }
-    @PostMapping("/addEntrance/{id}")
-    public String addEntrance(@PathVariable long id, HttpSession session,@ModelAttribute EntranceScanner entranceScanner) {
+    @PostMapping("/addGate/{id}/{type}")
+    public String addEntrance(@PathVariable long id,@PathVariable String type, HttpSession session,@ModelAttribute Gate entranceScanner) {
         String email = (String) session.getAttribute("email");
+        System.out.println(type);
         if(email == null){
             return "User Not Logged In";
         }
@@ -152,47 +149,83 @@ public class ParkingAreaController {
             return "UnAuthorized User";
         }
         ParkingArea area = parkingAreaRepository.findById(id).get();
-        if(entranceScannerRepository.findByParkingAreaId(area.getId()) != null){
-            return "Parking has Gate";
-        }
-        if(entranceScannerRepository.codeExists(entranceScanner.getCode()) != null){
+        if(gateRepository.codeExists(entranceScanner.getCode()) != null){
             return "Gate With This Code Exists";
         }
-        entranceScanner.setParkingArea(area);
-        EntranceScanner newScanner = new EntranceScanner();
-        newScanner.setCode(entranceScanner.getCode());
-        newScanner.setParkingArea(area);
-        newScanner.setPassword(entranceScanner.getPassword());
-        entranceScannerRepository.save(newScanner);
-        return "Gate Added Successfully";
+        if(gateRepository.findByParkingAreaId(area.getId()) != null){
+            Gate gate = gateRepository.findByParkingAreaId(area.getId());
+            if(type.equals("Entrance")){
+                gate.setGateType(GateType.Entrance);
+                gate.setCode(entranceScanner.getCode());
+                entranceScanner.setParkingArea(area);
+                gateRepository.save(gate);
+                return "Gate Modified";
+            }
+            gate.setGateType(GateType.Exit);
+            gate.setCode(entranceScanner.getCode());
+            entranceScanner.setParkingArea(area);
+            gateRepository.save(gate);
+            return "Gate Modified";
+        }
+        if(type.equals("Entrance")) {
+            entranceScanner.setParkingArea(area);
+            Gate newScanner = new Gate();
+            newScanner.setCode(entranceScanner.getCode());
+            newScanner.setParkingArea(area);
+            newScanner.setPassword(entranceScanner.getPassword());
+            newScanner.setGateType(GateType.Entrance);
+            gateRepository.save(newScanner);
+            return "Gate Added Successfully";
+        }
+            entranceScanner.setParkingArea(area);
+            Gate newScanner = new Gate();
+            newScanner.setCode(entranceScanner.getCode());
+            newScanner.setParkingArea(area);
+            newScanner.setPassword(entranceScanner.getPassword());
+            newScanner.setGateType(GateType.Exit);
+            gateRepository.save(newScanner);
+            return "Gate Added Successfully";
 
     }
-    @PostMapping("/addExit/{id}")
-    public String addExit(@PathVariable long id, HttpSession session,@ModelAttribute ExitScanner exitScanner) {
+    @GetMapping("/getAreaQuantity")
+    public long getQuantity(HttpSession session){
         String email = (String) session.getAttribute("email");
         if(email == null){
-            return "User Not Logged In";
+            return 0;
         }
         User user = userRepository.findByEmail(email);
-        if(!user.getRole().equals(Role.Admin)){
-            return "UnAuthorized User";
+        if(user.getRole().equals(Role.Admin)){
+            return parkingAreaRepository.areaQQuantity();
         }
-        ParkingArea area = parkingAreaRepository.findById(id).get();
-        if(exitScannerRepository.findByParkingAreaId(area.getId()) != null){
-            return "Parking has Gate";
-        }
-        if(exitScannerRepository.codeExists(exitScanner.getCode()) != null){
-            return "Gate With This Code Exists";
-        }
-        ExitScanner newScanner = new ExitScanner();
-        newScanner.setParkingArea(area);
-        newScanner.setCode(exitScanner.getCode());
-        newScanner.setPassword(exitScanner.getPassword());
-        exitScanner.setParkingArea(area);
-        ExitScanner exit = exitScannerRepository.save(newScanner);
-        System.out.println(exit.getId());
-        return "Gate Added Successfully";
+        return 0;
+
     }
+    @GetMapping("/getSpotQuantity")
+    public long getSpotQuantity(HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return 0;
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            return spotsRepository.spotsQuantity();
+        }
+        return 0;
+    }
+    @PostMapping("/entranceScanner")
+    public String login(@RequestBody GateDTO gate,HttpSession session){
+       Gate scanner= gateRepository.codeExists(gate.getCode());
+       if(scanner == null){
+           return "Wrong Credential";
+       }
+       if(scanner.getPassword().equals(gate.getPassword())){
+           session.setAttribute("code",scanner.getCode());
+           return "Login Success";
+       }
+       return "Wrong Credential";
+
+    }
+
 
 
 }

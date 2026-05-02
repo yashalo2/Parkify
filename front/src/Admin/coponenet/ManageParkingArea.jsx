@@ -15,7 +15,7 @@ import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import toast from "react-hot-toast";
-import { MdClose, MdLocalParking, MdPerson } from "react-icons/md";
+import { MdClose, MdLocalParking, MdOpenInNew, MdPerson } from "react-icons/md";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { Base_URL } from "../../config";
 import style from "../styles/ManageParkingArea.module.css";
@@ -68,13 +68,81 @@ function ManageParkingArea() {
   const [status, setStatus] = useState("");
   const [toggleId, setToggleId] = useState();
   const [parkingAreaId, setParkingAreaId] = useState();
-  const [gateType, setGateType] = useState();
+  const [gateType, setGateType] = useState("");
   const gateRef = useRef(null);
   const [addForm, setAddForm] = useState(true);
+  const [showEditLevel, setShowEditLevel] = useState(false);
+  const [levels, setLevels] = useState([]);
+  const [selectedOption, setSelectedOption] = useState("");
+  const [updateId, setUpdateId] = useState();
+  const [updatePrice, setUpdatePrice] = useState(0);
+  const [updateStatus, setUpdateStatus] = useState("");
+  const update = async () => {
+    if (selectedOption == "") {
+      toast.error("Please select update type");
+      return;
+    }
+    if (updateId == undefined || updateId == "") {
+      toast.error("Please Select Level to Update");
+    }
+    if (selectedOption == "price") {
+      try {
+        const response = await fetch(
+          `${Base_URL}/api/parkingLots/price/${updateId}/${updatePrice}`,
+          {
+            method: "POST",
+            credentials: "include",
+          },
+        );
+        const data = await response.text();
+        if (data == "Price Updated") {
+          toast.success(data);
+        } else {
+          toast.error(data);
+        }
+      } catch (err) {
+        toast.error("Error Occurred");
+      }
+    }
+    if (selectedOption == "status") {
+      try {
+        const response = await fetch(
+          `${Base_URL}/api/parkingLots/status/${updateId}`,
+          {
+            method: "POST",
+            credentials: "include",
+          },
+        );
+        const data = await response.text();
+        if (data == "Status Updated") {
+          toast.success(data);
+        } else {
+          toast.error(data);
+        }
+      } catch (err) {
+        toast.error("Error Occurred");
+      }
+    }
+  };
+  const getLevels = async (id) => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingLots/getLevels/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+      setLevels(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
   const addGate = async (e) => {
     e.preventDefault();
-
-    if (gateType == null) {
+    console.log(gateType);
+    if (gateType.length == 0) {
       toast.error("Select gate Type");
       return;
     }
@@ -82,7 +150,7 @@ function ManageParkingArea() {
 
     try {
       const response = await fetch(
-        `${Base_URL}/api/parkingArea/${gateType}/${parkingAreaId}`,
+        `${Base_URL}/api/parkingArea/addGate/${parkingAreaId}/${gateType}`,
         {
           method: "POST",
           credentials: "include",
@@ -100,7 +168,7 @@ function ManageParkingArea() {
         toast.error(data);
       }
     } catch (err) {
-      toast.error("Error Occuured");
+      toast.error("Error Occurred");
     }
   };
   const ToggleStatus = async () => {
@@ -648,9 +716,9 @@ function ManageParkingArea() {
                       label: "Booking History",
                       data: top.map((b) => b.total),
                       backgroundColor: [
-                        "rgba(59, 130, 246, 0.8)",
-                        "rgba(245, 158, 11, 0.8)",
-                        "rgba(205, 68, 239, 0.8)",
+                        "rgba(0, 242, 93, 0.8)",
+                        "rgba(11, 245, 202, 0.8)",
+                        "rgba(239, 225, 68, 0.8)",
                       ],
                       borderRadius: 8,
                     },
@@ -717,9 +785,9 @@ function ManageParkingArea() {
                       label: "Booking History",
                       data: less.map((b) => b.total),
                       backgroundColor: [
-                        "rgba(59, 130, 246, 0.8)",
-                        "rgba(245, 158, 11, 0.8)",
-                        "rgba(205, 68, 239, 0.8)",
+                        "rgba(255, 5, 147, 0.8)",
+                        "rgba(245, 116, 11, 0.8)",
+                        "rgba(68, 173, 239, 0.8)",
                       ],
                       borderRadius: 8,
                     },
@@ -806,7 +874,7 @@ function ManageParkingArea() {
                       }}
                       style={{ background: "blue" }}
                     >
-                      View More
+                      View More <MdOpenInNew />
                     </button>
                   </div>
                   <div>
@@ -820,6 +888,19 @@ function ManageParkingArea() {
                       style={{ background: "orange" }}
                     >
                       Add Gate
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => {
+                        (setAreaName(area.name),
+                          setToggleId(area.id),
+                          getLevels(area.id),
+                          setShowEditLevel(true));
+                      }}
+                      style={{ background: "#269df8" }}
+                    >
+                      Edit Levels
                     </button>
                   </div>
                   {area.status == "Open" && (
@@ -942,8 +1023,8 @@ function ManageParkingArea() {
                         id=""
                       >
                         <option value="">select Gate Type</option>
-                        <option value="addEntrance">Entrance</option>
-                        <option value="addExit">Exit</option>
+                        <option value="Entrance">Entrance</option>
+                        <option value="Exit">Exit</option>
                       </select>
                     </div>
                     <div>
@@ -1035,6 +1116,84 @@ function ManageParkingArea() {
                     style={{ background: "#ec0303" }}
                   >
                     No
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {showEditLevel && (
+            <div className={style.editLevels}>
+              <MdClose
+                size={30}
+                color="red"
+                style={{ position: "absolute", top: "10px", right: "10px" }}
+                onClick={() => setShowEditLevel(false)}
+              />
+              <div className={style.editLevelForm}>
+                <div>
+                  <h2>Edit Levels for</h2>
+                </div>
+                <div style={{ display: "flex", gap: "20px" }}>
+                  <select
+                    style={{ maxHeight: "100px", height: "max-content" }}
+                    name="level"
+                    id=""
+                    onChange={(e) => setUpdateId(e.target.value)}
+                  >
+                    <option value="">Select level</option>
+                    {levels.length > 0 ? (
+                      levels.map((level, index) => (
+                        <option key={index} value={level.id}>
+                          level: {level.level} status: {level.status}
+                        </option>
+                      ))
+                    ) : (
+                      <option>Parking Has No Levels</option>
+                    )}
+                  </select>
+                  <select
+                    onChange={(e) => setSelectedOption(e.target.value)}
+                    style={{ height: "max-content" }}
+                    name="level"
+                    id=""
+                  >
+                    <option value="">Select edit Type</option>
+                    <option value="price">Price</option>
+                    <option value="status">Status</option>
+                  </select>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  {selectedOption == "" && <p>Please select update Type</p>}
+                  {selectedOption == "price" && (
+                    <input
+                      type="number"
+                      style={{
+                        border: "1px solid #5e5c5c94",
+                        width: "60%",
+                        padding: "0.5em",
+                        borderRadius: "10px",
+                        textAlign: "center",
+                      }}
+                      onChange={(e) => setUpdatePrice(e.target.value)}
+                      placeholder="enter new price"
+                    />
+                  )}
+                  {selectedOption == "status" && <p>Toggle status</p>}
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <button
+                    style={{
+                      width: "70%",
+                      padding: "0.5em",
+                      border: "none",
+                      background: "blue",
+                      color: "#fff",
+                      fontSize: "large",
+                      borderRadius: "10px",
+                    }}
+                    onClick={() => update()}
+                  >
+                    Update
                   </button>
                 </div>
               </div>

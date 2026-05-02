@@ -7,10 +7,9 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.encoder.QRCode;
 import com.parkify.back.dto.*;
 import com.parkify.back.model.*;
-import com.parkify.back.repository.BookingsRepository;
-import com.parkify.back.repository.SpotsRepository;
-import com.parkify.back.repository.UserRepository;
+import com.parkify.back.repository.*;
 import com.parkify.back.service.BookingService;
+import com.parkify.back.service.MessageService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +37,12 @@ public class BookingController {
     private BookingService bookingService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private GateRepository gateRepository;
+    @Autowired
+    private ParkingAreaRepository parkingAreaRepository;
+    @Autowired
+    private MessageService messageService;
 
     @PostMapping("/book")
     public ResponseEntity<?> book(@ModelAttribute Bookings bookings, HttpSession session) throws WriterException, IOException {
@@ -112,7 +117,21 @@ public class BookingController {
         return ResponseEntity.ok().body(bookingsRepository.getReceipts(id));
     }
     @GetMapping("/EntranceScanner/{id}")
-    public ResponseEntity<?> getEntranceScanner(@PathVariable long id){
+    public ResponseEntity<?> getEntranceScanner(@PathVariable long id,HttpSession session){
+        String code = (String) session.getAttribute("code");
+        if(code == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
+        }
+        long areaId = gateRepository.getAreaId(code);
+        long bookingAreaId = bookingsRepository.getAreaId(id);
+        if(areaId != bookingAreaId){
+            String current = parkingAreaRepository.getName(areaId);
+            String bookedFor = parkingAreaRepository.getName(bookingAreaId);
+            String user = bookingsRepository.getFirstName(id);
+            long userID = bookingsRepository.getUserId(id);
+            messageService.sendAlert(current,user,bookedFor,userID);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong Parking Area");
+        }
         Optional<Bookings> booking = bookingsRepository.findById(id);
         Bookings booked = booking.get();
         if(booked.getStatus().equals(BookingStatus.Cancelled)){
@@ -120,6 +139,7 @@ public class BookingController {
         }else if(booked.getStatus().equals(BookingStatus.Used)){
             return ResponseEntity.ok().body("Entrance has been used");
         }
+
         booked.setStatus(BookingStatus.Used);
         bookingsRepository.save(booked);
         return ResponseEntity.ok().body("Booking Confirmed");
@@ -164,6 +184,11 @@ public class BookingController {
         }
         User user = userRepository.findByEmail(email);
         if(user.getRole().equals(Role.Admin)){
+            if(bookingService.getCancelledBooking(id)== null){
+                long value=0;
+                UserBookingHistoryDTO booking = new UserBookingHistoryDTO(value,value,value);
+                return booking;
+            }
             return bookingService.getCancelledBooking(id);
 
         }

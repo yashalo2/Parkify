@@ -26,7 +26,6 @@ public class EmailService {
                               margin: auto;
                               padding: 20px;
                               border-radius: 10px;
-                              background: #ffffff;
                               font-family: Arial, Helvetica, sans-serif;
                               border: 1px solid #e0e0e0;
                               box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -90,6 +89,74 @@ public class EmailService {
                               "
                             >
                               If you didn’t initiate this request, please ignore this email.<br />
+                              © 2026 Parkify Smart Parking
+                            </p>
+                          </div>
+                """;
+        helper.setText(htmlContent,true);
+        mailSender.send(mimeMessage);
+    }
+    public void sendEmailToGoldenUser(String to, String subject,String content,String admin) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        helper.setFrom("parkify.sign.up@gmail.com");
+        helper.setTo(to);
+        helper.setSubject(subject);
+        String htmlContent = """
+                            <div
+                            style="
+                              width: 90%;
+                              max-width: 600px;
+                              margin: auto;
+                              padding: 20px;
+                              border-radius: 10px;
+                              background: #ffffff;
+                              font-family: Arial, Helvetica, sans-serif;
+                              border: 1px solid #e0e0e0;
+                              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                            "
+                          >
+                            <div
+                              style="
+                                text-align: center;
+                                margin-bottom: 15px;
+                                border-radius: 50%;
+                                overflow: hidden;
+                              "
+                            >
+                          <h1>Parkify</h1>
+                            </div>
+                
+                            <h2 style="color: #2c3e50; margin: 0 0 15px 0; text-align: center">
+                              Smart Parking
+                            </h2>
+                
+                            <hr style="border: none; border-top: 1px solid #eee; margin: 15px 0" />
+                
+                            <p
+                              style="
+                                color: #333;
+                                font-size: 16px;
+                                line-height: 1.6;
+                                margin: 0 0 15px 0;
+                                text-align: left;
+                              "
+                            >""" + content + """
+                              </p>
+                
+                           
+                
+                            <p
+                              style="
+                                color: #555;
+                                font-size: 13px;
+                                line-height: 1.4;
+                                margin: 0;
+                                text-align: center;
+                              "
+                            >
+                              By """ + admin + """
+                               Parkify Admin .<br />
                               © 2026 Parkify Smart Parking
                             </p>
                           </div>

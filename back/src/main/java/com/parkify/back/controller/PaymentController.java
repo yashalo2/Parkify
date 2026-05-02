@@ -1,6 +1,7 @@
 package com.parkify.back.controller;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.parkify.back.dto.*;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -35,7 +37,7 @@ public class PaymentController {
     private UserRepository userRepository;
 
     @GetMapping("/pay/{booking}/{amount}")
-    public ResponseEntity<String> pay(@PathVariable double amount, @PathVariable long booking) {
+    public ResponseEntity<String> pay(@PathVariable double amount, @PathVariable long booking) throws WriterException, IOException {
         return ResponseEntity.ok().body(paymentService.Pay(amount, booking));
     }
 

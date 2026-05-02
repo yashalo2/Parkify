@@ -9,7 +9,7 @@
 }
 .container .userContainer {
   width: 30%;
-  background: #fff;
+  background: #252525;
 }
 .container .messageContainer {
   position: relative;
@@ -20,7 +20,6 @@
   width: calc(100% - 1em);
   height: 60px;
   padding: 0.5em;
-  background: #fff;
   display: flex;
   gap: 3px;
 }
@@ -49,7 +48,7 @@
 .container .userContainer .users .user {
   width: 100%;
   height: 60px;
-  background: #ededed;
+  background: #fff;
   display: flex;
   gap: 2px;
   border-radius: 10px;
@@ -67,7 +66,8 @@
   border-radius: 50%;
   align-content: center;
   text-align: center;
-  border: 1px solid grey;
+  background: linear-gradient(-135deg, #d5eb0c, #5bef0b, #0ab1df, #b212e2);
+  color: #fff;
 }
 .container .userContainer .users .user .info {
   flex: 1;

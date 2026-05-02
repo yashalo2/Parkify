@@ -59,6 +59,7 @@ function Scanner() {
         `${Base_URL}/api/booking/EntranceScanner/${bookingId}`,
         {
           method: "GET",
+          credentials: "include",
         },
       );
       const data = await response.text();

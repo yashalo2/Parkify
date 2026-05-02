@@ -1,5 +1,6 @@
 package com.parkify.back.controller;
 
+import com.parkify.back.dto.MailDTO;
 import com.parkify.back.dto.UserDTO;
 import com.parkify.back.model.ParkingArea;
 import com.parkify.back.model.PendingUser;
@@ -46,10 +47,12 @@ public class UserController {
             return "User with the email already exists";
         }
         if(pendingUserRepository.existsByEmail(user.getEmail())) {
+            PendingUser user1 = pendingUserRepository.findByEmail(user.getEmail());
             int code = 100000 + random.nextInt(900000);
+            user1.setCode(code);
+            pendingUserRepository.save(user1);
             emailService.sendEmail(user.getEmail(),"Registration",code);
-
-            return "send email";
+            return "Code Sent";
         }
         PendingUser register = new PendingUser();
         register.setEmail(user.getEmail());
@@ -60,8 +63,7 @@ public class UserController {
         register.setCode(code);
         pendingUserRepository.save(register);
         emailService.sendEmail(register.getEmail(), "Registration", code);
-
-        return "Verification Code Sent";
+        return "Code Sent";
     }
     @PostMapping("/verify/{code}")
     public String verify(@PathVariable int code,HttpSession session) {
@@ -77,8 +79,12 @@ public class UserController {
             user.setPassword(pendingUser.getPassword());
             user.setFirstName(pendingUser.getFirstName());
             user.setLastName(pendingUser.getLastName());
-            userRepository.save(user);
-            return "User Successfully Verified";
+            User registered=userRepository.save(user);
+            session.setAttribute("email", email);
+            session.setAttribute("id", registered.getId());
+            session.setAttribute("role", registered.getRole());
+            pendingUserRepository.delete(pendingUser);
+            return "Email Verified";
         }
         return "Invalid Code";
 
@@ -151,6 +157,20 @@ public class UserController {
         }
         return new ArrayList<>();
 
+    }
+    @PostMapping("/mail/{id}")
+    public String mail(@RequestBody MailDTO mail, HttpSession session,@PathVariable long id) throws MessagingException {
+        String email = (String) session.getAttribute("email");
+        if(email == null) {
+            return "User Not Logged In";
+        }
+        User user = userRepository.findByEmail(email);
+        User receiver = userRepository.findById(id).get();
+        if(user.getRole().equals(Role.Admin)) {
+            emailService.sendEmailToGoldenUser(receiver.getEmail(),mail.getSubject(),mail.getContent(),user.getFirstName());
+            return "Mail Sent";
+        }
+        return "UnAuthorized User";
     }
 
 }

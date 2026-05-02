@@ -135,4 +135,14 @@ where p.id = :id
 group by p.id
 """)
     List<AddGateDTO> getAddGateInfo(@Param("id") long id);
+    @Query("""
+select count(p) from ParkingArea p
+""")
+    long areaQQuantity();
+    @Query("""
+select p.name from ParkingArea p
+where p.id = :id 
+""")
+    String getName(@Param("id") long id);
+
 }

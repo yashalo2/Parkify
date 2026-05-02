@@ -23,8 +23,9 @@ function Verify() {
           credentials: "include",
         });
         const data = await response.text();
-        if (data == "User Successfully Verified") {
+        if (data == "Email Verified") {
           toast.success(data);
+          navigate("/customer/home");
         } else {
           toast.error(data);
         }

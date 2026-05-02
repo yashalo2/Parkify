@@ -26,4 +26,9 @@ join l.parkingArea p
 where s.id = :id
 """)
     List<BookDTO> getBooks(@Param("id") long id);
+    @Query("""
+select count(s) from Spots s
+""")
+    long spotsQuantity();
+
 }

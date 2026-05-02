@@ -19,7 +19,7 @@ function Register() {
         body: formData,
       });
       const data = await response.text();
-      if (data == "Verification Code Sent") {
+      if (data == "Code Sent") {
         toast.success(data);
         navigate("/verify");
       } else {
