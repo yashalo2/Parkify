@@ -101,7 +101,7 @@ function AdminSupportPage() {
       if (client && client.connected) {
         const user = sessionStorage.getItem("user");
         const userI = JSON.parse(user);
-        const senderId = userI.id;
+        const senderId = Number(userI.id);
         const date = new Date().toISOString();
         const msg = {
           senderId,
@@ -146,7 +146,7 @@ function AdminSupportPage() {
             alignContent: "center",
           }}
         >
-          <h3>Support Center</h3>
+          <h3 style={{ color: "#fff" }}>Support Center</h3>
         </div>
         <div className={style.filter}>
           <input
@@ -239,7 +239,7 @@ function AdminSupportPage() {
                               color: "black",
                             }}
                           >
-                            {new Date(message.date).toDateString()}
+                            {new Date(message.date).toLocaleString()}
                           </p>
                         </div>
                       </div>
@@ -260,7 +260,7 @@ function AdminSupportPage() {
                               color: "grey",
                             }}
                           >
-                            {new Date(message.date).toDateString()}
+                            {new Date(message.date).toLocaleString()}
                           </p>
                         </div>
                       </div>

@@ -164,7 +164,7 @@ where p.booking.spot.parkingLots.parkingArea.id = :id
  join s.parkingLots pl
  join pl.parkingArea pa
  group by pa.name,function('DATE',p.date),pa.id
- order by cast(p.date as date ),sum(p.amount) desc
+ order by sum(p.amount) desc
 """)
     List<IdDTO> getTopGrossingAllTime();
     @Query("""
@@ -180,7 +180,7 @@ where p.booking.spot.parkingLots.parkingArea.id = :id
  join s.parkingLots pl
  join pl.parkingArea pa
  group by pa.name,cast(p.date as date),pa.id
- order by cast(p.date as date ),sum(p.amount) asc
+ order by sum(p.amount) asc
 """)
     List<IdDTO> getLessGrossingAllTime();
     @Query("""

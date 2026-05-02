@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { MdPerson } from "react-icons/md";
+import {
+  MdAdd,
+  MdDashboard,
+  MdHeadphones,
+  MdManageAccounts,
+  MdOutlineLocalParking,
+  MdPerson,
+} from "react-icons/md";
 import { Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import style from "../styles/AdminOutLet.module.css";
@@ -10,11 +17,15 @@ function AdminOutlet() {
   const [role, setRole] = useState("");
   const user = sessionStorage.getItem("user");
   const current = localStorage.getItem("adminPage") || "home";
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   useEffect(() => {
     if (user) {
       const userRole = JSON.parse(user);
       setRole(userRole.role);
+      setFirstName(userRole.firstName);
+      setLastName(userRole.lastName);
     }
   }, [user]);
 
@@ -53,7 +64,7 @@ function AdminOutlet() {
               (navigate("home"), localStorage.setItem("adminPage", "home"));
             }}
           >
-            Dashboard
+            <MdDashboard /> Dashboard
           </button>
           <button
             className={current == "new" ? style.current : ""}
@@ -62,7 +73,7 @@ function AdminOutlet() {
                 localStorage.setItem("adminPage", "new"));
             }}
           >
-            Add Parking Area
+            <MdAdd /> Add Parking Area
           </button>
           <button
             className={current == "manageArea" ? style.current : ""}
@@ -71,7 +82,7 @@ function AdminOutlet() {
                 localStorage.setItem("adminPage", "manageArea"));
             }}
           >
-            Manage Parking Area
+            <MdOutlineLocalParking /> Manage Parking Area
           </button>
           <button
             className={current == "manageUser" ? style.current : ""}
@@ -80,7 +91,7 @@ function AdminOutlet() {
                 localStorage.setItem("adminPage", "manageUser"));
             }}
           >
-            Manage Users
+            <MdManageAccounts /> Manage Users
           </button>
           <button
             className={current == "support" ? style.current : ""}
@@ -89,12 +100,14 @@ function AdminOutlet() {
                 localStorage.setItem("adminPage", "support"));
             }}
           >
-            Support
+            <MdHeadphones /> Support
           </button>
         </div>
         <div className={style.decor}>
           <div className={style.profile}></div>
-          <div style={{ alignContent: "center" }}>Admin Name</div>
+          <div style={{ alignContent: "center" }}>
+            {firstName} {lastName}
+          </div>
         </div>
       </div>
       <main className={style.content}>

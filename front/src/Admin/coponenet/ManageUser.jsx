@@ -42,6 +42,34 @@ function ManageUser() {
   const [heatData, setHeatData] = useState([]);
   const [goldenUserBookings, setGoldenUserBookings] = useState([]);
   const [goldenUser, setGoldenUser] = useState([]);
+  const [content, setContent] = useState("");
+  const [subject, setSubject] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userId, setUserId] = useState();
+  const [sent, setSent] = useState(false);
+  const [showSendEmail, setShowSendEmail] = useState(false);
+  const sendEmail = async () => {
+    setSent(true);
+    try {
+      const response = await fetch(`${Base_URL}/api/users/mail/${userId}`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject: subject, content: content }),
+      });
+      const data = await response.text();
+      if (data == "Mail Sent") {
+        toast.success(data);
+      } else {
+        toast.error(data);
+      }
+    } catch (err) {
+      toast.error("Error Occurred");
+    } finally {
+      setSent(false);
+    }
+  };
+
   const getGoldenUserInfo = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/users/getGoldenUser`, {
@@ -52,6 +80,7 @@ function ManageUser() {
       setGoldenUser(data);
     } catch (err) {
       toast.error("Error Occurred");
+      console.log(err);
     }
   };
   const getGoldenUserBookingHistory = async () => {
@@ -254,7 +283,7 @@ function ManageUser() {
   };
   useEffect(() => {
     getUsers();
-    getActiveUsers();
+    // getActiveUsers();
     getGoldenUser();
     getGoldenUserBookingHistory();
     getGoldenUserInfo();
@@ -413,7 +442,10 @@ function ManageUser() {
         </div>
         <div className={style.topUsers}>
           <div className={style.leftUser}>
-            <div className={style.goldenProfile}>
+            <div
+              style={{ position: "relative" }}
+              className={style.goldenProfile}
+            >
               <MdPerson size={100} />
               <div
                 style={{
@@ -443,10 +475,91 @@ function ManageUser() {
                     </div>
                     <div>{u.email}</div>
                     <div>
-                      <button>send email</button>
+                      <button
+                        onClick={() => {
+                          (setUserName(u.firstName),
+                            setUserId(u.id),
+                            setShowSendEmail(true));
+                        }}
+                      >
+                        send email
+                      </button>
                     </div>
                   </div>
                 ))}
+              {showSendEmail && (
+                <div
+                  style={{
+                    width: "20%",
+                    height: "200px",
+                    background: "#fff",
+                    position: "absolute",
+                    borderRadius: "10px",
+                    boxShadow: "0px 0px 30px #acacac",
+                    display: "grid",
+                    gap: "10px",
+                  }}
+                >
+                  <MdClose
+                    color="red"
+                    style={{
+                      position: "absolute",
+                      top: "5px",
+                      right: "5px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => setShowSendEmail(false)}
+                  />
+                  <div>
+                    <h3 style={{ marginBottom: "0" }}>
+                      Send Email To{" "}
+                      <span style={{ color: "golden" }}>{userName}</span>
+                    </h3>
+                  </div>
+                  <div style={{ display: "flex", textAlign: "center" }}>
+                    <label style={{ flex: "1" }}>
+                      Subject:{" "}
+                      <input
+                        style={{
+                          border: "1px solid #c5c5c5",
+                          padding: "0.3em",
+                          borderRadius: "5px",
+                          textAlign: "center",
+                        }}
+                        type="text"
+                        placeholder="subject"
+                        onChange={(e) => setSubject(e.target.value)}
+                      />
+                    </label>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <textarea
+                      style={{
+                        width: "80%",
+                        height: "90%",
+                        outline: "none",
+                        border: "1px solid #c2c2c2",
+                        borderRadius: "5px",
+                        textAlign: "center",
+                        alignContent: "center",
+                      }}
+                      name="mail"
+                      placeholder="content"
+                      id=""
+                      onChange={(e) => setContent(e.target.value)}
+                    ></textarea>
+                  </div>
+                  <div>
+                    {sent ? (
+                      <button style={{ background: "#3452bdd4" }}>
+                        sending ...
+                      </button>
+                    ) : (
+                      <button onClick={() => sendEmail()}>Send</button>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className={style.heatMapAndChart}>

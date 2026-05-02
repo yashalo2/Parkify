@@ -57,12 +57,13 @@ function Message() {
     getMyMessage();
     return () => stompClient.deactivate();
   }, [receiverId]);
+
   const sendMessage = async () => {
     try {
       if (client && client.connected) {
         const user = sessionStorage.getItem("user");
         const userI = JSON.parse(user);
-        const senderId = userI.id;
+        const senderId = Number(userI.id);
         const date = new Date().toISOString();
         const msg = {
           senderId,
@@ -75,7 +76,6 @@ function Message() {
           body: JSON.stringify(msg),
         });
         setMessages((prev) => [...prev, msg]);
-
         setContent("");
       }
     } catch (err) {
@@ -119,7 +119,7 @@ function Message() {
         {messages.length > 0 &&
           messages.map((mes, index) => (
             <div key={index}>
-              {mes.sender == myId ? (
+              {(mes.sender == myId) == true ? (
                 <div style={{ justifyItems: "end" }} className={style.content}>
                   <div
                     style={{

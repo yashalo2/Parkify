@@ -30,6 +30,18 @@ public class MessageService {
         MessageSendDTO messageSendDTO =new  MessageSendDTO(saved.getReceiver().getId(),saved.getSender().getId(),saved.getContent(),saved.getDate());
         messagingTemplate.convertAndSend("/topic/message/" + message.getReceiver().getId(),messageSendDTO);
     }
+    public void sendAlert(String current,String name,String Parking,long userId){
+        String message= """
+                Hello! """ + name + """
+                 you are using a wrong Entrance Code for the wrong parking are
+                 your booking is for """ + Parking + """
+                but you are using it to get in to """ + current +"""
+                ,so please check you booking and use it to get in to the right parking area
+                """;
+        messagingTemplate.convertAndSend("/topic/alert/" + userId,message);
+        System.out.println(userId);
+
+    }
     public List<MessageSendDTO> getMyMessages(long id){
         return messageRepository.findMyMessages(id);
     }

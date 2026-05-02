@@ -20,6 +20,7 @@ public class Bookings {
     @ManyToOne
     @JoinColumn(name="spot_id")
     private Spots spot;
+    private boolean paid;
 
     public Spots getSpot() {
         return spot;
@@ -33,6 +34,15 @@ public class Bookings {
     public void prePersist() {
         status = BookingStatus.Open;
         bookingDate = Instant.now();
+        paid = false;
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
     }
 
     public Instant getBookingDate() {

@@ -208,4 +208,39 @@ where b.user.id = :id
 group by b.status
 """)
     List<CountInfoDTO> getGoldenUserBookingHistory(@Param("id") long id);
+    @Query("""
+ select new com.parkify.back.dto.GetBookingDTO(
+ b.id,
+ b.bookingDate,
+ b.status,
+ p.name,
+ pa.level,
+ s.spotName,
+ pa.price
+ )
+ from Bookings b
+ join b.spot s
+ join s.parkingLots pa
+ join pa.parkingArea p
+ where b.user.id = :id and b.status = :status and b.paid = false
+""")
+    List<GetBookingDTO> getWaitingBookings(@Param("id") long id, @Param("status") BookingStatus status);
+    @Query("""
+select p.id from Bookings b
+join b.spot.parkingLots.parkingArea p
+where b.id = :id
+""")
+    long getAreaId(@Param("id") long id);
+    @Query("""
+select u.firstName from Bookings b
+join b.user u
+where b.id = :id
+""")
+    String getFirstName(@Param("id") long id);
+    @Query("""
+select u.id from Bookings b
+join b.user u
+where b.id = :id
+""")
+    long getUserId(@Param("id") long id);
 }

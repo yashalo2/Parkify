@@ -51,6 +51,8 @@ function AdminPage() {
   const [topGrossing, setTopGrossing] = useState([]);
   const [lessGrossing, setLessGrossing] = useState([]);
   const [payments, setPayments] = useState([]);
+  const [spotCount, setSpotCount] = useState(0);
+  const [areaCount, setAreaCount] = useState(0);
   const getChart = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/payment/getChartInfo`, {
@@ -322,6 +324,36 @@ function AdminPage() {
       toast.error("Error Occurred");
     }
   };
+  const getAreaQuantity = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingArea/getAreaQuantity`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+      setAreaCount(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getSpotQuantity = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingArea/getSpotQuantity`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+      setSpotCount(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
   useEffect(() => {
     getChart();
     getBooked();
@@ -334,6 +366,8 @@ function AdminPage() {
     getTopGrossing();
     getLessGrossing();
     getRecentPayment();
+    getAreaQuantity();
+    getSpotQuantity();
   }, []);
   return (
     <div className={style.container}>
@@ -583,47 +617,17 @@ function AdminPage() {
                 </div>
                 <div>
                   <p>Parkin Areas</p>
-                  <p>20</p>
+                  <p>{areaCount}</p>
                 </div>
                 <div>
                   <p>Total Spots</p>
-                  <p>200</p>
+                  <p>{spotCount}</p>
                 </div>
               </div>
               <div
                 style={{ background: "#fff", display: "flex", gap: "5px" }}
                 className={style.topGross}
               >
-                <div
-                  style={{
-                    height: "80px",
-                    background: "none",
-                    boxShadow: "none",
-                  }}
-                >
-                  <Doughnut
-                    data={{
-                      labels: activeArea.map((d) => d.status),
-                      datasets: [
-                        {
-                          label: "count",
-                          data: activeArea.map((d) => d.number),
-                          backgroundColor: ["red", "blue"],
-                          BsBorderWidth: 1,
-                          borderRadius: 5,
-                          spacing: 2,
-                        },
-                      ],
-                    }}
-                    options={{
-                      plugins: {
-                        legend: {
-                          display: false,
-                        },
-                      },
-                    }}
-                  />
-                </div>
                 <div
                   className={style.description}
                   style={{ boxShadow: "none" }}
@@ -636,10 +640,39 @@ function AdminPage() {
                       display: "flex",
                     }}
                   >
-                    <p style={{ fontSize: "smaller", margin: "0" }}>
-                      30 Parking Areas Are Giving service to users andd 40 are
-                      out of service
-                    </p>
+                    <div
+                      style={{
+                        height: "80px",
+                        boxShadow: "none",
+                        width: "100%",
+                        justifyItems: "center",
+                      }}
+                    >
+                      <Doughnut
+                        data={{
+                          labels: activeArea.map((d) => d.status),
+                          datasets: [
+                            {
+                              label: "count",
+                              data: activeArea.map((d) => d.number),
+                              backgroundColor: ["#ff03c4", "#3823f8"],
+                              BsBorderWidth: 0,
+                            },
+                          ],
+                        }}
+                        options={{
+                          rotation: -90,
+                          circumference: 180,
+                          cutout: "70%",
+                          plugins: {
+                            legend: {
+                              display: false,
+                            },
+                          },
+                          maintainAspectRatio: true,
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -654,7 +687,7 @@ function AdminPage() {
                   <div
                     style={{ width: "calc(100% - 1em)", paddingLeft: "1em" }}
                   >
-                    Parking Spot Status Chart
+                    Parking Level Status Chart
                   </div>
 
                   <div
@@ -663,39 +696,39 @@ function AdminPage() {
                       display: "flex",
                       paddingLeft: "1em",
                     }}
+                  ></div>
+                  <div
+                    style={{
+                      height: "80px",
+                      justifyItems: "center",
+                      boxShadow: "none",
+                    }}
                   >
-                    <p style={{ fontSize: "smaller", margin: "0" }}>
-                      <span style={{ color: "red" }}>25 level</span> across all
-                      parking areas are out of service while{" "}
-                      <span style={{ color: "blue" }}>30 parking level </span>
-                      are active and giving service
-                    </p>
+                    <Doughnut
+                      data={{
+                        labels: activeLot.map((d) => d.status),
+                        datasets: [
+                          {
+                            label: "count",
+                            data: activeLot.map((d) => d.number),
+                            backgroundColor: ["#1beedd", "#af0bd8"],
+                            BsBorderWidth: 0,
+                          },
+                        ],
+                      }}
+                      options={{
+                        rotation: -90,
+                        circumference: 180,
+                        cutout: "70%",
+                        plugins: {
+                          legend: {
+                            display: false,
+                          },
+                        },
+                        maintainAspectRatio: true,
+                      }}
+                    />
                   </div>
-                </div>
-
-                <div style={{ height: "80px", justifyItems: "end" }}>
-                  <Doughnut
-                    data={{
-                      labels: activeLot.map((d) => d.status),
-                      datasets: [
-                        {
-                          label: "count",
-                          data: activeLot.map((d) => d.number),
-                          backgroundColor: ["blue", "red"],
-                          BsBorderWidth: 1,
-                          borderRadius: 5,
-                          spacing: 2,
-                        },
-                      ],
-                    }}
-                    options={{
-                      plugins: {
-                        legend: {
-                          display: false,
-                        },
-                      },
-                    }}
-                  />
                 </div>
               </div>
             </div>

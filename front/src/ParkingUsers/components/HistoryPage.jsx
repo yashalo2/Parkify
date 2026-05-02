@@ -21,6 +21,8 @@ function History() {
   const [currentOn, setCurrentOn] = useState("cbe");
   const [payAmount, setPayAmount] = useState(0);
   const [payBookingId, setPayBookingId] = useState();
+  const [paid, setPaid] = useState(false);
+  const [paidImage, setPaidImage] = useState("");
 
   const pay = async () => {
     try {
@@ -31,10 +33,12 @@ function History() {
         },
       );
       const data = await response.text();
-      if (data == "Payment Successfully Made") {
-        toast.success(data);
-      } else {
+      if (data == "Booking not found" || data == "Amount not enough") {
         toast.error(data);
+      } else {
+        setPaidImage(data);
+        setPaid(true);
+        setShowPayment(false);
       }
     } catch (err) {
       toast.error("Error Occurred");
@@ -109,15 +113,23 @@ function History() {
         <>
           <div className={style.filterContainer}>
             {showMenu && (
-              <div className={style.menu}>
-                <h2>Filter Booking By</h2>
-                <button onClick={() => setStatus("All")}>All Booking</button>
-                <button onClick={() => setStatus("Open")}>Pending</button>
-                <button onClick={() => setStatus("Used")}>Used </button>
-                <button onClick={() => setStatus("Cancelled")}>
-                  Cancelled
-                </button>
-              </div>
+              <>
+                {history != "waiting" && (
+                  <div className={style.menu}>
+                    <h2>Filter Booking By</h2>
+                    <button onClick={() => setStatus("All")}>
+                      All Booking
+                    </button>
+                    <button onClick={() => setStatus("Open")}>Pending</button>
+                    <button onClick={() => setStatus("Used")}>Used </button>
+                    {history == "booking" && (
+                      <button onClick={() => setStatus("Cancelled")}>
+                        Cancelled
+                      </button>
+                    )}
+                  </div>
+                )}
+              </>
             )}
 
             <div>
@@ -141,6 +153,16 @@ function History() {
                 }
               >
                 Entrance Code
+              </button>
+              <button
+                style={
+                  history === "waiting"
+                    ? { background: "#8e2de2", color: "#fff" }
+                    : {}
+                }
+                onClick={() => setHistory("waiting")}
+              >
+                Waiting Payment
               </button>
               <button
                 style={
@@ -256,6 +278,102 @@ function History() {
         </>
       ) : (
         <div className={style.showBooking}>
+          {history == "waiting" && paid && (
+            <div
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                background: "#b5b5b56d",
+                top: "0px",
+                zIndex: "30",
+                alignContent: "center",
+                justifyItems: "center",
+                backdropFilter: "blur(2px)",
+              }}
+            >
+              <MdClose
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  left: "10px",
+                  color: "red",
+                }}
+                size={30}
+                onClick={() => setPaid(false)}
+              />
+              <div
+                style={{
+                  width: "calc(80% - 1em)",
+                  maxWidth: "400px",
+                  padding: "0.5em",
+                  height: "60%",
+                  maxHeight: "500px",
+                  background: "#fff",
+                  borderRadius: "20px",
+                }}
+              >
+                <div
+                  style={{
+                    width: "calc(100% - 1em)",
+                    height: "calc(80px - 1em)",
+                    padding: "0.5em",
+                    background: "#8e2de2",
+                    display: "flex",
+                    alignContent: "center",
+                    color: "#fff",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "80px",
+                      height: "calc(80px - 1em)",
+                      background: "#fff",
+                      borderRadius: "10px",
+                    }}
+                  >
+                    <img
+                      style={{ width: "100%", height: "100%" }}
+                      src={logo}
+                      alt=""
+                    />
+                  </div>
+                  <div
+                    style={{
+                      width: "calc(100% - 110px)",
+                      height: "100px",
+                      textAlign: "center",
+                    }}
+                  >
+                    <h3>Parkify Payment</h3>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    width: "100%",
+                    height: "calc(100% - 130px)",
+                  }}
+                >
+                  <img
+                    style={{ width: "100%", height: "100%" }}
+                    src={`data:image/png;base64,${paidImage}`}
+                    alt=""
+                  />
+                </div>
+                <div
+                  style={{
+                    width: "100%",
+                    height: "50px",
+                    alignContent: "center",
+                    textAlign: "center",
+                    fontFamily: "fantasy",
+                  }}
+                >
+                  ©2026 payment made successfully
+                </div>
+              </div>
+            </div>
+          )}
           <div
             style={{
               width: "max-content",
@@ -268,35 +386,42 @@ function History() {
           >
             <MdArrowBack onClick={() => getMyBooking()} color="red" size={24} />
           </div>
-          <div className={style.qrCode}>
-            <div className={style.code}>
-              <div
-                className={style.label}
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <div style={{ width: "100px", height: "100px" }}>
-                  <img
-                    style={{ width: "100%", height: "100%" }}
-                    src={logo}
-                    alt=""
-                  />
-                </div>
+          {history != "waiting" && (
+            <div className={style.qrCode}>
+              <div className={style.code}>
                 <div
-                  style={{
-                    width: "calc(100% - 110px)",
-                    height: "100px",
-                  }}
+                  className={style.label}
+                  style={{ display: "flex", gap: "10px" }}
                 >
-                  <h2>Parkify</h2>
-                  <p>
-                    {receipt[0].area}{" "}
-                    <span style={{ fontWeight: "bold" }}>Entrance</span>
-                  </p>
+                  <div style={{ width: "100px", height: "100px" }}>
+                    <img
+                      style={{ width: "100%", height: "100%" }}
+                      src={logo}
+                      alt=""
+                    />
+                  </div>
+                  <div
+                    style={{
+                      width: "calc(100% - 110px)",
+                      height: "100px",
+                    }}
+                  >
+                    <h2>Parkify</h2>
+                    <p>
+                      {receipt[0].area}{" "}
+                      {history == "booking" && (
+                        <span style={{ fontWeight: "bold" }}>Entrance</span>
+                      )}
+                      {history == "payment" && (
+                        <span style={{ fontWeight: "bold" }}>Exit</span>
+                      )}
+                    </p>
+                  </div>
                 </div>
+                <img src={`data:image/png;base64,${img}`} alt="" />
               </div>
-              <img src={`data:image/png;base64,${img}`} alt="" />
             </div>
-          </div>
+          )}
           <div className={style.receiptContainer}>
             {receipt.length > 0 && (
               <div className={style.receipt}>
@@ -392,7 +517,7 @@ function History() {
                     </p>
                   </div>
                 </div>
-                {history == "payment" ? (
+                {history == "waiting" ? (
                   <div
                     style={{ display: "flex" }}
                     className={style.btnContainer}

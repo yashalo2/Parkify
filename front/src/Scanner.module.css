@@ -5,6 +5,13 @@
   top: 0;
   align-content: center;
   justify-items: center;
+  background: linear-gradient(
+    135deg,
+    #dfe9f3 0%,
+    #ffffff 30%,
+    #abc9dc 60%,
+    #e2ebf0 100%
+  );
 }
 
 .container .reader {

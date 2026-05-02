@@ -86,7 +86,6 @@ public class BookingService {
             long value=0;
             UserBookingHistoryDTO booking = new UserBookingHistoryDTO(value,value,value);
             return booking;
-
         }
         return bookingsRepository.getBookingStatus(startWeekStartTime,weekEnd,monthStartTime,monthEndTime,id,BookingStatus.Cancelled);
     }
