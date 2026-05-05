@@ -14,6 +14,7 @@ import java.util.List;
 
 @Repository
 public interface BookingsRepository extends JpaRepository<Bookings, Long> {
+    List<Bookings> findByExpireDateBeforeAndStatus(Instant expireDate, BookingStatus status);
     @Query("""
 select case when count(b) > 0 then true else false end
 from Bookings b
@@ -243,4 +244,12 @@ join b.user u
 where b.id = :id
 """)
     long getUserId(@Param("id") long id);
+    @Query("""
+select new com.parkify.back.dto.ActiveDTO(
+    count(*),
+    b.bookingDate
+)from Bookings b
+group by b.bookingDate
+""")
+    List<ActiveDTO> getActiveBookingUsers();
 }

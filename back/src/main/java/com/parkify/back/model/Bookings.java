@@ -29,6 +29,14 @@ public class Bookings {
     public void setSpot(Spots spot) {
         this.spot = spot;
     }
+    private Instant expireDate;
+
+    public Instant getExpireDate() {
+        return expireDate;
+    }
+    public void setExpireDate(Instant expireDate) {
+        this.expireDate = expireDate;
+    }
 
     @PrePersist
     public void prePersist() {

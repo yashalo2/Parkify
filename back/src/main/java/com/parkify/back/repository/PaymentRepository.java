@@ -1,18 +1,20 @@
 package com.parkify.back.repository;
 
 import com.parkify.back.dto.*;
+import com.parkify.back.model.Bookings;
 import com.parkify.back.model.Payment;
 import com.parkify.back.model.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
+    List<Payment> getAllByStatus(PaymentStatus status);
     @Query(""" 
             SELECT new com.parkify.back.dto.ChartDTO(
             p.date,
@@ -106,10 +108,10 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 """)
     List<PaymentInfoDTO> getPaymentInfo();
     @Query("""
- select new com.parkify.back.dto.GetBookingDTO(
+ select new com.parkify.back.dto.GetPaymentDTO(
  py.id,
  py.date,
- b.status,
+ py.status,
  p.name,
  pa.level,
  s.spotName,
@@ -122,7 +124,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
  join pa.parkingArea p
  where b.user.id = :id and py.status = :status
 """)
-    List<GetBookingDTO> getBookingInfo(@Param("id") long id,@Param("status") PaymentStatus status);
+    List<GetPaymentDTO> getBookingInfo(@Param("id") long id,@Param("status") PaymentStatus status);
     @Query("""
  select new com.parkify.back.dto.GetBookingDTO(
  py.id,
@@ -223,5 +225,29 @@ where p.booking.user.id = :id
 group by p.date
 """)
     List<HeatMapDTO> getHeatMapInfo(@Param("id") long id);
+    @Query("""
+select b from Payment p
+join p.booking b
+where p.id = :id
+""")
+    Bookings getPrice(@Param("id") long id);
+    @Query("""
+select new com.parkify.back.dto.PaymentReceiptDTO(
+b.id,
+p.name,
+pa.level,
+s.spotName,
+pa.price,
+b.bookingDate,
+py.status
+)
+from Payment py
+join py.booking b
+join b.spot s
+join s.parkingLots pa
+join pa.parkingArea p
+where py.id = :id
+""")
+    List<PaymentReceiptDTO> getReceipts(@Param("id") long id);
 
 }

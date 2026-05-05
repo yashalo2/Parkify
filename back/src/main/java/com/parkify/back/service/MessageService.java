@@ -2,9 +2,11 @@ package com.parkify.back.service;
 
 import com.parkify.back.dto.MessageSendDTO;
 import com.parkify.back.dto.UserDTO;
+import com.parkify.back.model.Alert;
 import com.parkify.back.model.Message;
 import com.parkify.back.model.Role;
 import com.parkify.back.model.User;
+import com.parkify.back.repository.AlertRepository;
 import com.parkify.back.repository.MessageRepository;
 import com.parkify.back.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
@@ -23,6 +25,8 @@ public class MessageService {
     private MessageRepository messageRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AlertRepository alertRepository;
 
     public void sendMessage(Message message){
 
@@ -38,6 +42,11 @@ public class MessageService {
                 but you are using it to get in to """ + current +"""
                 ,so please check you booking and use it to get in to the right parking area
                 """;
+        User user = userRepository.findMeById(userId);
+        Alert alert = new Alert();
+        alert.setUser(user);
+        alert.setContent(message);
+        alertRepository.save(alert);
         messagingTemplate.convertAndSend("/topic/alert/" + userId,message);
         System.out.println(userId);
 
@@ -50,5 +59,15 @@ public class MessageService {
     }
     public List<UserDTO> getNeedyUsersBySearch(String search){
         return messageRepository.findNeedyUsersBySearch(search,Role.Customer);
+    }
+    public void notify(long userId,String message){
+        User user = userRepository.findMeById(userId);
+        Alert alert = new Alert();
+        alert.setUser(user);
+        alert.setContent(message);
+        alertRepository.save(alert);
+        messagingTemplate.convertAndSend("/topic/alert/" + userId,message);
+        System.out.println(userId);
+
     }
 }

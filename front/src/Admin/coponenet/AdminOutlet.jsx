@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import {
   MdAdd,
   MdDashboard,
@@ -6,9 +7,11 @@ import {
   MdManageAccounts,
   MdOutlineLocalParking,
   MdPerson,
+  MdSettings,
 } from "react-icons/md";
 import { Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
+import { Base_URL } from "../../config";
 import style from "../styles/AdminOutLet.module.css";
 function AdminOutlet() {
   const navigate = useNavigate();
@@ -19,7 +22,81 @@ function AdminOutlet() {
   const current = localStorage.getItem("adminPage") || "home";
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-
+  const [showCancelForm, setShowCancelForm] = useState(false);
+  const bookingRef = useRef(null);
+  const paymentRef = useRef(null);
+  const [rePay, setRePay] = useState({});
+  const [cancel, setCancel] = useState({});
+  const getRePayData = async () => {
+    try {
+      const response = await fetch(`${Base_URL}/api/payment/getRePayData`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      setRePay(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const getCancelData = async () => {
+    try {
+      const response = await fetch(`${Base_URL}/api/booking/getCancelData`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      setCancel(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  const updatePaymentTimeOut = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(paymentRef.current);
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/payment/updatePaymentTimeOut`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        },
+      );
+      const data = await response.text();
+      if (data == "Update Success") {
+        toast.success(data);
+        setShowCancelForm(false);
+      } else {
+        toast.error(data);
+      }
+    } catch (err) {
+      toast.error("ErrorOccurred");
+    }
+  };
+  const bookingTimeOut = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(bookingRef.current);
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/booking/updateBookingTimeOut`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        },
+      );
+      const data = await response.text();
+      if (data == "Update Success") {
+        toast.success(data);
+        setShowCancelForm(false);
+      } else {
+        toast.error(data);
+      }
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
   useEffect(() => {
     if (user) {
       const userRole = JSON.parse(user);
@@ -27,6 +104,8 @@ function AdminOutlet() {
       setFirstName(userRole.firstName);
       setLastName(userRole.lastName);
     }
+    getRePayData();
+    getCancelData();
   }, [user]);
 
   useEffect(() => {
@@ -38,6 +117,7 @@ function AdminOutlet() {
   if (!isAuthenticated || role !== "Admin") {
     return null;
   }
+
   return (
     <div className={style.container}>
       <div className={style.topBar}>
@@ -103,13 +183,73 @@ function AdminOutlet() {
             <MdHeadphones /> Support
           </button>
         </div>
-        <div className={style.decor}>
-          <div className={style.profile}></div>
-          <div style={{ alignContent: "center" }}>
-            {firstName} {lastName}
-          </div>
+        <div
+          className={style.decor}
+          onClick={() => {
+            (setShowCancelForm(!showCancelForm),
+              getCancelData(),
+              getRePayData());
+          }}
+        >
+          <div>
+            {" "}
+            <MdSettings />{" "}
+          </div>{" "}
+          <div style={{ flex: "1", alignContent: "center" }}>Setting</div>
         </div>
       </div>
+      {showCancelForm && (
+        <div className={style.form}>
+          <form ref={bookingRef} onSubmit={bookingTimeOut}>
+            <h3>Cancel Booking</h3>
+            <div>
+              <input type="number" name="timeOut" placeholder="enter value" />
+              <select name="type" id="">
+                <option value="Minute">minutes</option>
+                <option value="Day">days</option>
+                <option value="Week">weeks</option>
+              </select>
+              <button>Edit</button>
+            </div>
+          </form>
+          <form ref={paymentRef} onSubmit={updatePaymentTimeOut}>
+            <h3>RePay</h3>
+            <div>
+              <input type="number" name="timeOut" placeholder="enter value " />
+              <select name="type" id="">
+                <option value="Minute">minutes</option>
+                <option value="Day">days</option>
+                <option value="Week">weeks</option>
+              </select>
+              <button>Edit</button>
+            </div>
+          </form>{" "}
+          <div style={{ margin: "50px" }}>
+            <div
+              style={{
+                padding: "0.5em",
+                width: "100%",
+                height: "60px",
+                marginLeft: "0px",
+                display: "flex",
+              }}
+            >
+              <div style={{ display: "grid", flex: "1" }}>
+                <h3 style={{ margin: "0px" }}>RePay</h3>
+                <p>
+                  {rePay.timeOut} {rePay.type}
+                </p>
+              </div>
+              <div style={{ display: "grid" }}>
+                <h3 style={{ margin: "0px" }}>Cancel Booking</h3>
+                <p>
+                  {cancel.timeOut} {cancel.type}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <main className={style.content}>
         <Outlet />
       </main>

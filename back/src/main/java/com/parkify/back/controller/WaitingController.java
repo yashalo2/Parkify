@@ -32,6 +32,9 @@ public class WaitingController {
         return ResponseEntity.ok().body(bookingsRepository.getWaitingBookings(user.getId(),BookingStatus.Used));
 
     }
-
+    @GetMapping("/getBooking/{id}")
+    public ResponseEntity<?> getBooking(@PathVariable long id){
+        return ResponseEntity.ok().body(bookingsRepository.getReceipts(id));
+    }
 
 }

@@ -17,10 +17,27 @@ public class Payment {
     private Instant date;
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
+    private Instant expireDate;
     @PrePersist
     public void prePersist() {
         this.date = Instant.now();
         this.status = PaymentStatus.Open;
+    }
+
+    public PaymentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
+    }
+
+    public Instant getExpireDate() {
+        return expireDate;
+    }
+
+    public void setExpireDate(Instant expireDate) {
+        this.expireDate = expireDate;
     }
 
     public long getId() {

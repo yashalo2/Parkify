@@ -8,10 +8,9 @@ function Landing() {
       <div className={style.container}>
         <div className={style.logo}></div>
         <div className={style.top}>
-          <button>About</button>
-          <button>Contact</button>
-          <button>Support</button>
-          <button>Terms & Policy</button>
+          <button onClick={() => navigate("about")}>About</button>
+          <button onClick={() => navigate("contact")}>Contact</button>
+          <button onClick={() => navigate("terms")}>Terms & Policy</button>
         </div>
         <div className={style.card}>
           <img src={car} alt="" />

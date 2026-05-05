@@ -1,5 +1,6 @@
 import { Toaster } from "react-hot-toast";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import About from "./About.jsx";
 import AddParkingArea from "./Admin/coponenet/AddParkingArea.jsx";
 import AdminOutlet from "./Admin/coponenet/AdminOutlet";
 import AdminPage from "./Admin/coponenet/AdminPage.jsx";
@@ -7,8 +8,10 @@ import AdminSupportPage from "./Admin/coponenet/AdminSupport.jsx";
 import ManageParkingArea from "./Admin/coponenet/ManageParkingArea.jsx";
 import ManageUser from "./Admin/coponenet/ManageUser.jsx";
 import "./App.css";
+import Contact from "./Contact.jsx";
 import Landing from "./Landing.jsx";
 import Login from "./Login.jsx";
+import Alert from "./ParkingUsers/components/Alert.jsx";
 import Booking from "./ParkingUsers/components/Booking.jsx";
 import History from "./ParkingUsers/components/HistoryPage.jsx";
 import Home from "./ParkingUsers/components/Home";
@@ -18,6 +21,7 @@ import PaymentPage from "./ParkingUsers/components/PaymentPage.jsx";
 import Register from "./Register.jsx";
 import Scanner from "./Scanner.jsx";
 import ScannerLogin from "./ScannerLogin.jsx";
+import TermsPrivacy from "./Terms.jsx";
 import Verify from "./Verification.jsx";
 function App() {
   return (
@@ -26,6 +30,10 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Landing />}></Route>
+        <Route path="about" element={<About />}></Route>
+        <Route path="terms" element={<TermsPrivacy />}></Route>
+        <Route path="contact" element={<Contact />}></Route>
+
         <Route path="scanner" element={<Scanner />}></Route>
         <Route path="scannerLogin" element={<ScannerLogin />}></Route>
         <Route path="login" element={<Login />}></Route>
@@ -37,6 +45,7 @@ function App() {
           <Route path="history" element={<History />}></Route>
           <Route path="support" element={<Message />}></Route>
           <Route path="booking" element={<Booking area={1} />}></Route>
+          <Route path="alerts" element={<Alert />}></Route>
         </Route>
         <Route path="admin" element={<AdminOutlet />}>
           <Route path="home" element={<AdminPage />}></Route>

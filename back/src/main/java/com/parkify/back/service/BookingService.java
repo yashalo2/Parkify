@@ -2,13 +2,17 @@ package com.parkify.back.service;
 
 import com.parkify.back.dto.*;
 import com.parkify.back.model.BookingStatus;
+import com.parkify.back.model.Bookings;
+import com.parkify.back.model.CancelBooking;
 import com.parkify.back.model.User;
 import com.parkify.back.repository.BookingsRepository;
+import com.parkify.back.repository.CancelBookingRepository;
 import com.parkify.back.repository.PaymentRepository;
 import com.parkify.back.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +27,8 @@ public class BookingService {
     private BookingsRepository bookingsRepository;
     @Autowired
     private PaymentRepository paymentRepository;
+    @Autowired
+    private CancelBookingRepository cancelBookingRepository;
 
     public List<ChartDTO> getBooked() {
         return bookingsRepository.getChart(BookingStatus.Open);
@@ -133,4 +139,19 @@ public class BookingService {
         }
         return bookingsRepository.getGoldenUserBookingHistory(top.getId());
     }
+    @Scheduled(fixedRate = 100000)
+    public void cancelExpiredBookings() {
+        Instant now = Instant.now();
+        List<Bookings> expired = bookingsRepository.findByExpireDateBeforeAndStatus(now, BookingStatus.Open);
+        expired.forEach(booking -> {
+            if(booking.getExpireDate().isBefore(now)) {
+                booking.setStatus(BookingStatus.Cancelled);
+                bookingsRepository.save(booking);
+            }
+        });
+    }
 }
+
+
+
+

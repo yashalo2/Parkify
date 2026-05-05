@@ -12,9 +12,9 @@ import {
 import { useEffect, useState } from "react";
 import CalendarHeatMap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
-import { Doughnut } from "react-chartjs-2";
+import { Doughnut, Line } from "react-chartjs-2";
 import toast from "react-hot-toast";
-import { MdClose, MdPerson } from "react-icons/md";
+import { MdClose, MdMail, MdOpenInNew, MdPerson } from "react-icons/md";
 import { Base_URL } from "../../config";
 import style from "../styles/ManageUser.module.css";
 ChartJS.register(
@@ -48,6 +48,34 @@ function ManageUser() {
   const [userId, setUserId] = useState();
   const [sent, setSent] = useState(false);
   const [showSendEmail, setShowSendEmail] = useState(false);
+  const [mailType, setMailType] = useState("email");
+  const [selectedUserId, setSelectedUserId] = useState();
+  const [selectedUserName, setSelectedUserName] = useState("");
+  const [showEditUser, setShowEditUser] = useState(false);
+  const [activeBooking, setActiveBooking] = useState([]);
+  const notify = async () => {
+    if (selectedUserId == null || content == "") {
+      toast.error("Please Enter Notification Content");
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/users/notify/${selectedUserId}/${content}`,
+        {
+          method: "POST",
+          credentials: "include",
+        },
+      );
+      const data = await response.text();
+      if (data == "User Notified") {
+        toast.success(data);
+      } else {
+        toast.error(data);
+      }
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
   const sendEmail = async () => {
     setSent(true);
     try {
@@ -57,6 +85,30 @@ function ManageUser() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ subject: subject, content: content }),
       });
+      const data = await response.text();
+      if (data == "Mail Sent") {
+        toast.success(data);
+      } else {
+        toast.error(data);
+      }
+    } catch (err) {
+      toast.error("Error Occurred");
+    } finally {
+      setSent(false);
+    }
+  };
+  const sendEmailToUser = async () => {
+    setSent(true);
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/users/mail/${selectedUserId}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subject: subject, content: content }),
+        },
+      );
       const data = await response.text();
       if (data == "Mail Sent") {
         toast.success(data);
@@ -119,7 +171,7 @@ function ManageUser() {
         },
       );
       const data = await response.json();
-      setCounts(data);
+      setActiveBooking(data);
     } catch (err) {
       toast.error("Error Occurred");
     }
@@ -268,6 +320,7 @@ function ManageUser() {
       toast.error("Error Occurred");
     }
   };
+
   const getUserInfo = async (id) => {
     try {
       getCancelledHistory(id);
@@ -281,162 +334,94 @@ function ManageUser() {
       toast.error("Error Occurred");
     }
   };
+
   useEffect(() => {
     getUsers();
-    // getActiveUsers();
+    getActiveUsers();
     getGoldenUser();
     getGoldenUserBookingHistory();
     getGoldenUserInfo();
   }, []);
+  const group = activeBooking.reduce((acc, item) => {
+    const day = new Date(item.date).toISOString().split("T")[0];
+    acc[day] = (acc[day] || 0) + item.count;
+    return acc;
+  }, {});
+  const labelsAll = Object.keys(group)
+    .sort()
+    .map((day) => {
+      const d = new Date(day);
+      return d.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    });
+  const dataAll = Object.keys(group)
+    .sort()
+    .map((day) => group[day]);
+  const dataset = {
+    labels: labelsAll,
+    datasets: [
+      {
+        label: "Daily Bookings",
+        data: dataAll,
+        borderColor: "#0b0bf3c2",
+        backgroundColor: "#1751f0e0",
+        fill: true,
+        pointRadius: 5,
+        tension: 0.4,
+      },
+    ],
+  };
   return (
     <div className={style.container}>
       <div className={style.boxContainer}>
         <div className={style.activity}>
           <div className={style.div}>
             <div>
-              <div style={{ width: "80px", height: "80px" }}>
-                <Doughnut
-                  data={{
-                    labels: data.map((d) => d.status),
-                    datasets: [
-                      {
-                        label: "count",
-                        data: [50, 100],
-                        backgroundColor: ["#0a83e7", "#ededed"],
-                        BsBorderWidth: 0,
+              <h2>Daily Bookings</h2>
+            </div>
+            <div>
+              <Line
+                data={dataset}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      position: "top",
+                    },
+                    tooltip: {
+                      mode: "index",
+                      intersect: false,
+                    },
+                  },
+                  scales: {
+                    x: {
+                      ticks: {
+                        callback: function (value, index) {
+                          const label = this.getLabelForValue(value);
+                          return label.length > 3
+                            ? label.substring(0, 3) + "…"
+                            : label;
+                        },
                       },
-                    ],
-                  }}
-                  options={{
-                    // rotation: -90,
-                    // circumference: 180,
-                    // cutout: "70%",
-                    plugins: {
-                      legend: {
+                      grid: {
                         display: false,
                       },
                     },
-                    maintainAspectRatio: true,
-                  }}
-                />
-              </div>
-            </div>
-            <div>
-              <div>
-                <strong>Daily Users</strong>
-                <p>
-                  5% of the system users booked 1000 parking booking at 10
-                  different parking areas
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className={style.div}>
-            <div>
-              <div style={{ width: "80px", height: "80px" }}>
-                <Doughnut
-                  data={{
-                    labels: data.map((d) => d.status),
-                    datasets: [
-                      {
-                        label: "count",
-                        data: [counts.thisWeek, counts.total],
-                        backgroundColor: ["#f8972089", "#ededed"],
-                        BsBorderWidth: 0,
+                    y: {
+                      ticks: {
+                        display: true,
                       },
-                    ],
-                  }}
-                  options={{
-                    plugins: {
-                      legend: {
+                      grid: {
                         display: false,
                       },
                     },
-                    maintainAspectRatio: true,
-                  }}
-                />
-              </div>
-            </div>
-            <div>
-              <div>
-                <strong>Weekly Users</strong>
-                <p>
-                  5% of the system users booked 1000 parking booking at 10
-                  different parking areas
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className={style.div}>
-            <div>
-              <div style={{ width: "80px", height: "80px" }}>
-                <Doughnut
-                  data={{
-                    labels: data.map((d) => d.status),
-                    datasets: [
-                      {
-                        label: "count",
-                        data: [counts.thisMonth, counts.total],
-                        backgroundColor: ["#ededed", "#51f610ad"],
-                        BsBorderWidth: 0,
-                      },
-                    ],
-                  }}
-                  options={{
-                    plugins: {
-                      legend: {
-                        display: false,
-                      },
-                    },
-                    maintainAspectRatio: true,
-                  }}
-                />
-              </div>
-            </div>
-            <div>
-              <div>
-                <strong>Monthly Users</strong>
-                <p>
-                  5% of the system users booked 1000 parking booking at 10
-                  different parking areas
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className={style.div}>
-            <div>
-              <div style={{ width: "80px", height: "80px" }}>
-                <Doughnut
-                  data={{
-                    labels: data.map((d) => d.status),
-                    datasets: [
-                      {
-                        label: "count",
-                        data: [counts.total, counts.total],
-                        backgroundColor: ["#e70ad5", "#ededed"],
-                        BsBorderWidth: 0,
-                      },
-                    ],
-                  }}
-                  options={{
-                    plugins: {
-                      legend: {
-                        display: false,
-                      },
-                    },
-                    maintainAspectRatio: true,
-                  }}
-                />
-              </div>
-            </div>
-            <div>
-              <div>
-                <strong>Annual Users</strong>
-                <p>
-                  5% of the system users booked 1000 parking booking at 10
-                  different parking areas
-                </p>
-              </div>
+                  },
+                  maintainAspectRatio: false,
+                }}
+              />
             </div>
           </div>
         </div>
@@ -498,6 +483,7 @@ function ManageUser() {
                     boxShadow: "0px 0px 30px #acacac",
                     display: "grid",
                     gap: "10px",
+                    zIndex: "30",
                   }}
                 >
                   <MdClose
@@ -555,7 +541,9 @@ function ManageUser() {
                         sending ...
                       </button>
                     ) : (
-                      <button onClick={() => sendEmail()}>Send</button>
+                      <button onClick={() => sendEmail()}>
+                        Send <MdMail />
+                      </button>
                     )}
                   </div>
                 </div>
@@ -652,67 +640,187 @@ function ManageUser() {
           />
         </div>
         <div className={style.users}>
-          {users.length > 0 ? (
-            users.map((user, index) => (
+          <div style={{ width: "100%", height: "100%", overflowY: "auto" }}>
+            {users.length > 0 ? (
+              users.map((user, index) => (
+                <div key={index} className={style.user}>
+                  <div
+                    style={{
+                      background:
+                        "linear-gradient(135deg , #0ecf4f, #0ecfc5, #039132",
+                    }}
+                    className={style.profile}
+                  >
+                    <MdPerson size={24} color="#fff" />
+                  </div>
+                  <div className={style.info}>
+                    {user.firstName} {user.lastName}
+                  </div>
+                  <div className={style.info}>{user.email}</div>
+                  <div className={style.info}>
+                    {user.status == "Active" && (
+                      <strong
+                        style={{
+                          padding: "0.5em 1em",
+                          borderRadius: "10px",
+                          color: "#00b816",
+                        }}
+                      >
+                        {user.status}
+                      </strong>
+                    )}
+                    {user.status == "Blocked" && (
+                      <strong
+                        style={{
+                          padding: "0.5em 1em",
+                          borderRadius: "10px",
+                          color: "#b80000",
+                        }}
+                      >
+                        {user.status}
+                      </strong>
+                    )}
+                  </div>
+                  <div className={style.info}>{user.userLevel}</div>
+                  <div className={style.info}>
+                    <button
+                      style={{
+                        padding: "0.5em",
+                        width: "50%",
+                        border: "none",
+                        background: "blue",
+                        color: "#fff",
+                        borderRadius: "10px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        (setShowUserInfo(true), getUserInfo(user.id));
+                      }}
+                    >
+                      View <MdOpenInNew />
+                    </button>
+                  </div>
+
+                  <div className={style.info}>
+                    <button
+                      style={{
+                        padding: "0.5em",
+                        width: "50%",
+                        border: "none",
+                        background: "#03bee4",
+                        color: "#fff",
+                        borderRadius: "10px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        (setSelectedUserId(user.id),
+                          setSelectedUserName(user.firstName),
+                          setShowEditUser(true));
+                      }}
+                    >
+                      Notify User
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
               <div
-                onClick={() => {
-                  (setShowUserInfo(true), getUserInfo(user.id));
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  textAlign: "center",
+                  alignContent: "center",
                 }}
-                key={index}
-                className={style.user}
               >
-                <div
-                  style={{
-                    background:
-                      "linear-gradient(135deg , #0ecf4f, #0ecfc5, #039132",
-                  }}
-                  className={style.profile}
-                >
-                  <MdPerson size={24} color="#fff" />
-                </div>
-                <div className={style.info}>
-                  {user.firstName} {user.lastName}
-                </div>
-                <div className={style.info}>{user.email}</div>
-                <div className={style.info}>{user.userLevel}</div>
-                <div className={style.info}>
-                  {user.status == "Active" && (
-                    <strong
-                      style={{
-                        background: "#0dee117d",
-                        padding: "0.5em 1em",
-                        borderRadius: "10px",
-                        color: "#00b816",
-                      }}
-                    >
-                      {user.status}
-                    </strong>
-                  )}
-                  {user.status == "Blocked" && (
-                    <strong
-                      style={{
-                        background: "#ee0d0d7d",
-                        padding: "0.5em 1em",
-                        borderRadius: "10px",
-                        color: "#b80000",
-                      }}
-                    >
-                      {user.status}
-                    </strong>
-                  )}
-                </div>
+                <h2>{message}</h2>
               </div>
-            ))
-          ) : (
-            <div
-              style={{
-                width: "100%",
-                height: "100%",
-                textAlign: "center",
-                alignContent: "center",
-              }}
-            >
-              <h2>{message}</h2>
+            )}
+          </div>
+          {showEditUser && (
+            <div className={style.editUser}>
+              <MdClose
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "10px",
+                  cursor: "pointer",
+                }}
+                color="red"
+                size={30}
+                onClick={() => setShowEditUser(false)}
+              />
+              <div className={style.editUserForm}>
+                <div className={style.userName}>
+                  <button
+                    onClick={() => setMailType("email")}
+                    className={mailType == "email" ? style.current : ""}
+                  >
+                    Email
+                  </button>
+                  <button
+                    onClick={() => setMailType("notification")}
+                    className={mailType == "notification" ? style.current : ""}
+                  >
+                    Notification
+                  </button>
+                </div>
+                {mailType == "email" ? (
+                  <>
+                    <div style={{ display: "grid" }}>
+                      <div>SEND EMAIL {selectedUserName}</div>
+                      <div>
+                        <label>
+                          {" "}
+                          Subject:{" "}
+                          <input
+                            type="text"
+                            placeholder="Subject"
+                            onChange={(e) => setSubject(e.target.value)}
+                          />
+                        </label>
+                      </div>
+                      <div>
+                        <textarea
+                          name=""
+                          id=""
+                          placeholder="Enter content"
+                          onChange={(e) => setContent(e.target.value)}
+                        ></textarea>
+                      </div>
+                    </div>
+                    <div>
+                      <button
+                        onClick={() => sendEmailToUser()}
+                        style={{ background: "#00d9ff", color: "#fff" }}
+                      >
+                        Send
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div>
+                    <div>
+                      <h2>Notify {selectedUserName}</h2>
+                    </div>
+                    <div>
+                      <textarea
+                        name=""
+                        id=""
+                        placeholder="Enter Content"
+                        onChange={(e) => setContent(e.target.value)}
+                      ></textarea>
+                    </div>
+                    <div style={{ marginTop: "20px" }}>
+                      <button
+                        onClick={() => notify()}
+                        style={{ background: "#00d9ff", color: "#fff" }}
+                      >
+                        send
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

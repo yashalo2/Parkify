@@ -18,17 +18,17 @@
   background: #fff;
 }
 .container .boxContainer .activity {
-  display: grid;
+  display: flex;
   gap: 2px;
-  grid-template-columns: repeat(2, 1fr);
 }
 .container .boxContainer .activity .div {
-  display: flex;
+  flex: 1;
   gap: 1px;
   height: 140px;
+  width: 100%;
+  height: 100%;
 }
 .container .boxContainer .activity .div div {
-  flex: 1;
   align-content: center;
   justify-items: center;
   text-align: center;
@@ -116,10 +116,10 @@
   color: black;
 }
 .container .userContainer .users {
+  position: relative;
   width: calc(100% - 1em);
   height: calc(100% - 55px - 1em);
   margin-top: 5px;
-  overflow-y: auto;
   background: #e3e3e3;
   padding: 0.5em;
 }
@@ -145,6 +145,70 @@
   flex: 1;
   align-content: center;
   text-align: center;
+}
+.container .userContainer .users .editUser {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #ededed79;
+  backdrop-filter: blur(2px);
+  align-content: center;
+  justify-items: center;
+}
+.container .userContainer .users .editUser .editUserForm {
+  width: 60%;
+  height: 60%;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 3px #25252551;
+  display: grid;
+}
+.container .userContainer .users .editUser .editUserForm .userName {
+  width: calc(100% - 0.5em);
+  height: 30px;
+  font-size: larger;
+  padding-left: 0.5em;
+  padding-top: 0.5em;
+}
+.container .userContainer .users .editUser .editUserForm div {
+  width: 100%;
+  text-align: center;
+}
+.container .userContainer .users .editUser .editUserForm .userName button {
+  border-radius: 0px;
+  padding: 0.5em;
+  cursor: pointer;
+}
+.container .userContainer .users .editUser .editUserForm .userName .current {
+  background: #8e2de2;
+  color: #fff;
+}
+.container .userContainer .users .editUser .editUserForm div input {
+  width: 60%;
+  padding: 0.5em;
+  border: 1px solid #bbbbbb;
+  border-radius: 10px;
+  text-align: center;
+  outline: none;
+}
+.container .userContainer .users .editUser .editUserForm div textarea {
+  width: 80%;
+  padding: 0.5em;
+  height: 80px;
+  border: 0.2px solid #00000036;
+  outline: none;
+  border-radius: 10px;
+  align-content: center;
+  text-align: center;
+}
+.container .userContainer .users .editUser .editUserForm div button {
+  width: 40%;
+  margin-left: 30px;
+  padding: 0.5em;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
 }
 .container .userInfoContainer {
   position: absolute;
