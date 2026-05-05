@@ -17,6 +17,12 @@
   border-bottom-right-radius: 10px;
   background: #fff;
 }
+.container .topBar .alert {
+  position: absolute;
+  right: 300px;
+  width: max-content;
+  margin-top: 20px;
+}
 .container .topBar .logoContainer {
   position: absolute;
   top: 0;
@@ -131,6 +137,13 @@
     flex-direction: column;
     align-items: flex-start;
     padding: 0.5em 0.5em 0 0.5em;
+  }
+  .container .topBar .alert {
+    position: absolute;
+    top: 0px;
+    right: 70px;
+    width: max-content;
+    margin-top: 20px;
   }
   .container .topBar .logoContainer {
     position: absolute;

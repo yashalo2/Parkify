@@ -21,6 +21,8 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -43,6 +45,8 @@ public class BookingController {
     private ParkingAreaRepository parkingAreaRepository;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private CancelBookingRepository cancelBookingRepository;
 
     @PostMapping("/book")
     public ResponseEntity<?> book(@ModelAttribute Bookings bookings, HttpSession session) throws WriterException, IOException {
@@ -51,11 +55,89 @@ public class BookingController {
             System.out.println(email);
             return ResponseEntity.ok().body("user not logged in");
         }
+        CancelBooking cancel = cancelBookingRepository.getAll();
+        if(cancel == null){
+            Instant now = Instant.now();
+            Instant addDay = now.plus(Duration.ofDays(1));
+            User user = userRepository.findByEmail(email);
+            Spots spots = bookings.getSpot();
+            spots.setSpotStatus(SpotStatus.Reserved);
+            spotsRepository.save(spots);
+            bookings.setUser(user);
+            bookings.setExpireDate(addDay);
+            Bookings booking = bookingsRepository.save(bookings);
+            String qrContent = "{\"bookingId\":" + booking.getId();
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE,250,250);
+            BufferedImage qrImage = new BufferedImage(250,250, BufferedImage.TYPE_INT_RGB);
+            for (int x = 0; x < 250; x++) {
+                for (int y = 0; y < 250; y++) {
+                    int pixel = bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF;
+                    qrImage.setRGB(x, y, pixel);
+                }
+            }
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ImageIO.write(qrImage, "png", byteArrayOutputStream);
+            String base64Image = Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
+            return ResponseEntity.ok().body(base64Image);
+        }else if(cancel.getType().equals(TimeOut.Minute)){
+            Instant now = Instant.now();
+            Instant addMinute = now.plus(Duration.ofMinutes(cancel.getTimeOut()));
+            User user = userRepository.findByEmail(email);
+            Spots spots = bookings.getSpot();
+            spots.setSpotStatus(SpotStatus.Reserved);
+            spotsRepository.save(spots);
+            bookings.setUser(user);
+            bookings.setExpireDate(addMinute);
+            Bookings booking = bookingsRepository.save(bookings);
+            String qrContent = "{\"bookingId\":" + booking.getId();
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE,250,250);
+            BufferedImage qrImage = new BufferedImage(250,250, BufferedImage.TYPE_INT_RGB);
+            for (int x = 0; x < 250; x++) {
+                for (int y = 0; y < 250; y++) {
+                    int pixel = bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF;
+                    qrImage.setRGB(x, y, pixel);
+                }
+            }
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ImageIO.write(qrImage, "png", byteArrayOutputStream);
+            String base64Image = Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
+            return ResponseEntity.ok().body(base64Image);
+        }
+        else if(cancel.getType().equals(TimeOut.Week)){
+            Instant now = Instant.now();
+            Instant addWeek = now.plus(Duration.ofDays(cancel.getTimeOut() * 7));
+            User user = userRepository.findByEmail(email);
+            Spots spots = bookings.getSpot();
+            spots.setSpotStatus(SpotStatus.Reserved);
+            spotsRepository.save(spots);
+            bookings.setUser(user);
+            bookings.setExpireDate(addWeek);
+            Bookings booking = bookingsRepository.save(bookings);
+            String qrContent = "{\"bookingId\":" + booking.getId();
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE,250,250);
+            BufferedImage qrImage = new BufferedImage(250,250, BufferedImage.TYPE_INT_RGB);
+            for (int x = 0; x < 250; x++) {
+                for (int y = 0; y < 250; y++) {
+                    int pixel = bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF;
+                    qrImage.setRGB(x, y, pixel);
+                }
+            }
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ImageIO.write(qrImage, "png", byteArrayOutputStream);
+            String base64Image = Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
+            return ResponseEntity.ok().body(base64Image);
+        }
+        Instant now = Instant.now();
+        Instant addDay = now.plus(Duration.ofDays(cancel.getTimeOut()));
         User user = userRepository.findByEmail(email);
         Spots spots = bookings.getSpot();
         spots.setSpotStatus(SpotStatus.Reserved);
         spotsRepository.save(spots);
         bookings.setUser(user);
+        bookings.setExpireDate(addDay);
         Bookings booking = bookingsRepository.save(bookings);
         String qrContent = "{\"bookingId\":" + booking.getId();
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
@@ -71,7 +153,6 @@ public class BookingController {
         ImageIO.write(qrImage, "png", byteArrayOutputStream);
         String base64Image = Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
         return ResponseEntity.ok().body(base64Image);
-
     }
     @GetMapping("/getEntrance/{id}")
     public ResponseEntity<?> getEntrance(@PathVariable long id) throws WriterException, IOException {
@@ -253,8 +334,8 @@ public class BookingController {
         return bookingsRepository.getAreaBookingByEmail(email,id);
     }
     @GetMapping("/getActiveBookingUsers")
-    public ActiveBookingUsersDTO getActiveBookingUsers(){
-        return bookingService.getActiveBookingUsers();
+    public List<ActiveDTO> getActiveBookingUsers(){
+        return bookingsRepository.getActiveBookingUsers();
     }
     @GetMapping("/getAllAreaCount")
     public List<CountInfoDTO> getAllAreaCount(HttpSession session){
@@ -280,6 +361,44 @@ public class BookingController {
             return bookingService.getGoldenUserBookingHistory();
         }
         return new ArrayList<>();
+    }
+    @PostMapping("/updateBookingTimeOut")
+    public String updateTimeOUt(@ModelAttribute CancelBooking update,HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return "User Not Logged";
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+           CancelBooking cancelBooking = cancelBookingRepository.getAll();
+           cancelBooking.setTimeOut(update.getTimeOut());
+           if(update.getType().equals(TimeOut.Minute)){
+               cancelBooking.setType(TimeOut.Minute);
+               cancelBookingRepository.save(cancelBooking);
+               return "Update Success";
+           }
+           else if(update.getType().equals(TimeOut.Day)){
+               cancelBooking.setType(TimeOut.Day);
+               cancelBookingRepository.save(cancelBooking);
+               return "Update Success";
+           }
+            cancelBooking.setType(TimeOut.Week);
+            cancelBookingRepository.save(cancelBooking);
+            return "Update Success";
+        }
+        return "UnAuthorized User";
+    }
+    @GetMapping("/getCancelData")
+    public CancelBooking getCancelData(HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return new CancelBooking();
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            return cancelBookingRepository.getAll();
+        }
+        return new CancelBooking();
     }
 
 }

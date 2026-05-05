@@ -27,7 +27,6 @@ function Home() {
       setLocations(data);
     } catch (err) {
       toast.error("Failed to fetch parking areas. Please try again.");
-      console.log(err);
     }
   };
 

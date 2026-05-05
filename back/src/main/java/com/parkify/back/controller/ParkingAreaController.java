@@ -25,6 +25,8 @@ public class ParkingAreaController {
     private UserRepository userRepository;
     @Autowired
     private SpotsRepository spotsRepository;
+    @Autowired
+    private AlertRepository alertRepository;
 
     @GetMapping("/getLocations")
     public List<LocationDTO> getLocations() {
@@ -225,7 +227,24 @@ public class ParkingAreaController {
        return "Wrong Credential";
 
     }
+@GetMapping("/getAlerts")
+    public List<AlertDTO> getAlerts(HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return new ArrayList<>();
+        }
+        User user = userRepository.findByEmail(email);
+        return alertRepository.getAllAlerts(user.getId());
+}
+@GetMapping("/getScannerInfo")
+    public String getScannerInfo(HttpSession session){
+        String code = (String) session.getAttribute("code");
+        if(code == null){
+            return "Gate Not Logged In";
+        }
+        String name = gateRepository.getName(code);
+        return name;
 
-
+}
 
 }

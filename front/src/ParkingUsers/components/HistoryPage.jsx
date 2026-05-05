@@ -23,7 +23,26 @@ function History() {
   const [payBookingId, setPayBookingId] = useState();
   const [paid, setPaid] = useState(false);
   const [paidImage, setPaidImage] = useState("");
-
+  const rePay = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/payment/rePay/${payBookingId}/${payAmount}`,
+        {
+          method: "GET",
+        },
+      );
+      const data = await response.text();
+      if (data == "Booking not found" || data == "Amount not enough") {
+        toast.error(data);
+      } else {
+        setPaidImage(data);
+        setPaid(true);
+        setShowPayment(false);
+      }
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
   const pay = async () => {
     try {
       const response = await fetch(
@@ -46,7 +65,7 @@ function History() {
   };
   const getExit = async () => {
     try {
-      const response = await fetch(`${Base_URL}/api/payments/getExit`, {
+      const response = await fetch(`${Base_URL}/api/payment/getExit`, {
         method: "GET",
         credentials: "include",
       });
@@ -79,9 +98,12 @@ function History() {
   };
   const getBook = async (id) => {
     try {
-      const response = await fetch(`${Base_URL}/api/booking/getBooking/${id}`, {
-        method: "GET",
-      });
+      const response = await fetch(
+        `${Base_URL}/api/${history}/getBooking/${id}`,
+        {
+          method: "GET",
+        },
+      );
       const data = await response.json();
       setReceipt(data);
     } catch (err) {
@@ -222,6 +244,17 @@ function History() {
                           style={{
                             textAlign: "end",
                             color: "#b81414",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {b.status}
+                        </div>
+                      )}
+                      {b.status == "TimeOut" && (
+                        <div
+                          style={{
+                            textAlign: "end",
+                            color: "#ff0000",
                             fontWeight: "bold",
                           }}
                         >
@@ -517,6 +550,24 @@ function History() {
                     </p>
                   </div>
                 </div>
+                {receipt[0].status == "TimeOut" ? (
+                  <div
+                    style={{ display: "flex" }}
+                    className={style.btnContainer}
+                  >
+                    <button
+                      style={{ background: "blue", flex: "1" }}
+                      onClick={() => setShowPayment(true)}
+                    >
+                      Re Pay
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    style={{ display: "flex" }}
+                    className={style.btnContainer}
+                  ></div>
+                )}
                 {history == "waiting" ? (
                   <div
                     style={{ display: "flex" }}
@@ -607,7 +658,12 @@ function History() {
                   <input type="number" />
                 </div>
                 <div>
-                  <button onClick={() => pay()}>Pay</button>
+                  {history == "waiting" && (
+                    <button onClick={() => pay()}>Pay</button>
+                  )}
+                  {history == "payment" && (
+                    <button onClick={() => rePay()}>rePay</button>
+                  )}
                 </div>
               </div>
             </div>

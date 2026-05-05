@@ -1,6 +1,13 @@
 import { Client } from "@stomp/stompjs";
 import { useEffect, useState } from "react";
-import { MdHeadphones, MdHistory, MdHome, MdPerson } from "react-icons/md";
+import { toast } from "react-hot-toast";
+import {
+  MdHeadphones,
+  MdHistory,
+  MdHome,
+  MdNotifications,
+  MdPerson,
+} from "react-icons/md";
 import { Outlet, useNavigate } from "react-router-dom";
 import SockJS from "sockjs-client";
 import notifications from "../../Sounds/alert.mp3";
@@ -15,8 +22,8 @@ function OutLet() {
   const isAuthenticated = !!sessionStorage.getItem("user");
   const user = sessionStorage.getItem("user");
   const [loader, setLoader] = useState(false);
+  const [warning, setWarning] = useState(false);
   const notification = new Audio(notifications);
-
   const them = localStorage.getItem("them") || "home";
   useEffect(() => {
     const stompClient = new Client({
@@ -24,17 +31,13 @@ function OutLet() {
         new SockJS(`${Base_URL}/ws`, null, { withCredentials: true }),
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log("Connected to webSocket");
-
         const user = sessionStorage.getItem("user");
         const userI = JSON.parse(user);
         const senderId = userI.id;
-        console.log(senderId);
-
         stompClient.subscribe(`/topic/alert/${senderId}`, (message) => {
-          console.log(message);
           notification.play();
-          console.log(message.body);
+          setWarning(true);
+          toast.error("Alert");
         });
       },
     });
@@ -59,6 +62,7 @@ function OutLet() {
   if (!isAuthenticated || role !== "Customer") {
     return null;
   }
+
   return (
     <div className={style.container}>
       <div className={style.topBar}>
@@ -74,11 +78,16 @@ function OutLet() {
             <MdPerson className={style.icon} size={30} />
           </div>
           <div className={style.actions}>
-            <button>Home</button>
-            <button>Find Parking</button>
-            <button>History</button>
-            <button>Settings</button>
+            <button onClick={() => navigate("home")}>Home</button>
+            <button onClick={() => navigate("history")}>History</button>
             <button onClick={() => navigate("support")}>Support</button>
+          </div>
+          <div className={style.alert} onClick={() => navigate("alerts")}>
+            {warning ? (
+              <MdNotifications size={30} color="red" />
+            ) : (
+              <MdNotifications size={30} />
+            )}
           </div>
         </div>
       </div>

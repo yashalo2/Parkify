@@ -10,6 +10,7 @@ import com.parkify.back.repository.ParkingAreaRepository;
 import com.parkify.back.repository.PendingUserRepository;
 import com.parkify.back.repository.UserRepository;
 import com.parkify.back.service.EmailService;
+import com.parkify.back.service.MessageService;
 import com.parkify.back.service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
@@ -38,6 +39,8 @@ public class UserController {
     private PendingUserRepository pendingUserRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private MessageService messageService;
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute PendingUser user, HttpSession session) throws MessagingException {
@@ -169,6 +172,19 @@ public class UserController {
         if(user.getRole().equals(Role.Admin)) {
             emailService.sendEmailToGoldenUser(receiver.getEmail(),mail.getSubject(),mail.getContent(),user.getFirstName());
             return "Mail Sent";
+        }
+        return "UnAuthorized User";
+    }
+    @PostMapping("/notify/{id}/{content}")
+    public String notify(@PathVariable long id, @PathVariable String content, HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if (email == null) {
+            return "User Not Logged In";
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)) {
+            messageService.notify(id,content);
+            return "User Notified";
         }
         return "UnAuthorized User";
     }

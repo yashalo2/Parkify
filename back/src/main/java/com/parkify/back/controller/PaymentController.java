@@ -8,6 +8,7 @@ import com.parkify.back.dto.*;
 import com.parkify.back.model.*;
 import com.parkify.back.repository.BookingsRepository;
 import com.parkify.back.repository.PaymentRepository;
+import com.parkify.back.repository.RePayRepository;
 import com.parkify.back.repository.UserRepository;
 import com.parkify.back.service.PaymentService;
 import jakarta.servlet.http.HttpSession;
@@ -35,12 +36,17 @@ public class PaymentController {
     private BookingsRepository bookingsRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RePayRepository rePayRepository;
 
     @GetMapping("/pay/{booking}/{amount}")
     public ResponseEntity<String> pay(@PathVariable double amount, @PathVariable long booking) throws WriterException, IOException {
         return ResponseEntity.ok().body(paymentService.Pay(amount, booking));
     }
-
+    @GetMapping("/rePay/{payment}/{amount}")
+    public ResponseEntity<String> rePay(@PathVariable double amount, @PathVariable long payment) throws WriterException, IOException {
+        return ResponseEntity.ok().body(paymentService.rePay(amount, payment));
+    }
     @GetMapping("/getChartInfo")
     public List<ChartDTO> getChartInfo() {
         return paymentRepository.groupPaymentsByDay();
@@ -76,7 +82,7 @@ public class PaymentController {
             return ResponseEntity.ok().body(paymentRepository.getBookingInfo(user.getId(),PaymentStatus.Used));
 
         }
-        return ResponseEntity.ok().body(paymentRepository.getPayment(user.getId()));
+        return ResponseEntity.ok().body(paymentRepository.getBookingInfo(user.getId(),PaymentStatus.TimeOut));
 
 
     }
@@ -122,5 +128,48 @@ public class PaymentController {
         }
         return new ArrayList<>();
     }
+    @PostMapping("/updatePaymentTimeOut")
+    public String updateTimeOUt(@ModelAttribute RePay pay,HttpSession session ){
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return "User not logged in";
+        }
+        User user = userRepository.findByEmail(email);
+        RePay old = rePayRepository.getAll();
+        old.setTimeOut(pay.getTimeOut());
+        if(user.getRole().equals(Role.Admin)){
+            if(pay.getType().equals(TimeOut.Day)){
+                old.setType(TimeOut.Day);
+                rePayRepository.save(old);
+                return "Update Success";
 
-}
+            }else if(pay.getType().equals(TimeOut.Week)){
+                old.setType(TimeOut.Week);
+                rePayRepository.save(old);
+                return "Update Success";
+            }
+            old.setType(TimeOut.Minute);
+            rePayRepository.save(old);
+            return "Update Success";
+
+        }
+        return "UnAuthorized User";
+
+    }
+    @GetMapping("/getRePayData")
+    public RePay getRePayData(HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        if(email == null){
+            return new RePay();
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getRole().equals(Role.Admin)){
+            return rePayRepository.getAll();
+        }
+        return new RePay();
+    }
+    @GetMapping("/getBooking/{id}")
+        public ResponseEntity<?> getBooking(@PathVariable long id){
+            return ResponseEntity.ok().body(paymentRepository.getReceipts(id));
+        }
+ }

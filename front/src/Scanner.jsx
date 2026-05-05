@@ -14,6 +14,7 @@ function Scanner() {
   const [success, setSuccess] = useState(true);
   const [scanned, setScanned] = useState(false);
   const [message, setMessage] = useState("");
+  const [area, setArea] = useState("");
   const successSound = new Audio(SuccessMp);
   const failSound = new Audio(FailMp);
 
@@ -76,6 +77,24 @@ function Scanner() {
       console.log(err);
     }
   };
+  const getMyInfo = async () => {
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingArea/getScannerInfo`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const data = await response.text();
+      setArea(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
+  useEffect(() => {
+    getMyInfo();
+  }, []);
   return (
     <div
       style={{
@@ -91,7 +110,7 @@ function Scanner() {
           <div className={style.logo}>
             <img src={logo} alt="" />
           </div>
-          <div className={style.name}>Parkify Entrance</div>
+          <div className={style.name}>{area} Entrance</div>
         </div>
         <div style={{ justifyItems: "center" }}>
           <h1>Scan Your Entrance Code</h1>
