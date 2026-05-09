@@ -1,10 +1,8 @@
 package com.parkify.back.controller;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.qrcode.encoder.QRCode;
 import com.parkify.back.dto.*;
 import com.parkify.back.model.*;
 import com.parkify.back.repository.*;
@@ -15,18 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.client.RestTemplate;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping("api/booking")
@@ -47,6 +44,10 @@ public class BookingController {
     private MessageService messageService;
     @Autowired
     private CancelBookingRepository cancelBookingRepository;
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final String ESP32_URL = "http://localhost:9011";
+
+    private final AtomicBoolean gateOpen = new AtomicBoolean(false);
 
     @PostMapping("/book")
     public ResponseEntity<?> book(@ModelAttribute Bookings bookings, HttpSession session) throws WriterException, IOException {
@@ -107,7 +108,7 @@ public class BookingController {
         }
         else if(cancel.getType().equals(TimeOut.Week)){
             Instant now = Instant.now();
-            Instant addWeek = now.plus(Duration.ofDays(cancel.getTimeOut() * 7));
+            Instant addWeek = now.plus(Duration.ofDays(cancel.getTimeOut() * 7L));
             User user = userRepository.findByEmail(email);
             Spots spots = bookings.getSpot();
             spots.setSpotStatus(SpotStatus.Reserved);
@@ -190,42 +191,69 @@ public class BookingController {
             return ResponseEntity.ok().body(bookingsRepository.getBookings(user.getId(),BookingStatus.Cancelled));
         }
         return ResponseEntity.ok().body(bookingsRepository.getBooking(user.getId()));
-
-
     }
     @GetMapping("/getBooking/{id}")
     public ResponseEntity<?> getBooking(@PathVariable long id){
         return ResponseEntity.ok().body(bookingsRepository.getReceipts(id));
     }
+    @GetMapping("/gate/status")
+    public ResponseEntity<Map<String, Boolean>> getGateStatus() {
+        return ResponseEntity.ok(Map.of("open", gateOpen.get()));
+    }
     @GetMapping("/EntranceScanner/{id}")
-    public ResponseEntity<?> getEntranceScanner(@PathVariable long id,HttpSession session){
+    public ResponseEntity<?> getEntranceScanner(
+            @PathVariable long id,
+            HttpSession session) {
+
         String code = (String) session.getAttribute("code");
-        if(code == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
-        }
-        long areaId = gateRepository.getAreaId(code);
-        long bookingAreaId = bookingsRepository.getAreaId(id);
-        if(areaId != bookingAreaId){
-            String current = parkingAreaRepository.getName(areaId);
-            String bookedFor = parkingAreaRepository.getName(bookingAreaId);
-            String user = bookingsRepository.getFirstName(id);
-            long userID = bookingsRepository.getUserId(id);
-            messageService.sendAlert(current,user,bookedFor,userID);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong Parking Area");
-        }
-        Optional<Bookings> booking = bookingsRepository.findById(id);
-        Bookings booked = booking.get();
-        if(booked.getStatus().equals(BookingStatus.Cancelled)){
-            return ResponseEntity.ok().body("Entrance have been used or cancelled");
-        }else if(booked.getStatus().equals(BookingStatus.Used)){
-            return ResponseEntity.ok().body("Entrance has been used");
+        if (code == null) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("User not logged in");
         }
 
+        long areaId        = gateRepository.getAreaId(code);
+        long bookingAreaId = bookingsRepository.getAreaId(id);
+
+        if (areaId != bookingAreaId) {
+            String current   = parkingAreaRepository.getName(areaId);
+            String bookedFor = parkingAreaRepository.getName(bookingAreaId);
+            String user      = bookingsRepository.getFirstName(id);
+            long   userID    = bookingsRepository.getUserId(id);
+            messageService.sendAlert(current, user, bookedFor, userID);
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Wrong Parking Area");
+        }
+
+        Bookings booked = bookingsRepository.findById(id)
+                .orElse(null);
+
+        if (booked == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Booking not found");
+        }
+
+        if (booked.getStatus().equals(BookingStatus.Cancelled)) {
+            return ResponseEntity.ok("Booking has been cancelled");
+        }
+
+        if (booked.getStatus().equals(BookingStatus.Used)) {
+            return ResponseEntity.ok("Entrance has already been used");
+        }
         booked.setStatus(BookingStatus.Used);
         bookingsRepository.save(booked);
-        return ResponseEntity.ok().body("Booking Confirmed");
-    }
-    @GetMapping("/getPendingBookings")
+        gateOpen.set(true);
+        CompletableFuture
+                .delayedExecutor(6, TimeUnit.SECONDS)
+                .execute(() -> {
+                    gateOpen.set(false);
+                    System.out.println("Gate auto-closed after 6 seconds");
+                });
+
+        return ResponseEntity.ok("Booking Confirmed. Gate is opening.");
+    }@GetMapping("/getPendingBookings")
     public ResponseEntity<?> getPendingBooking(){
         return ResponseEntity.ok().body(bookingService.getBooked());
     }
