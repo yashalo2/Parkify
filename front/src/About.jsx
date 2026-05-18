@@ -1,6 +1,7 @@
 import { MdArrowBack } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import style from "./About.module.css";
+import aboutImg6 from "./assets/image.png";
 import aboutImg5 from "./assets/occupied.jpg";
 import aboutImg4 from "./assets/payment.jpg";
 import aboutImg1 from "./assets/select.jpg";
@@ -66,6 +67,13 @@ export default function About() {
             <strong>Real Time Spot Status:</strong> A modern, data-driven Spot
             Status Detection gives proper real time spot status for users to
             booking peking for their prefered and available Space growth.
+          </p>
+        </div>
+        <div className={style.galleryItem}>
+          <img src={aboutImg6} alt="Customer Chat Support" />
+          <p>
+            <strong>Alert:</strong> Built-in Alerts system that alert users for
+            the error they made and correct them.
           </p>
         </div>
       </div>

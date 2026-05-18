@@ -5,6 +5,7 @@ import AddParkingArea from "./Admin/coponenet/AddParkingArea.jsx";
 import AdminOutlet from "./Admin/coponenet/AdminOutlet";
 import AdminPage from "./Admin/coponenet/AdminPage.jsx";
 import AdminSupportPage from "./Admin/coponenet/AdminSupport.jsx";
+import ChangePassword from "./Admin/coponenet/ChangePassword.jsx";
 import ManageParkingArea from "./Admin/coponenet/ManageParkingArea.jsx";
 import ManageUser from "./Admin/coponenet/ManageUser.jsx";
 import "./App.css";
@@ -33,7 +34,6 @@ function App() {
         <Route path="about" element={<About />}></Route>
         <Route path="terms" element={<TermsPrivacy />}></Route>
         <Route path="contact" element={<Contact />}></Route>
-
         <Route path="scanner" element={<Scanner />}></Route>
         <Route path="scannerLogin" element={<ScannerLogin />}></Route>
         <Route path="login" element={<Login />}></Route>
@@ -53,6 +53,7 @@ function App() {
           <Route path="manageParking" element={<ManageParkingArea />}></Route>
           <Route path="manageUser" element={<ManageUser />}></Route>
           <Route path="support" element={<AdminSupportPage />}></Route>
+          <Route path="changePassword" element={<ChangePassword />}></Route>
         </Route>
       </Routes>
     </Router>

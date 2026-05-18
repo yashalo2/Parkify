@@ -55,3 +55,24 @@
   border-radius: 8px;
   cursor: pointer;
 }
+.page-container .info {
+  width: 100%;
+  height: 300px;
+  background: blue;
+  display: flex;
+  gap: 40px;
+}
+.page-container .info .logo {
+  width: 250px;
+  height: 100%;
+  margin: auto;
+  background-image: url("./assets/logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.page-container .info .socials {
+  flex: 1;
+  height: 100%;
+  background: linear-gradient(45deg, #2196f3, #21cbf3);
+  margin: auto;
+}

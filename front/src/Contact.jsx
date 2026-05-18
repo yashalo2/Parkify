@@ -22,6 +22,10 @@ export default function Contact() {
         <p>📧 support@parkify.com</p>
         <p>📍 Adama, Ethiopia</p>
       </div>
+      <div className="info">
+        <div className="logo"></div>
+        <div className="socials"></div>
+      </div>
     </div>
   );
 }

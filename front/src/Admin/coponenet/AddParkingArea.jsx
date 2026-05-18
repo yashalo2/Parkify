@@ -2,7 +2,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { MdClose } from "react-icons/md";
+import { MdClose, MdSearch } from "react-icons/md";
 import {
   MapContainer,
   Marker,
@@ -26,6 +26,28 @@ function AddParkingArea() {
   const [showAddLevelForm, setShowAddLevelForm] = useState(false);
   const [parkingArea, setParkingArea] = useState([]);
   const [lots, setLots] = useState([]);
+  const search = async (search) => {
+    if (search.length == 0) {
+      getLocations();
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${Base_URL}/api/parkingArea/searchArea/${search}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+      if (data.length == 0) {
+        toast.error("No Parking Area Found");
+      }
+      setLocations(data);
+    } catch (err) {
+      toast.error("Error Occurred");
+    }
+  };
   const getLocations = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/parkingArea/getLocations`, {
@@ -153,6 +175,16 @@ function AddParkingArea() {
         className={style.mapContainer}
         onClick={() => setShowAddLevelForm(false)}
       >
+        <div className={style.search}>
+          <div>
+            <MdSearch size={30} />
+          </div>
+          <input
+            type="text"
+            placeholder="Enter Area Name"
+            onChange={(e) => search(e.target.value)}
+          />
+        </div>
         <MapContainer
           center={position}
           zoom={13}
