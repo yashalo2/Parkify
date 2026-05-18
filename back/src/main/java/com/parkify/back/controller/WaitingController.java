@@ -1,17 +1,16 @@
 package com.parkify.back.controller;
 
 import com.parkify.back.model.BookingStatus;
+import com.parkify.back.model.Contact;
 import com.parkify.back.model.User;
 import com.parkify.back.repository.BookingsRepository;
+import com.parkify.back.repository.ContactRepository;
 import com.parkify.back.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/waiting")
@@ -20,6 +19,8 @@ public class WaitingController {
     private UserRepository userRepository;
     @Autowired
     private BookingsRepository bookingsRepository;
+    @Autowired
+    private ContactRepository contactRepository;
 
     @GetMapping("/getMyBooking/{status}")
     public ResponseEntity<?> getMyBooking(@PathVariable String status , HttpSession session){
@@ -35,6 +36,11 @@ public class WaitingController {
     @GetMapping("/getBooking/{id}")
     public ResponseEntity<?> getBooking(@PathVariable long id){
         return ResponseEntity.ok().body(bookingsRepository.getReceipts(id));
+    }
+    @PostMapping("/sendMessage")
+    public String sendMessage(@ModelAttribute Contact contact){
+        contactRepository.save(contact);
+        return "Message Sent";
     }
 
 }

@@ -37,6 +37,10 @@ export default function TermsPrivacy() {
           time. Parkify puts you in control of your information.
         </p>
       </section>
+      <div className="footer">
+        <div className="TermsLogo"></div>
+        <div className="moreInfo"></div>
+      </div>
     </div>
   );
 }

@@ -58,7 +58,6 @@
 .page-container .info {
   width: 100%;
   height: 300px;
-  background: blue;
   display: flex;
   gap: 40px;
 }
@@ -73,6 +72,108 @@
 .page-container .info .socials {
   flex: 1;
   height: 100%;
-  background: linear-gradient(45deg, #2196f3, #21cbf3);
   margin: auto;
+  align-content: center;
+}
+.page-container .info .socials .social-icon {
+  width: 100%;
+  height: 50px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin: auto;
+  display: flex;
+  gap: 20px;
+}
+.page-container .info .socials .social-icon div {
+  flex: 1;
+  padding: 0.5em;
+  transition: 0.3s ease;
+}
+.page-container .info .socials .social-icon div:hover {
+  transform: rotateZ(10deg);
+}
+.page-container .info .socials .social-icon .one {
+  background-image: url("./assets/whatsapp.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.page-container .info .socials .social-icon .two {
+  background-image: url("./assets/twitter.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.page-container .info .socials .social-icon .three {
+  background-image: url("./assets/instagram (1).png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.page-container .info .socials .social-icon .four {
+  background-image: url("./assets/tik-tok.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.page-container .info .socials .social-icon .five {
+  background-image: url("./assets/linkedin.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.page-container .info .socials .social-icon .six {
+  background-image: url("./assets/youtube.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.footer {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #f5f5f5;
+  color: #333;
+  text-align: center;
+  display: flex;
+}
+.footer .TermsLogo {
+  width: 200px;
+  height: 200px;
+  background-image: url("./assets/logo.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: auto;
+}
+.footer .moreInfo {
+  flex: 1;
+  padding: 1rem;
+  text-align: left;
+  background: blue;
+}
+@media (max-width: 700px) {
+  .page-container .logo {
+    width: 100%;
+    background-position: center;
+    background-size: contain;
+  }
+  .page-container .info {
+    flex-direction: column;
+    height: auto;
+  }
+  .page-container .info .logo {
+    width: 100%;
+    height: 200px;
+  }
+  .page-container .info .socials {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .footer .TermsLogo {
+    width: 100px;
+    background-position: center;
+    background-size: cover;
+  }
 }
