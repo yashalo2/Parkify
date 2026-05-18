@@ -14,6 +14,32 @@
   border-radius: 10px;
   overflow: hidden;
 }
+.container .mapContainer .search {
+  position: absolute;
+  left: 10%;
+  top: 5px;
+  width: 80%;
+  height: 80px;
+  background: #0000006e;
+  z-index: 20;
+  border-radius: 10px;
+  display: flex;
+  align-content: center;
+  gap: 5px;
+}
+.container .mapContainer .search div {
+  height: 100%;
+  padding-left: 0.5em;
+  align-content: center;
+}
+.container .mapContainer .search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: none;
+  border-left: 1px solid #000000;
+  text-align: center;
+}
 .container .mapContainer .locationName {
   position: absolute;
   top: 0;
