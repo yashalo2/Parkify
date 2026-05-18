@@ -93,6 +93,7 @@
   color: black;
 }
 .container .card {
+  display: block;
   position: relative;
   left: 20%;
   top: calc(70% - 150px);

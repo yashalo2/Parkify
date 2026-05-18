@@ -19,12 +19,12 @@ function Landing() {
           <div className={style.div}></div>
           <div className={style.infoCard}>
             <p>
-              <h3>Park smarter, not harder.</h3> Find your perfect parking spot
-              with Parkify - the ultimate smart parking solution. Say goodbye to
-              circling the block and hello to stress-free parking. With
-              real-time availability, seamless navigation, and secure payments,
-              Parkify makes parking a breeze. Join the parking revolution today
-              and experience the future of parking!
+              <strong>Park smarter, not harder.</strong> Find your perfect
+              parking spot with Parkify - the ultimate smart parking solution.
+              Say goodbye to circling the block and hello to stress-free
+              parking. With real-time availability, seamless navigation, and
+              secure payments, Parkify makes parking a breeze. Join the parking
+              revolution today and experience the future of parking!
             </p>
             <div className={style.buttons}>
               <button onClick={() => navigate("login")}>Get Started</button>
