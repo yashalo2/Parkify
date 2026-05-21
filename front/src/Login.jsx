@@ -26,9 +26,7 @@ function Login() {
         toast.error(errorText);
         return;
       }
-
       const contentType = res.headers.get("content-type");
-
       if (contentType && contentType.includes("application/json")) {
         const user = await res.json();
         sessionStorage.setItem("user", JSON.stringify(user));
@@ -38,9 +36,8 @@ function Login() {
         const message = await res.text();
         toast.error(message || "Error occurred");
       }
-      console.log(data);
     } catch (error) {
-      toast.error("An error occurred. Please try again.");
+      // toast.error("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }

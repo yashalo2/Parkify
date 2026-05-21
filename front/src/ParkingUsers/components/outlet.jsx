@@ -5,6 +5,7 @@ import {
   MdHeadphones,
   MdHistory,
   MdHome,
+  MdLogout,
   MdNotifications,
   MdPerson,
 } from "react-icons/md";
@@ -18,6 +19,9 @@ function OutLet() {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   const [client, setClient] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
+  const [lastName, setLastName] = useState("");
   const [role, setRole] = useState("");
   const isAuthenticated = !!sessionStorage.getItem("user");
   const user = sessionStorage.getItem("user");
@@ -50,9 +54,27 @@ function OutLet() {
     if (user) {
       const userRole = JSON.parse(user);
       setRole(userRole.role);
+      setFirstName(userRole.firstName);
+      setLastName(userRole.lastName);
+      setEmail(userRole.email);
     }
   }, [user]);
-
+  const logout = () => {
+    fetch(`${Base_URL}/api/users/logout`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        if (data == "Logged Out") {
+          toast.success(data);
+          sessionStorage.removeItem("user");
+          navigate("/login");
+        } else {
+          toast.error(data);
+        }
+      });
+  };
   useEffect(() => {
     if (!isAuthenticated || (role && role !== "Customer")) {
       navigate("/login");
@@ -121,7 +143,29 @@ function OutLet() {
           <MdHeadphones size={24} />
         </button>
       </div>
-      {showMenu && <div className={style.menu}></div>}
+      {showMenu && (
+        <div className={style.menu}>
+          <div className={style.profile}>
+            <div className={style.img}>
+              <MdPerson size={100} color="#fff" />
+            </div>
+          </div>
+          <div className={style.name}>
+            <h3>
+              {firstName} {lastName}
+            </h3>
+            <h4>{email}</h4>
+          </div>
+          <div className={style.btns}>
+            <button onClick={() => navigate("changePassword")}>
+              Change Password
+            </button>
+            <button onClick={() => logout()}>
+              Log-Out <MdLogout color="red" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

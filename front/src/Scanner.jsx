@@ -64,7 +64,7 @@ function Scanner() {
         },
       );
       const data = await response.text();
-      if (data == "Booking Confirmed") {
+      if (data == "Booking Confirmed. Gate is opening.") {
         setSuccess(true);
         successSound.play();
       } else {
