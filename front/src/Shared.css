@@ -148,8 +148,8 @@
   flex: 1;
   padding: 1rem;
   text-align: left;
-  background: blue;
 }
+
 @media (max-width: 700px) {
   .page-container .logo {
     width: 100%;
@@ -169,6 +169,10 @@
     height: auto;
     display: flex;
     flex-wrap: wrap;
+    gap: 20px;
+  }
+  .footer {
+    flex-direction: column;
     gap: 20px;
   }
   .footer .TermsLogo {

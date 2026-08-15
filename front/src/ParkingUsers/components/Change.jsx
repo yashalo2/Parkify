@@ -2,9 +2,9 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { MdArrowBack } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import style from "../../Admin/styles/ChangePassword.module.css";
 import { Base_URL } from "../../config";
-import style from "../styles/ChangePassword.module.css";
-function ChangePassword() {
+function Change() {
   const navigate = useNavigate();
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -41,7 +41,7 @@ function ChangePassword() {
   return (
     <div className={style.container}>
       <MdArrowBack
-        onClick={() => navigate("/admin/home")}
+        onClick={() => navigate("/customer/home")}
         className={style.back}
         color="red"
       />
@@ -49,27 +49,15 @@ function ChangePassword() {
         <h2>Change Password</h2>
         <div>
           <label>Old Password</label>
-          <input
-            type="text"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-          />
+          <input onChange={(e) => setOldPassword(e.target.value)} type="text" />
         </div>
         <div>
-          <label>New Password</label>
-          <input
-            type="text"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
+          <label>new Password</label>
+          <input onChange={(e) => setNewPassword(e.target.value)} type="text" />
         </div>
         <div>
-          <label>Confirm Password</label>
-          <input
-            type="text"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-          />
+          <label>confirm Password</label>
+          <input onChange={(e) => setConfirm(e.target.value)} type="text" />
         </div>
         <div>
           <button onClick={() => changePassword()}>Save</button>
@@ -78,4 +66,4 @@ function ChangePassword() {
     </div>
   );
 }
-export default ChangePassword;
+export default Change;

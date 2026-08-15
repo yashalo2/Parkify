@@ -1,0 +1,165 @@
+.footerContainer {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  align-items: stretch;
+}
+
+.logoArea {
+  flex: 0 0 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background-color: #ffffff;
+}
+
+.logoImg {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.blueDivContent {
+  flex: 0 0 75%;
+  background-color: #000;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  padding: 40px;
+  gap: 32px;
+}
+
+.footerColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandInfo {
+  flex: 2;
+}
+
+.brandInfo h3 {
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.brandInfo p {
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.links {
+  flex: 1;
+}
+
+.links h4,
+.downloadApps h4 {
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
+
+.links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.links ul li {
+  margin-bottom: 10px;
+}
+
+.links ul li a {
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: opacity 0.2s ease;
+}
+
+.links ul li a:hover {
+  opacity: 0.75;
+}
+
+.downloadApps {
+  flex: 1.2;
+}
+
+.appButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.appBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.appBtn svg {
+  flex-shrink: 0;
+}
+
+.appBtn:hover {
+  background-color: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 820px) {
+  .footerContainer {
+    flex-direction: column;
+  }
+
+  .logoArea {
+    flex: 1 1 100%;
+    padding: 32px 24px;
+  }
+
+  .blueDivContent {
+    flex: 1 1 100%;
+    flex-direction: column;
+    padding: 32px 24px;
+    gap: 28px;
+  }
+}

@@ -6,6 +6,7 @@ import AdminOutlet from "./Admin/coponenet/AdminOutlet";
 import AdminPage from "./Admin/coponenet/AdminPage.jsx";
 import AdminSupportPage from "./Admin/coponenet/AdminSupport.jsx";
 import ChangePassword from "./Admin/coponenet/ChangePassword.jsx";
+import ContactAdmin from "./Admin/coponenet/ContactAdmin.jsx";
 import ManageParkingArea from "./Admin/coponenet/ManageParkingArea.jsx";
 import ManageUser from "./Admin/coponenet/ManageUser.jsx";
 import "./App.css";
@@ -14,6 +15,7 @@ import Landing from "./Landing.jsx";
 import Login from "./Login.jsx";
 import Alert from "./ParkingUsers/components/Alert.jsx";
 import Booking from "./ParkingUsers/components/Booking.jsx";
+import Change from "./ParkingUsers/components/Change.jsx";
 import History from "./ParkingUsers/components/HistoryPage.jsx";
 import Home from "./ParkingUsers/components/Home";
 import Message from "./ParkingUsers/components/Message.jsx";
@@ -46,6 +48,7 @@ function App() {
           <Route path="support" element={<Message />}></Route>
           <Route path="booking" element={<Booking area={1} />}></Route>
           <Route path="alerts" element={<Alert />}></Route>
+          <Route path="changePassword" element={<Change />}></Route>
         </Route>
         <Route path="admin" element={<AdminOutlet />}>
           <Route path="home" element={<AdminPage />}></Route>
@@ -54,6 +57,7 @@ function App() {
           <Route path="manageUser" element={<ManageUser />}></Route>
           <Route path="support" element={<AdminSupportPage />}></Route>
           <Route path="changePassword" element={<ChangePassword />}></Route>
+          <Route path="contact" element={<ContactAdmin />}></Route>
         </Route>
       </Routes>
     </Router>

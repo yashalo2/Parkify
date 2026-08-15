@@ -98,6 +98,7 @@
 .container .formContainer .loading {
   animation: loading 2s ease infinite;
 }
+
 @keyframes loading {
   0% {
     background: linear-gradient(135deg, orange, orange, #00000068);
@@ -127,6 +128,38 @@
     transform: rotate(360deg);
   }
 }
+.container .formContainer .sending {
+  background: linear-gradient(
+    85deg,
+    #444444,
+    #444444,
+    #444444,
+    #444444,
+    #444444,
+    #808080,
+    #444444,
+    #444444,
+    #444444,
+    #444444,
+    #444444
+  );
+  background-size: 400% 400%;
+  animation: gradientBG 1s ease infinite;
+  color: #fff;
+  transition:
+    background 0.5s,
+    color 0.5s;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 @media (max-width: 500px) {
   .container .logoContainer {
     position: absolute;

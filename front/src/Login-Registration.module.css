@@ -199,7 +199,9 @@
 .container .mobileCard {
   display: none;
 }
-
+.sending {
+  background: rgba(0, 0, 0, 0.452);
+}
 @media (max-width: 700px) {
   .container .card {
     display: none;

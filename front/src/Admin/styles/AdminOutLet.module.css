@@ -125,6 +125,19 @@
 .container .form div {
   padding-left: 0.5em;
 }
+.container .contact {
+  margin-top: 100px;
+}
+.container .contact button {
+  width: 80%;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: black;
+  text-align: start;
+  margin-bottom: 10px;
+  transition: 0.3s;
+}
 .container .form div,
 form h3 {
   margin-left: 1em;
@@ -138,9 +151,9 @@ form h3 {
 }
 .container .form div button {
   padding: 0.5em;
-  background: blue;
   color: #fff;
   border: none;
+  background: blue;
   padding: 0.5em 2em;
   cursor: pointer;
   margin-left: 5px;
@@ -208,6 +221,7 @@ form h3 {
   margin-bottom: 10px;
   transition: 0.3s;
 }
+
 .container .menu .btns button:hover {
   background: black;
   color: #fff;

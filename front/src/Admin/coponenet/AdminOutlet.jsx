@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import {
   MdAdd,
+  MdContactMail,
   MdDashboard,
   MdHeadphones,
   MdLogout,
@@ -29,6 +30,22 @@ function AdminOutlet() {
   const [email, setEmail] = useState("");
   const [rePay, setRePay] = useState({});
   const [cancel, setCancel] = useState({});
+  const logout = () => {
+    fetch(`${Base_URL}/api/users/logout`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        if (data == "Logged Out") {
+          toast.success(data);
+          sessionStorage.removeItem("user");
+          navigate("/login");
+        } else {
+          toast.error(data);
+        }
+      });
+  };
   const getRePayData = async () => {
     try {
       const response = await fetch(`${Base_URL}/api/payment/getRePayData`, {
@@ -185,7 +202,17 @@ function AdminOutlet() {
           >
             <MdHeadphones /> Support
           </button>
+          <button
+            className={`${style.contact} ${current == "contact" ? style.current : ""}`}
+            onClick={() => {
+              (navigate("contact"),
+                localStorage.setItem("adminPage", "contact"));
+            }}
+          >
+            <MdContactMail /> Contact
+          </button>
         </div>
+
         <div
           className={style.decor}
           onClick={() => {
@@ -273,7 +300,7 @@ function AdminOutlet() {
             <button onClick={() => navigate("changePassword")}>
               Change Password
             </button>
-            <button>
+            <button onClick={() => logout()}>
               Log-Out <MdLogout color="red" />
             </button>
           </div>

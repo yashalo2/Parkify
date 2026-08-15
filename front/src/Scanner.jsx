@@ -42,6 +42,7 @@ function Scanner() {
         }
       } catch (err) {
         toast.error("Please Wait  !");
+        console.log(err);
       }
     };
 
@@ -64,7 +65,7 @@ function Scanner() {
         },
       );
       const data = await response.text();
-      if (data == "Booking Confirmed") {
+      if (data == "Booking Confirmed. Gate is opening.") {
         setSuccess(true);
         successSound.play();
       } else {
