@@ -37,7 +37,7 @@ function Login() {
         toast.error(message || "Error occurred");
       }
     } catch (error) {
-      // toast.error("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }

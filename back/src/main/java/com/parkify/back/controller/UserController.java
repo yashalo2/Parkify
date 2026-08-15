@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
@@ -41,6 +42,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute PendingUser user, HttpSession session) throws MessagingException {
@@ -59,7 +62,8 @@ public class UserController {
         }
         PendingUser register = new PendingUser();
         register.setEmail(user.getEmail());
-        register.setPassword(user.getPassword());
+        String encrypted = passwordEncoder.encode(user.getPassword());
+        register.setPassword(encrypted);
         register.setFirstName(user.getFirstName());
         register.setLastName(user.getLastName());
         int code = 100000 + random.nextInt(900000);
@@ -96,7 +100,7 @@ public class UserController {
     public ResponseEntity<?> login(@ModelAttribute User user, HttpSession session) {
         if(userRepository.existsByEmail(user.getEmail())) {
             User customer = userRepository.findByEmail(user.getEmail());
-            if(customer.getPassword().equals(user.getPassword())) {
+            if(passwordEncoder.matches(user.getPassword(), customer.getPassword())) {
                 session.setAttribute("id", customer.getId());
                 session.setAttribute("email", customer.getEmail());
                 session.setAttribute("firstName", customer.getFirstName());
@@ -159,7 +163,6 @@ public class UserController {
             return userService.getGoldenUser();
         }
         return new ArrayList<>();
-
     }
     @PostMapping("/mail/{id}")
     public String mail(@RequestBody MailDTO mail, HttpSession session,@PathVariable long id) throws MessagingException {
@@ -187,6 +190,27 @@ public class UserController {
             return "User Notified";
         }
         return "UnAuthorized User";
+    }
+    @GetMapping("/logout")
+    public String logout(HttpSession session){
+        session.removeAttribute("email");
+        return "Logged Out";
+    }
+    @PostMapping("/changePassword/{old}/{newPassword}")
+    public String change(@PathVariable String old, @PathVariable String newPassword, HttpSession session){
+        String email = (String) session.getAttribute("email");
+        if(email == null) {
+            return "User Not Logged In";
+        }
+        User user = userRepository.findByEmail(email);
+        if(user.getPassword().equals(old)) {
+            String encrypted = passwordEncoder.encode(newPassword);
+            user.setPassword(encrypted);
+            userRepository.save(user);
+            return "Password Changed";
+        }
+        return "User  Not Found";
+
     }
 
 }

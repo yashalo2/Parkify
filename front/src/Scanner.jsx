@@ -42,6 +42,7 @@ function Scanner() {
         }
       } catch (err) {
         toast.error("Please Wait  !");
+        console.log(err);
       }
     };
 

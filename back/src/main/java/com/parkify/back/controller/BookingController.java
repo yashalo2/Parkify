@@ -44,11 +44,16 @@ public class BookingController {
     private MessageService messageService;
     @Autowired
     private CancelBookingRepository cancelBookingRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
     private final RestTemplate restTemplate = new RestTemplate();
     private final String ESP32_URL = "http://localhost:9011";
 
     private final AtomicBoolean gateOpen = new AtomicBoolean(false);
 
+
+        private final RestTemplate resTemplate = new RestTemplate();
+        private final String ESP32URL = "http://localhost:9011"; // Wokwi Gateway bridge
     @PostMapping("/book")
     public ResponseEntity<?> book(@ModelAttribute Bookings bookings, HttpSession session) throws WriterException, IOException {
         String email = (String) session.getAttribute("email");
@@ -214,7 +219,36 @@ public class BookingController {
 
         long areaId        = gateRepository.getAreaId(code);
         long bookingAreaId = bookingsRepository.getAreaId(id);
+        Gate gate = gateRepository.getGate(areaId);
+        if(gate.getGateType().equals(GateType.Exit)){
+            Payment booked = paymentRepository.findById(id)
+                    .orElse(null);
 
+            if (booked == null) {
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body("Booking not found");
+            }
+
+            if (booked.getStatus().equals(PaymentStatus.Open)) {
+                restTemplate.getForObject(ESP32_URL + "/gate/open", String.class);
+                return ResponseEntity.ok("Gate Opening");
+            }
+
+            if (booked.getStatus().equals(BookingStatus.Used)) {
+                return ResponseEntity.ok("Exit has already been used");
+            }
+            booked.setStatus(PaymentStatus.Used);
+            paymentRepository.save(booked);
+            gateOpen.set(true);
+            CompletableFuture
+                    .delayedExecutor(6, TimeUnit.SECONDS)
+                    .execute(() -> {
+                        gateOpen.set(false);
+                        System.out.println("Gate auto-closed after 6 seconds");
+                    });
+            return ResponseEntity.ok("Payment Confirmed. Gate is opening.");
+        }
         if (areaId != bookingAreaId) {
             String current   = parkingAreaRepository.getName(areaId);
             String bookedFor = parkingAreaRepository.getName(bookingAreaId);
@@ -225,6 +259,7 @@ public class BookingController {
                     .status(HttpStatus.UNAUTHORIZED)
                     .body("Wrong Parking Area");
         }
+
 
         Bookings booked = bookingsRepository.findById(id)
                 .orElse(null);
@@ -251,7 +286,7 @@ public class BookingController {
                     gateOpen.set(false);
                     System.out.println("Gate auto-closed after 6 seconds");
                 });
-
+        restTemplate.getForObject(ESP32_URL + "/gate/open", String.class);
         return ResponseEntity.ok("Booking Confirmed. Gate is opening.");
     }@GetMapping("/getPendingBookings")
     public ResponseEntity<?> getPendingBooking(){
@@ -428,5 +463,8 @@ public class BookingController {
         }
         return new CancelBooking();
     }
-
+    @GetMapping("/gate/command")
+    public String getGateCommand() {
+        return "gateCommand";
+    }
 }

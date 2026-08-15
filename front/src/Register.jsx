@@ -8,11 +8,13 @@ import style from "./Login.module.css";
 function Register() {
   const [message, setMessage] = useState("");
   const formRef = useRef(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const register = async (e) => {
     e.preventDefault();
-    const formData = new FormData(formRef.current);
     try {
+      setLoading(true);
+      const formData = new FormData(formRef.current);
       const response = await fetch(`${Base_URL}/api/users/register`, {
         method: "POST",
         credentials: "include",
@@ -27,6 +29,8 @@ function Register() {
       }
     } catch (err) {
       toast.error("Error Occurred");
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -54,7 +58,13 @@ function Register() {
             <input type="email" name="email" placeholder="Email" />
             <input type="password" name="password" placeholder="Password" />
             <input type="password" placeholder="Confirm Password" />
-            <button type="submit">Register</button>
+            {!loading ? (
+              <button className={style.sending} type="button" disabled>
+                Registering...
+              </button>
+            ) : (
+              <button type="submit">Register</button>
+            )}
             <p>
               Already have an account?{" "}
               <span

@@ -26,4 +26,8 @@ join g.parkingArea p
 where g.code = :code
 """)
     String getName(@Param("code") String code);
+    @Query("""
+select g from Gate g where g.id = :id
+""")
+    Gate getGate(@Param("id") long id);
 }
